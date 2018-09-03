@@ -1,0 +1,21 @@
+[name]
+count-line-cli
+
+[version]
+0.0.21
+
+
+
+
+[bin]
+count-line = bin/count-line
+
+[dependencies]
+commander = *
+git-pull-or-clone = *
+gotoeasy-file = *
+is-ignore = *
+
+[license]
+Apache-2.0
+

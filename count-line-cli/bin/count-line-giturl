@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options] [path]')
+	.option('-c --clean', 'clean work directory before git clone or pull')
+	.option('--csv', 'output count result to csv file')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+let opts = {
+	clean: !!cmmd.clean,
+	path: process.cwd(),
+	urls: cmmd.args,
+	csv: !!cmmd.csv,
+	debug: !!cmmd.debug
+};
+
+!opts.debug && (console.debug = x=>x);
+
+const result = require('../lib/index')(opts);
+

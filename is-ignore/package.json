@@ -1,0 +1,31 @@
+{
+  "name": "is-ignore",
+  "version": "0.0.5",
+  "main": "index.js",
+  "dependencies": {
+    "dotgitignore": "*"
+  },
+  "bin": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "按 .gitignore 文件配置的规则，判断是否为忽略的目录或文件",
+  "keywords": [
+    "gitignore",
+    "ignore",
+    "is-ignore"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/is-ignore#readme",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

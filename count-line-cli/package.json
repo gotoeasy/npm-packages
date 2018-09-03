@@ -1,0 +1,30 @@
+{
+  "name": "count-line-cli",
+  "version": "0.0.21",
+  "main": "",
+  "dependencies": {
+    "commander": "*",
+    "git-pull-or-clone": "*",
+    "gotoeasy-file": "*",
+    "is-ignore": "*"
+  },
+  "bin": {
+    "count-line": "bin/count-line"
+  },
+  "scripts": {},
+  "description": "",
+  "keywords": [],
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "homepage": "",
+  "bugs": {
+    "url": ""
+  },
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "license": "Apache-2.0"
+}

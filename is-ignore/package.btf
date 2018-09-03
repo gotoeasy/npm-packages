@@ -1,0 +1,39 @@
+[name] // 项目名 （必填）
+is-ignore
+
+[version] // 版本号 （必填）
+0.0.5
+
+
+[main] // 入口文件 （必填）
+index.js
+
+[dependencies] // 依赖库 （选填）
+dotgitignore = *
+
+[scripts] // 脚本命令 （选填）
+test = echo "Error: no test specified" && exit 1
+
+[description] // 描述 （选填）
+按 .gitignore 文件配置的规则，判断是否为忽略的目录或文件
+
+[keywords] // 检索关键字 （选填），多个关键字用半角逗号分隔
+gitignore, ignore, is-ignore
+
+[repository] // 仓库 （选填）
+type= git
+url = git+https://github.com/gotoeasy/npm-packages.git
+
+[homepage] // 主页 （选填），github项目会自动识别设定
+https://github.com/gotoeasy/npm-packages/is-ignore#readme
+
+[bugs] // BUG提交地址 （选填），github项目会自动识别设定
+url = https://github.com/gotoeasy/npm-packages/issues
+
+[author] // 作者信息 （选填）
+name = 青松
+email= gotoeasy@163.com
+
+[license] // 协议 （选填）
+Apache-2.0
+
