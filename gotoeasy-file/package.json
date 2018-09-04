@@ -1,0 +1,28 @@
+{
+  "name": "gotoeasy-file",
+  "version": "0.0.9",
+  "main": "index.js",
+  "dependencies": {},
+  "bin": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "常用文件操作封装",
+  "keywords": [
+    "fs",
+    "file"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-file/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
