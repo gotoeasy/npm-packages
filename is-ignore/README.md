@@ -37,3 +37,7 @@ let ignore = new IsIgnore({path: 'D:/test'});
 console.log(ignore.isIgnore('D:/test/README.md'));     // false
 console.log(ignore.isIgnore('D:/test/node_modules'));  // true
 ```
+
+## NOTE
+* 根目录有`.gitignore`文件时将被利用并忽略相关文件，但解析匹配可能有搞错的情况
+

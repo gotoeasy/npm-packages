@@ -1,6 +1,6 @@
 {
   "name": "is-ignore",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "main": "index.js",
   "dependencies": {
     "dotgitignore": "*"
@@ -19,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/is-ignore#readme",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/is-ignore/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

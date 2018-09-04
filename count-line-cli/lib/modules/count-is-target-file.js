@@ -1,8 +1,6 @@
 const File = require('gotoeasy-file');
 const event = require('../event');
 
-const exts = ['java', 'xml', 'dtd', 'properties', 'jsp', 'js', 'html', 'htm', 'css', 'tld', 'sh', 'sql', 'ts', 'less'];
-
 module.exports = event.on('对象文件判断', function(){
 
 	return (file, project) => {
@@ -15,7 +13,7 @@ module.exports = event.on('对象文件判断', function(){
 
 
 function isTargetFile(file){
-	return exts.includes(getFileExt(file));
+	return event.at('环境').exts.includes(getFileExt(file));
 }
 
 function getFileExt(file){

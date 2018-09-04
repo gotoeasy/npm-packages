@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+let opts = {
+	path: process.cwd().replace(/\\/g, '/'),
+	debug: !!cmmd.debug
+};
+
+!opts.debug && (console.debug = x=>x);
+
+require('../lib/count-line-init')(opts);

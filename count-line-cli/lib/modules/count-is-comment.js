@@ -20,33 +20,47 @@ module.exports = event.on('注释判断', function(){
 
 
 function isLineComment(ext, line){
-	if ( ['java', 'js', 'ts', 'less', 'jsp', 'html', 'htm'].includes(ext)  ) {
-		return line.indexOf('//') == 0;
-	}else if ( ['sql'].includes(ext) ) {
-		return line.indexOf('--') == 0;
-	}else if ( ['properties', 'sh'].includes(ext) ) {
-		return line.indexOf('#') == 0;
-	}
-
-	return false;
+	let env = event.at('环境');
+	let str = env.extComment[ext] ? (env.extComment[ext].get('line-comment') || '') : '';
+	return str && line.indexOf(str) == 0
 }
 
 function isBlockCommentStart(ext, line){
-	if ( ['java', 'js', 'ts', 'less', 'css'].includes(ext)  ) {
-		return line.indexOf('/*') == 0;
-	}else if ( ['xml', 'dtd', 'tld', 'jsp', 'html', 'htm'].includes(ext) ) {
-		return line.indexOf('<!--') == 0;
+	let mapComment = event.at('环境').extComment[ext];
+	if ( !mapComment ) {
+		return false;
 	}
 
-	return false;
+	// block-comment-start
+	let start = mapComment.get('block-comment-start');
+	let end = mapComment.get('block-comment-end');
+	let rs = (start && line.indexOf(start) == 0);
+	if ( rs ) {
+		mapComment.set('$current-block-comment-end', end);
+		return rs;
+	}
+
+	for ( let i=1; i<=3; i++) {
+		// block-comment-start1 ~ block-comment-start3
+		start = mapComment.get('block-comment-start' + i);
+		end = mapComment.get('block-comment-end' + i);
+		rs = (start && line.indexOf(start) == 0);
+		if ( rs ) {
+			mapComment.set('$current-block-comment-end', end);
+			return rs;
+		}
+	}
+
+	mapComment.set('$current-block-comment-end', '');
+	return rs;
 }
 
 function isBlockCommentEnd(ext, line){
-	if ( ['java', 'js', 'ts', 'less', 'css'].includes(ext)  ) {
-		return line.indexOf('*/') >= 0;
-	}else if ( ['xml', 'dtd', 'tld', 'jsp', 'html', 'htm'].includes(ext) ) {
-		return line.indexOf('-->') >= 0;
+	let mapComment = event.at('环境').extComment[ext];
+	if ( !mapComment ) {
+		return true;
 	}
 
-	return false;
+	let end = mapComment.get('$current-block-comment-end');
+	return line.indexOf(end) >= 0;
 }

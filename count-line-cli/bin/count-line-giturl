@@ -13,10 +13,11 @@ let opts = {
 	path: process.cwd(),
 	urls: cmmd.args,
 	csv: !!cmmd.csv,
+	giturl: true,
 	debug: !!cmmd.debug
 };
 
 !opts.debug && (console.debug = x=>x);
 
-const result = require('../lib/index')(opts);
+require('../lib/index')(opts);
 

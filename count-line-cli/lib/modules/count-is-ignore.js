@@ -14,7 +14,7 @@ module.exports = event.on('is-ignore', function(result={}){
 		let env = event.at('环境');
 		let opts = {
 			debug: env.debug,
-			path: env.work_path + '/' + project
+			path: env.prjs[project]
 		};
 		result[project] = new IsIgnore(opts);
 
@@ -22,3 +22,4 @@ module.exports = event.on('is-ignore', function(result={}){
 	};
 
 }());
+

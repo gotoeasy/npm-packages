@@ -1,30 +1,36 @@
 {
   "name": "count-line-cli",
-  "version": "0.0.21",
-  "main": "",
+  "version": "1.0.1",
+  "main": "index.js",
   "dependencies": {
     "commander": "*",
     "git-pull-or-clone": "*",
-    "gotoeasy-file": "*",
+    "gotoeasy-btf": "*",
     "is-ignore": "*"
   },
   "bin": {
     "count-line": "bin/count-line"
   },
-  "scripts": {},
-  "description": "",
-  "keywords": [],
-  "repository": {
-    "type": "",
-    "url": ""
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "homepage": "",
+  "description": "代码行数统计工具",
+  "keywords": [
+    "count-line",
+    "line counter",
+    "代码行数统计"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/README.md",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
   },
   "author": {
-    "name": "",
-    "email": ""
+    "name": "青松",
+    "email": "gotoeasy@163.com"
   },
   "license": "Apache-2.0"
 }

@@ -2,7 +2,9 @@
 is-ignore
 
 [version] // 版本号 （必填）
-0.0.5
+0.1.0
+
+
 
 
 [main] // 入口文件 （必填）
@@ -25,7 +27,7 @@ type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页 （选填），github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/is-ignore#readme
+https://github.com/gotoeasy/npm-packages/blob/master/is-ignore/README.md
 
 [bugs] // BUG提交地址 （选填），github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues
