@@ -1,0 +1,40 @@
+{
+  "name": "gotoeasy-csjs",
+  "version": "0.0.3",
+  "main": "index.js",
+  "dependencies": {
+    "less": "*",
+    "prettier": "*",
+    "autoprefixer": "*",
+    "clean-css": "*",
+    "uglify-es": "*"
+  },
+  "devDependencies": {
+    "less": "*",
+    "prettier": "*",
+    "autoprefixer": "*",
+    "uglify-es": "*",
+    "gotoeasy-btf": "*"
+  },
+  "bin": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "CSS、JS常用的编译、美化、压缩操作封装",
+  "keywords": [
+    "csjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-csjs/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
