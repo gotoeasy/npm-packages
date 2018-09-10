@@ -1,6 +1,6 @@
 {
   "name": "gotoeasy-csjs",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "main": "index.js",
   "dependencies": {
     "less": "*",
@@ -13,6 +13,7 @@
     "less": "*",
     "prettier": "*",
     "autoprefixer": "*",
+    "clean-css": "*",
     "uglify-es": "*",
     "gotoeasy-btf": "*"
   },
@@ -20,9 +21,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "CSS、JS常用的编译、美化、压缩操作封装",
+  "description": "CSS、JS常用的编译、美化、压缩操作封装，支持ES6",
   "keywords": [
-    "csjs"
+    "CSS代码美化",
+    "CSS代码压缩",
+    "JS代码美化",
+    "JS代码压缩"
   ],
   "repository": {
     "type": "git",
