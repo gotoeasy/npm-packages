@@ -1,4 +1,5 @@
 const fs = require('fs')
+const anymatch = require('anymatch');
 
 // 按指定编码写文件
 // file为对象时，取属性使用：path、file、text、encoding
@@ -60,7 +61,13 @@ function remove(path) {
 	}
 };
 
-function files(path) {
+// 不传matchers时不查询子目录
+// matchers: 类似gitignore，*表示不含目录分隔符的任意字符，**表示任意字符含任意多级目录，?表示一个字符
+function files(path, ...matchers) {
+	if ( matchers.length ) {
+		return listFiles(path, matchers);
+	}
+
 	let rs = [];
 	if( isDirectoryExists(path) ) {
 		let ls = fs.readdirSync(path);
@@ -68,6 +75,36 @@ function files(path) {
 	}
 	return rs;
 };
+
+function listFiles(path, matchers) {
+
+	let matcher = {
+		match: function (file){
+			let name = file.replace(path + '/', '');
+			return anymatch(matchers, name);
+		}
+	};
+
+	let result = [];
+	findFiles(path, matcher, result);
+	return result;
+};
+
+function findFiles(path, matcher, result){
+
+	let files = fs.readdirSync(path);
+	files.forEach( file => {
+		let absName = path + "/" + file;
+		if ( isFile(absName) ) {
+			// 文件，匹配保存
+			matcher.match(absName) && result.push(absName);
+		}else{
+			// 目录，继续找
+			findFiles(absName, matcher, result);
+		}
+	});
+}
+
 
 function isFileExists(file) {
 	return isFile(file) && exists(file);

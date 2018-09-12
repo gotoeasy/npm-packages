@@ -2,7 +2,7 @@
 gotoeasy-csjs
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.11
 
 
 
@@ -12,14 +12,14 @@ index.js
 [dependencies] // 依赖库 （选填）
 less = *
 prettier = *
-autoprefixer = *
+less-plugin-autoprefix = *
 clean-css = *
 uglify-es = *
 
 [devDependencies] // 开发依赖库 （选填）
 less = *
 prettier = *
-autoprefixer = *
+less-plugin-autoprefix = *
 clean-css = *
 uglify-es = *
 gotoeasy-btf = *
