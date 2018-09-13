@@ -1,10 +1,8 @@
 {
   "name": "gotoeasy-file",
-  "version": "0.0.12",
+  "version": "0.0.15",
   "main": "index.js",
-  "dependencies": {
-    "anymatch": "*"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "bin": {},
   "scripts": {

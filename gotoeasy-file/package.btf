@@ -2,7 +2,7 @@
 gotoeasy-file
 
 [version] // 版本号 （必填）
-0.0.12
+0.0.15
 
 
 
@@ -10,7 +10,6 @@ gotoeasy-file
 index.js
 
 [dependencies] // 依赖库 （选填）
-anymatch = *
 
 [description] // 描述 （选填）
 常用文件操作封装
