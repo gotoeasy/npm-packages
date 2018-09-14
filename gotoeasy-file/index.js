@@ -203,11 +203,11 @@ function findFiles(path, matcher, result){
 
 
 function isFileExists(file) {
-	return isFile(file) && exists(file);
+	return exists(file) && isFile(file);
 };
 
 function isDirectoryExists(file) {
-	return isDirectory(file) && exists(file);
+	return exists(file) && isDirectory(file);
 };
 
 function isFile(file) {

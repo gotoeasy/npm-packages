@@ -1,23 +1,26 @@
 {
-  "name": "gotoeasy-file",
-  "version": "0.0.16",
+  "name": "gotoeasy-npm",
+  "version": "0.0.6",
   "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "gotoeasy-file": "*",
+    "https-proxy-agent": "*"
+  },
+  "devDependencies": {
+    "gotoeasy-file": "*",
+    "https-proxy-agent": "*"
+  },
   "bin": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "常用文件操作封装",
-  "keywords": [
-    "fs",
-    "file"
-  ],
+  "description": "npm常用操作封装",
+  "keywords": [],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-file/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-npm/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },
