@@ -11,10 +11,12 @@ index.js
 
 [dependencies] // 依赖库 （选填）
 gotoeasy-file = *
+compressing = *
 https-proxy-agent = *
 
 [devDependencies] // 开发依赖库 （选填）
 gotoeasy-file = *
+compressing = *
 https-proxy-agent = *
 
 [description] // 描述 （选填）

@@ -34,15 +34,15 @@ module.exports = event.on('统计结果汇总输出', function(){
 
 		let summary = ['type\tcode\tcomment\tblank\ttotal\t'];
 		let ary = [];
+		env.exts.forEach(k => {
+			extCnt = extSummary[k] || {total: 0, code: 0, comment: 0, blank: 0};
+			summary.push( k + '\t' + extCnt.code + '\t' + extCnt.comment + '\t' + extCnt.blank +  '\t' + extCnt.total + '\t' );
+		});
+
+		summary.push(  '\t' + code + '\t' + comment + '\t' + blank +  '\t' + total + '\t' );
+		summary.push( '\t\t\t\t\t\n' );
+
 		if ( env.csv ) {
-			env.exts.forEach(k => {
-				extCnt = extSummary[k] || {total: 0, code: 0, comment: 0, blank: 0};
-				summary.push( k + '\t' + extCnt.code + '\t' + extCnt.comment + '\t' + extCnt.blank +  '\t' + extCnt.total + '\t' );
-			});
-
-			summary.push(  '\t' + code + '\t' + comment + '\t' + blank +  '\t' + total + '\t' );
-			summary.push( '\t\t\t\t\t\n' );
-
 			let file = env.path + '/count-line-result.csv';
 			File.write(file, summary.join('\n') + txt);
 			console.log('count result:', file);
