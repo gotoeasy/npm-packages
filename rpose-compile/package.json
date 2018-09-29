@@ -1,28 +1,24 @@
 {
-  "name": "gotoeasy-npm",
-  "version": "0.0.8",
+  "name": "rpose-compile",
+  "version": "0.0.7",
   "main": "index.js",
   "dependencies": {
-    "gotoeasy-file": "*",
-    "compressing": "*",
-    "https-proxy-agent": "*"
+    "gotoeasy-csjs": "*"
   },
   "devDependencies": {
-    "gotoeasy-file": "*",
-    "compressing": "*",
-    "https-proxy-agent": "*"
+    "gotoeasy-csjs": "*"
   },
   "bin": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "npm常用操作封装",
+  "description": "HTML模板编译为JavaScript函数",
   "keywords": [],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-npm/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-compile/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

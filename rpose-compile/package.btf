@@ -1,34 +1,24 @@
 [name] // 项目名 （必填）
-gotoeasy-csjs
+rpose-compile
 
 [version] // 版本号 （必填）
-0.0.12
+0.0.7
 
 
 
-[main] // 入口文件 （必填）
+[main] // 入口文件
 index.js
 
 [dependencies] // 依赖库 （选填）
-less = *
-prettier = *
-less-plugin-autoprefix = *
-clean-css = *
-uglify-es = *
+gotoeasy-csjs = *
 
 [devDependencies] // 开发依赖库 （选填）
-less = *
-prettier = *
-less-plugin-autoprefix = *
-clean-css = *
-uglify-es = *
-gotoeasy-btf = *
+gotoeasy-csjs = *
 
 [description] // 描述 （选填）
-CSS、JS常用的编译、美化、压缩操作封装，支持ES6
+HTML模板编译为JavaScript函数
 
 [keywords] // 检索关键字 （选填），多个关键字用半角逗号分隔
-CSS代码美化, CSS代码压缩, JS代码美化, JS代码压缩
 
 [scripts] // 脚本命令 （选填）
 test = echo "Error: no test specified" && exit 1
@@ -38,7 +28,7 @@ type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页 （选填），github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-csjs/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-compile/README.md
 
 [bugs] // BUG提交地址 （选填），github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

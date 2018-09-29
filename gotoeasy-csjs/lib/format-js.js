@@ -2,7 +2,7 @@
 // ”ü‰»JS
 // ---------------------------
 
-const fmtOpt = { parser: "babylon", printWidth: 999999, tabWidth: 4 };
+const fmtOpt = { parser: "babylon", printWidth: 150, tabWidth: 4 };
 
 module.exports = function(src){
 	const prettier = require('prettier');
