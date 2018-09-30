@@ -1,11 +1,13 @@
 {
   "name": "rpose-compile",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
+    "acorn-globals": "*",
     "gotoeasy-csjs": "*"
   },
   "devDependencies": {
+    "acorn-globals": "*",
     "gotoeasy-csjs": "*"
   },
   "bin": {},

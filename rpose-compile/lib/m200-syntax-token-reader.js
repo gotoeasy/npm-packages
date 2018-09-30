@@ -1,3 +1,4 @@
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
 // ------------ Token阅读器 ------------
 class TokenReader{
@@ -5,6 +6,7 @@ class TokenReader{
 		this.ary = tokens;
 		this.maxLength = this.ary.length;
 		this.pos = 0;
+console.debug(MODULE, tokens);
 	}
 
 	skip(len){

@@ -29,7 +29,9 @@ function complie(htmlTemplate, opts){
 	//console.info('----------------------------------------------------------');
 	//console.info(csjs.formatJs(csjs.miniJs(js)));
 
-	return csjs.formatJs(js);
+	//return csjs.formatJs(js);
+	//return csjs.miniJs(js);
+	return js;
 }
 
 module.exports = complie;

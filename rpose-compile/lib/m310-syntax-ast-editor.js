@@ -3,7 +3,7 @@ const AstVisitor = require('./m300-syntax-ast-visitor')
 const util = require('./m900-util')
 
 // ------------ Ast编辑器 ------------
-// TODO
+// 连续的文本、表达式，合并为一个表达式
 function AstEditor(ast){
 
 	let visitor = new AstVisitor(ast);

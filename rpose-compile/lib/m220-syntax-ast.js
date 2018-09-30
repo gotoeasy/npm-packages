@@ -3,6 +3,8 @@ const options = require('./m020-options')();
 const TokenReader = require('./m200-syntax-token-reader');
 const syntaxCheck = require('./m210-syntax-check');
 
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+
 // ------------ 构建AST ------------
 function AstParser(tokens){
 
@@ -14,7 +16,9 @@ function AstParser(tokens){
 	// ------------ 接口方法 ------------
 	// 解析
 	this.parse = function() {
-		return parseChildren();
+		let ast = parseChildren();
+//console.debug(MODULE, JSON.stringify(ast,null,2));
+		return ast;
 	}
 
 	// ------------ 内部方法 ------------
@@ -123,7 +127,7 @@ function AstParser(tokens){
 		return {type: 'Text', src: reader.readToken().text};
 	}
 
-	// 表达式 {{ }}
+	// 表达式 { } 或 {= }
 	function parseExpression() {
 		if ( reader.eof() || (reader.getCurrentToken().type != options.TypeUnescapeExpression && reader.getCurrentToken().type != options.TypeEscapeExpression) ) {
 			return null;

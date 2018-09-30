@@ -2,14 +2,30 @@
 const options = require('./m020-options')();
 const TemplateReader = require('./m100-reader');
 
+// TODO 未转义字符引起的解析错误，友好提示
+
+// \{ = '\u0000\u0001', \} = '\ufffe\uffff'
+function escape(str){
+	return str == null ? null : str.replace(/\\{/g, '\u0000\u0001').replace(/\\}/g, '\ufffe\uffff');
+}
+function unescape(str){
+	return str == null ? null : str.replace(/\u0000\u0001/g, '{').replace(/\ufffe\uffff/g, '}');
+}
+function unescapeHtml(str){
+	if ( /&/.test(str) ) {
+		return str.replace(/&quot;/g, '"').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '&').replace(/&amp;/g, '&');
+	}
+	return str;
+}
+
 // ------------ 分词 ------------
 /*
 let html=`
 <!-- 模板例子 -->
 <div>
 {% for (let i=0; i<ary.length; i++) { %}
-	<my-tag type="{{ ary[i].type }}">{{ ary[i].text }}</my-tag>
-	<input type  = "text">
+	<my-tag type="{ary[i].type}">{ ary[i].text }</my-tag>
+	<input type="text">
 {% } %}
 </div>
 `;
@@ -21,6 +37,7 @@ console.info(tokens);
 function TokenParser(src){
 
 	// ------------ 变量 ------------
+	src = escape(src);
 	let reader = new TemplateReader(src);
 	let tokens = [];
 
@@ -55,7 +72,7 @@ function TokenParser(src){
 				}
 				reader.skip(1); // 跳过【>】
 
-				token = {type: options.TypeTagClose, text: tagNm.trim()};	// Token: 闭合标签
+				token = {type: options.TypeTagClose, text: unescape(tagNm).trim()};	// Token: 闭合标签
 				tokens.push(token);
 				return 1;
 			}
@@ -83,7 +100,7 @@ function TokenParser(src){
 //			return 1;
 //		}
 
-		let tokenTagNm = {type: '', text: tagNm.trim()};	// Token: 标签 (类型待后续解析更新)
+		let tokenTagNm = {type: '', text: unescape(tagNm).trim()};	// Token: 标签 (类型待后续解析更新)
 		tokens.push(tokenTagNm);
 
 		// 全部属性
@@ -137,7 +154,7 @@ function TokenParser(src){
 			return 0;
 		}
 
-		let token = { type: options.TypeAttributeName, text: key };	// Token: 属性名
+		let token = { type: options.TypeAttributeName, text: unescape(key) };	// Token: 属性名
 		tokens.push(token);
 
 		// 跳过空白
@@ -159,7 +176,7 @@ function TokenParser(src){
 				}
 				reader.skip(1);	// 跳过右双引号
 
-				token = { type: options.TypeAttributeValue, text: val };	// Token: 属性值
+				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
 				tokens.push(token);
 			}else if ( reader.getCurrentChar() == "'" ) {
 				// 值由单引号包围
@@ -169,18 +186,18 @@ function TokenParser(src){
 				}
 				reader.skip(1);	// 跳过右单引号
 
-				token = { type: options.TypeAttributeValue, text: val };	// Token: 属性值
+				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
 				tokens.push(token);
 			}else{
 				// 值应该是单纯数字
 				while ( /[^\s\/>]/.test(reader.getCurrentChar()) ) {
-					val += reader.readChar();	// 连续可见字符就放进去（后续需正确性检查）
+					val += reader.readChar();	// 连续可见字符就放进去 //TODO 后续需正确性检查
 				}
 
 				if ( val.trim() == '' ) {
 					throw new Error('E002(pos=' + (reader.getPos() - val.length) + ')'); // 属性值漏，如<tag aaa= />
 				}
-				token = { type: options.TypeAttributeValue, text: val };	// Token: 属性值
+				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
 				tokens.push(token);
 			}
 
@@ -197,7 +214,7 @@ function TokenParser(src){
 		let idxStart = src.indexOf('<!--', pos), idxEnd = src.indexOf('-->', pos+4);
 		if ( idxStart == pos && idxEnd > pos ) {
 			// 起始为【<!--】且后面有【-->】
-			token = { type: options.TypeHtmlComment, text: src.substring(pos+4, idxEnd) };	// Token: HTML注释
+			token = { type: options.TypeHtmlComment, text: unescape(src.substring(pos+4, idxEnd)) };	// Token: HTML注释
 			reader.skip(idxEnd+3-pos); // 位置更新
 
 			tokens.push(token);
@@ -213,7 +230,7 @@ function TokenParser(src){
 		let idxStart = src.indexOf(options.CodeBlockStart, pos), idxEnd = src.indexOf(options.CodeBlockEnd, pos + options.CodeBlockStart.length);
 		if ( idxStart == pos && idxEnd > 0 ) {
 			// 起始为【{%】且后面有【%}】
-			token = { type: options.TypeCodeBlock, text: src.substring(pos + options.CodeBlockStart.length, idxEnd) }; // Token: 代码块
+			token = { type: options.TypeCodeBlock, text: unescape(src.substring(pos + options.CodeBlockStart.length, idxEnd)) }; // Token: 代码块
 			reader.skip(idxEnd + options.CodeBlockEnd.length - pos); // 位置更新
 
 			tokens.push(token);
@@ -241,7 +258,7 @@ function TokenParser(src){
 		}
 
 		if ( text ) {
-			token = {type: options.TypeText, text: text};	// Token: 文本
+			token = {type: options.TypeText, text: unescape(unescapeHtml(text))};	// Token: 文本
 			tokens.push(token);
 			return 1;
 		}
@@ -249,7 +266,7 @@ function TokenParser(src){
 		return 0;
 	}
 
-	// 表达式 {{ }}
+	// 表达式 { } 或 {= }
 	function parseExpression() {
 		if ( reader.eof() ) {
 			return 0;
@@ -275,7 +292,7 @@ function TokenParser(src){
 		let idxStart = src.indexOf(sStart, pos), idxEnd = src.indexOf(sEnd, pos + sStart.length);
 		if ( idxStart == pos && idxEnd > 0 ) {
 //			let rs = { type: type, text: src.substring(pos + sStart.length, idxEnd) }; // Token: 表达式(删除两边的表达式符号)
-			let rs = { type: type, text: src.substring(pos, idxEnd + sEnd.length) }; // Token: 表达式(保留原样)
+			let rs = { type: type, text: unescape(src.substring(pos, idxEnd + sEnd.length)) }; // Token: 表达式(保留原样)
 			reader.skip(idxEnd + sEnd.length - pos); // 位置更新
 			return rs;
 		}

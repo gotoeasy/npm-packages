@@ -1,13 +1,15 @@
+const AST_EDIT = 'ast-edit';
+
 // 选项配置
 module.exports = (function (options={}, init){
 
 	// 模板开始结束符
 	options.CodeBlockStart = '{%';
 	options.CodeBlockEnd = '%}';
-	options.ExpressionStart = '{{';
-	options.ExpressionEnd = '}}';
-	options.ExpressionUnescapeStart = '{{{';
-	options.ExpressionUnescapeEnd = '}}}';
+	options.ExpressionStart = '{';
+	options.ExpressionEnd = '}';
+	options.ExpressionUnescapeStart = '{=';
+	options.ExpressionUnescapeEnd = '}';
 
 	// 词素类型
 	options.TypeHtmlComment = 'HtmlComment';
@@ -26,11 +28,12 @@ module.exports = (function (options={}, init){
 	options.AutoCloseTags = 'br,hr,input,img,meta,link,area,base,col,command,embed,keygen,param,srouce,trace,wbr'.split(',');
 
 	// 生成代码的函数名
-	options.NameFnCreateElement = 'createElement';
-	options.NameFnCreateText = 'createText';
-	options.NameFnEscapeHtml = 'escapeHtml';
-	options.NameFnUnescapeHtml = '';
+	options.NameFnEscapeHtml = 'escapeHtml'; // 转义函数名
 
+/*	// 插件
+	options.plugins = {};
+	options.plugins[AST_EDIT] = [];
+*/
 
 	return function(opts){
 
@@ -70,14 +73,29 @@ module.exports = (function (options={}, init){
 			}
 
 			// 生成代码的函数名
-			options.NameFnCreateElement = opts.NameFnCreateElement || options.NameFnCreateElement;
-			options.NameFnCreateText = opts.NameFnCreateText || options.NameFnCreateText;
 			options.NameFnEscapeHtml = opts.NameFnEscapeHtml || options.NameFnEscapeHtml;
-			options.NameFnUnescapeHtml = opts.NameFnUnescapeHtml || options.NameFnUnescapeHtml;
 
+
+/*			// 插件
+			if ( opts.plugins ) {
+				// ast节点编辑
+				if ( isArray(opts.plugins[AST_EDIT]) ) {
+					opts.plugins[AST_EDIT].forEach(plugin => isFunction(plugin) && options.plugins[AST_EDIT].push(plugin) );
+				}
+			}
+*/
 		}
 
 		return options; // Object.assign({}, options); // 返回副本避免被无意修改?
 	}
 
 })();
+
+/*
+function isArray(ary) {
+	return ary && (Array.isArray(ary) || ary instanceof Array); 
+}
+function isFunction(obj){ 
+	return (typeof obj == 'function') && obj.constructor == Function; 
+}
+*/
