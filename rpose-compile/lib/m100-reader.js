@@ -30,6 +30,10 @@ class TemplateReader{
 		return rs;
 	}
 
+//	setPos(pos){
+//		this.pos = pos;
+//	}
+
 	getPos(){
 		return this.pos;
 	}

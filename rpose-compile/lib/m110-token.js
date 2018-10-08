@@ -67,8 +67,8 @@ function TokenParser(src){
 				return 0; // 当前不是节点闭合标签(【</xxx>】)
 			}else{
 				reader.skip(2); // 跳过【</】
-				while ( reader.getCurrentChar() != ">" ) {
-					tagNm += reader.readChar();	// 只要不是【'】就算属性值
+				while ( reader.getCurrentChar() != ">" && !reader.eof() ) {
+					tagNm += reader.readChar();	// 只要不是【>】就算标签闭合名
 				}
 				reader.skip(1); // 跳过【>】
 
@@ -80,7 +80,7 @@ function TokenParser(src){
 
 		// -------- 标签开始 --------
 		// 简单检查格式
-		if ( reader.getCurrentChar() != '<' && src.indexOf('>', pos+2) < 0 ) {
+		if ( reader.getCurrentChar() == '<' && src.indexOf('>', pos+2) < 0 ) {
 			return 0; // 当前不是节点开始(起始【<】，但后面没有【>】)
 		}
 
@@ -185,6 +185,30 @@ function TokenParser(src){
 					val += reader.readChar();	// 只要不是【'】就算属性值
 				}
 				reader.skip(1);	// 跳过右单引号
+
+				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
+				tokens.push(token);
+			}else if ( reader.getCurrentChar() == "{" ) {
+				// 值省略引号包围
+				let stack = [];
+				while ( !reader.eof() ) {
+					if ( reader.getCurrentChar() == "{" ) {
+						stack.push('{');
+					}else if ( reader.getCurrentChar() == "}" ) {
+						if ( !stack.length ) {
+							break;
+						}else if ( stack.length == 1 ){
+							val += reader.readChar();	// 表达式结束
+							break;
+						}else{
+							stack.pop();
+						}
+					}
+					val += reader.readChar();	// 只要不是【'】就算属性值
+				}
+				if ( reader.eof() ) {
+					throw new Error('invalid expression of AttributeValue: ' + val); // 属性值表达式有误
+				}
 
 				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
 				tokens.push(token);

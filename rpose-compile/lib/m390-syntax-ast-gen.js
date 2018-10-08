@@ -5,7 +5,8 @@ const REG_EVENTS = /^(onclick|onchange|onabort|onafterprint|onbeforeprint|onbefo
 
 const options = require('./m020-options')();
 const util = require('./m900-util');
-const acorn = require('acorn-globals');
+const acorn = require('acorn');
+const acornGlobals = require('acorn-globals');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -13,14 +14,18 @@ const FN_TMPL_DEF = 'function nodeTemplate($data, $opts){'; // 模板方法开�
 
 // ------------ Ast代码编译器 ------------
 class AstGen{
-	constructor(ast) {
+	constructor(ast, doc) {
 		this.ast = ast;
+
+		this.$dataKeys = getObjectKeys(doc.defaultdata);	// 默认数据对象的源码，如{a:1,b:'2'......}，从中取出key（数组）
+		this.$optsKeys = getObjectKeys(doc.defaultprops);	// 默认选项对象的源码，如{a:1,b:'2'......}，从中取出key（数组）
+		this.$methodKeys = getObjectKeys(doc.methods);		// 方法对象的源码，如{a:function(){},b:()=>{}......}，从中取出key（数组）
 	}
 
 	toJavaScript (){
 		let src = this.parseChildren(this.ast);
 console.debug(MODULE, src);
-		return checkAndInitVars(src);
+		return checkAndInitVars(src, this.$dataKeys, this.$optsKeys);
 	}
 
 	parseChildren (astNodes, isFn=true){
@@ -55,12 +60,12 @@ console.debug(MODULE, src);
 			}else{
 				// 标签节点
 				let tag = node.tag;
-				let isStdTag = REG_TAGS.test(tag);					// 是否标准标签
-				let events = getDomEvents(node.attrs, isStdTag);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
+				let isStdTag = REG_TAGS.test(tag);									// 是否标准标签
+				let events = getDomEvents(node.attrs, isStdTag, this.$methodKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
 				let attrs = attrsStringify(node.attrs);
 				let childSrc = node.children && node.children.length ? this.parseChildren(node.children, false) : null;
 
-				let str = `${aryNm}.push( {t: '${tag}'`;			// 一定有标签名，其他可以没有
+				let str = `${aryNm}.push( {t: '${tag}'`;							// 一定有标签名，其他可以没有
 				events && (str += `, e: ${events}` );
 				attrs && (str += `, a: ${attrs}` );
 				childSrc && (str += `, c: ${childSrc}` );
@@ -121,7 +126,7 @@ function attrsStringify(attrs){
 }
 
 // 抽取并删除事件属性，返回事件属性
-function getDomEvents(attrs, isStdTag){
+function getDomEvents(attrs, isStdTag, $methodKeys){
 	if ( !isStdTag || !attrs ) {
 		return null;
 	}
@@ -129,6 +134,12 @@ function getDomEvents(attrs, isStdTag){
 	let rs = [], keys = [];
 	for ( let key in attrs ) {
 		if ( REG_EVENTS.test(key) ) {
+			if ( attrs[key].indexOf('{') < 0 ) {
+				// 没有表达式，检查指定方法是否存在
+				if ( !$methodKeys.includes(attrs[key].trim()) ) {
+					throw new Error('method not found: ' + attrs[key]); // 指定方法找不到，需要定义
+				}
+			}
 			rs.push( '"' + key.substring(2).toLowerCase() + '": ' + util.getExpression(attrs[key]) );
 			keys.push(key);
 		}
@@ -143,22 +154,48 @@ function getDomEvents(attrs, isStdTag){
 }
 
 // 检查是否有变量缩写，有则补足。 以支持{$data.abcd}简写为{abcd}
-function checkAndInitVars(src){
+function checkAndInitVars(src, $dataKeys, $optsKeys){
 	// 参数添加转义函数进行检查 'function nodeTemplate($data, $opts){' => 'function nodeTemplate($data, $opts, escapeHtml){'
 	let tmpFnDef = FN_TMPL_DEF.replace('){', ', ' + options.NameFnEscapeHtml.split('.')[0]) + '){'; // 'function nodeTemplate($data, $opts, escapeHtml){'
 	let tmp = src.replace(FN_TMPL_DEF, tmpFnDef);
-	let scope = acorn(tmp);
+	let scope = acornGlobals(tmp);
 	if ( !scope.length ) {
 		return src; // 正常，直接返回
 	}
 
 	// 函数内部添加变量声明赋值后返回
 	let vars = [];
-	scope.forEach(v => vars.push(`let ${v.name} = $data.${v.name};`));
+//	scope.forEach(v => vars.push(`let ${v.name} = $data.${v.name};`));
+
+	for ( let i=0, v; i<scope.length; i++ ) {
+		v = scope[i];
+		let inc$data = $dataKeys.includes(v.name);
+		let inc$opts = $optsKeys.includes(v.name);
+		if ( !inc$data && !inc$opts ) {
+			throw new Error('template variable undefined: ' + v.name); // 变量无法识别来自$data还是$opts
+		}
+		if ( inc$data && inc$opts ) {
+			throw new Error('template variable uncertainty: ' + v.name); // 变量同时存在于$data和$opts，需指定
+		}
+
+
+		if ( inc$data ) {
+			vars.push(`let ${v.name} = $data.${v.name};`)
+		}else {
+			vars.push(`let ${v.name} = $opts.${v.name};`)
+		}
+	}
+
 	return FN_TMPL_DEF + vars.join('\n') + src.substring(FN_TMPL_DEF.length);
 }
 
-
+function getObjectKeys(jsonStr){ // jsonStr = {....}
+    let ast = acorn.parse('let x = ' + jsonStr);
+	let props = ast.body[0].declarations[0].init.properties;
+	let keys = [];
+	props.forEach(node => keys.push(node.key.name));
+	return keys;
+}
 
 module.exports = AstGen;
 

@@ -7,12 +7,12 @@ const AstGen = require('./lib/m390-syntax-ast-gen');
 
 
 // 模板编译为JavaScript函数
-function complie(htmlTemplate, opts){
+function complie(doc, opts){
 
 	// 自定义选项
 	options(opts);
 
-	let tokenParser = new TokenParser(htmlTemplate);
+	let tokenParser = new TokenParser(doc.html);
 	let tokens = tokenParser.parse();
 	//console.info(tokens);
 
@@ -22,7 +22,7 @@ function complie(htmlTemplate, opts){
 	//console.info('----------------------------------------------------------');
 	//console.info(JSON.stringify(ast, null, 4));
 
-	let astGen = new AstGen(ast);
+	let astGen = new AstGen(ast, doc);
 	let js = astGen.toJavaScript();
 	//console.info('----------------------------------------------------------');
 	//console.info(csjs.formatJs(js));
