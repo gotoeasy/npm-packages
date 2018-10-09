@@ -10,7 +10,7 @@ const acornGlobals = require('acorn-globals');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
-const FN_TMPL_DEF = 'function nodeTemplate($data, $opts){'; // 模板方法开始行
+const FN_TMPL_DEF = 'function nodeTemplate($data, $options){'; // 模板方法开始行
 
 // ------------ Ast代码编译器 ------------
 class AstGen{
@@ -33,7 +33,7 @@ console.debug(MODULE, src);
 
 		let arySrc = [];
 		let hasCodeBlock = false;
-		isFn ? arySrc.push(FN_TMPL_DEF) : arySrc.push('(()=>{'); // 函数则【 function nodeTemplate($data, $opts){ 】，箭头函数则立即执行
+		isFn ? arySrc.push(FN_TMPL_DEF) : arySrc.push('(()=>{'); // 函数则【 function nodeTemplate($data, $options){ 】，箭头函数则立即执行
 		arySrc.push(`let ${aryNm} = [];`);
 		for (let i=0, node; i<astNodes.length; i++) {
 			node = astNodes[i];
@@ -96,7 +96,7 @@ console.debug(MODULE, src);
 			let sReturn = '[' + str + ']';										// [nnnn, nnnn, nn]
 			
 			if ( isFn ) {
-				return FN_TMPL_DEF + ' return ' + sReturn + ';}'; // 'function nodeTemplate($data, $opts){ return ' + sReturn + ';}';
+				return FN_TMPL_DEF + ' return ' + sReturn + ';}'; // 'function nodeTemplate($data, $options){ return ' + sReturn + ';}';
 			}else{
 				return sReturn; // 内部箭头函数默认返回
 			}
@@ -155,8 +155,8 @@ function getDomEvents(attrs, isStdTag, $methodKeys){
 
 // 检查是否有变量缩写，有则补足。 以支持{$data.abcd}简写为{abcd}
 function checkAndInitVars(src, $dataKeys, $optsKeys){
-	// 参数添加转义函数进行检查 'function nodeTemplate($data, $opts){' => 'function nodeTemplate($data, $opts, escapeHtml){'
-	let tmpFnDef = FN_TMPL_DEF.replace('){', ', ' + options.NameFnEscapeHtml.split('.')[0]) + '){'; // 'function nodeTemplate($data, $opts, escapeHtml){'
+	// 参数添加转义函数进行检查 'function nodeTemplate($data, $options){' => 'function nodeTemplate($data, $options, escapeHtml){'
+	let tmpFnDef = FN_TMPL_DEF.replace('){', ', ' + options.NameFnEscapeHtml.split('.')[0]) + '){'; // 'function nodeTemplate($data, $options, escapeHtml){'
 	let tmp = src.replace(FN_TMPL_DEF, tmpFnDef);
 	let scope = acornGlobals(tmp);
 	if ( !scope.length ) {
@@ -182,7 +182,7 @@ function checkAndInitVars(src, $dataKeys, $optsKeys){
 		if ( inc$data ) {
 			vars.push(`let ${v.name} = $data.${v.name};`)
 		}else {
-			vars.push(`let ${v.name} = $opts.${v.name};`)
+			vars.push(`let ${v.name} = $options.${v.name};`)
 		}
 	}
 
