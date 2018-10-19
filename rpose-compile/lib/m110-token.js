@@ -147,12 +147,40 @@ function TokenParser(src){
 
 		// 读取属性名
 		let key = '', val = '';
-		while ( /[^\s=\/>]/.test(reader.getCurrentChar()) ) {
-			key += reader.readChar();	// 只要不是【空白、等号、斜杠、大于号】就算属性名
+		if ( reader.getCurrentChar() == '{' ) { // TODO 根据配置符号判断, 考虑误解析情况
+			let stack = [];
+			key += reader.readChar(); // 表达式开始
+			while ( !reader.eof() ) {
+				if ( reader.getCurrentChar() == '{' ) {
+					if ( reader.getPrevChar() != '\\' ) {
+						stack.push('{'); // 表达式中支持写{....}, 但字符串包含表达式符号将引起混乱误解析，编写时应避免
+					}
+				}
+				if ( reader.getCurrentChar() == '}' ) {
+					if ( reader.getPrevChar() != '\\' ) {  // console.info('1111111111111111111111111111111111',stack, key)
+						if ( !stack.length ) {
+							// 表达式结束
+							key += reader.readChar();
+							break; // 退出循环
+						}
+						stack.pop();
+					}
+				}
+				key += reader.readChar();
+			}
+			if ( key == '' ) {
+				return 0;
+			}
+
+		}else{
+			while ( /[^\s=\/>]/.test(reader.getCurrentChar()) ) {
+				key += reader.readChar();	// 只要不是【空白、等号、斜杠、大于号】就算属性名
+			}
+			if ( key == '' ) {
+				return 0;
+			}
 		}
-		if ( key == '' ) {
-			return 0;
-		}
+
 
 		let token = { type: options.TypeAttributeName, text: unescape(key) };	// Token: 属性名
 		tokens.push(token);

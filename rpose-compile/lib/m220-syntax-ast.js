@@ -95,6 +95,7 @@ function AstParser(tokens){
 				reader.skip(2); // 跳过属性名、等号
 				attr[key] = reader.readToken().text;
 			}else{
+				// 无值属性，默认值为true
 				attr[reader.getCurrentToken().text] = true;
 				reader.skip(1); // 跳过属性名
 			}

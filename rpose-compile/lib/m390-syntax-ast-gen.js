@@ -3,6 +3,8 @@ const REG_TAGS = /^(html|link|meta|style|title|address|article|aside|footer|head
 // HTML标准所定义的全部标签事件
 const REG_EVENTS = /^(onclick|onchange|onabort|onafterprint|onbeforeprint|onbeforeunload|onblur|oncanplay|oncanplaythrough|oncontextmenu|oncopy|oncut|ondblclick|ondrag|ondragend|ondragenter|ondragleave|ondragover|ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|onfocusin|onfocusout|onformchange|onforminput|onhashchange|oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|onloadedmetadata|onloadstart|onmousedown|onmouseenter|onmouseleave|onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onoffline|ononline|onpagehide|onpageshow|onpaste|onpause|onplay|onplaying|onprogress|onratechange|onreadystatechange|onreset|onresize|onscroll|onsearch|onseeked|onseeking|onselect|onshow|onstalled|onsubmit|onsuspend|ontimeupdate|ontoggle|onunload|onunload|onvolumechange|onwaiting|onwheel)$/i;
 
+const JS_VARS = 'assignOptions,rpose,Object,Map,Set,WeakMap,WeakSet,Date,Math,Array,String,Number,JSON,Error,Function,arguments,Boolean,Promise,Proxy,Reflect,RegExp,alert,console,window,document'.split(',');
+
 const options = require('./m020-options')();
 const util = require('./m900-util');
 const acorn = require('acorn');
@@ -10,16 +12,18 @@ const acornGlobals = require('acorn-globals');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
-const FN_TMPL_DEF = 'function nodeTemplate($data, $options){'; // 模板方法开始行
+const FN_TMPL_DEF = 'function nodeTemplate($state, $options){'; // 模板方法开始行
 
 // ------------ Ast代码编译器 ------------
 class AstGen{
 	constructor(ast, doc) {
 		this.ast = ast;
 
-		this.$dataKeys = getObjectKeys(doc.defaultdata);	// 默认数据对象的源码，如{a:1,b:'2'......}，从中取出key（数组）
-		this.$optsKeys = getObjectKeys(doc.defaultprops);	// 默认选项对象的源码，如{a:1,b:'2'......}，从中取出key（数组）
-		this.$methodKeys = getObjectKeys(doc.methods);		// 方法对象的源码，如{a:function(){},b:()=>{}......}，从中取出key（数组）
+		//this.$dataKeys = getObjectKeys(doc.state);	// 默认数据对象的源码，如{a:1,b:'2'......}，从中取出key（数组）
+		//this.$optsKeys = getObjectKeys(doc.options);	// 默认选项对象的源码，如{a:1,b:'2'......}，从中取出key（数组）
+		this.$dataKeys = JSON.parse(doc.optionkeys);	// 已解析的optionkeys
+		this.$optsKeys = JSON.parse(doc.statekeys);		// 已解析的statekeys
+		this.$methodKeys = getObjectKeys(doc.methods);	// 方法对象的源码，如{a:function(){},b:()=>{}......}，从中取出key（数组）
 	}
 
 	toJavaScript (){
@@ -33,7 +37,7 @@ console.debug(MODULE, src);
 
 		let arySrc = [];
 		let hasCodeBlock = false;
-		isFn ? arySrc.push(FN_TMPL_DEF) : arySrc.push('(()=>{'); // 函数则【 function nodeTemplate($data, $options){ 】，箭头函数则立即执行
+		isFn ? arySrc.push(FN_TMPL_DEF) : arySrc.push('(()=>{'); // 函数则【 function nodeTemplate($state, $options){ 】，箭头函数则立即执行
 		arySrc.push(`let ${aryNm} = [];`);
 		for (let i=0, node; i<astNodes.length; i++) {
 			node = astNodes[i];
@@ -51,11 +55,11 @@ console.debug(MODULE, src);
 				}else if ( node.type == options.TypeEscapeExpression ) {
 					// 待转义表达式
 					let txt = util.getExpression(node.src);
-					arySrc.push( `${aryNm}.push( ${txt} );` );									// escapeHtml($data.name)
+					arySrc.push( `${aryNm}.push( ${txt} );` );									// escapeHtml($state.name)
 				}else{
 					// 非转义表达式
 					let txt = util.getExpression(node.src);
-					arySrc.push( `${aryNm}.push( (${txt}) );` );															// ($data.name)
+					arySrc.push( `${aryNm}.push( (${txt}) );` );															// ($state.name)
 				}
 			}else{
 				// 标签节点
@@ -96,7 +100,7 @@ console.debug(MODULE, src);
 			let sReturn = '[' + str + ']';										// [nnnn, nnnn, nn]
 			
 			if ( isFn ) {
-				return FN_TMPL_DEF + ' return ' + sReturn + ';}'; // 'function nodeTemplate($data, $options){ return ' + sReturn + ';}';
+				return FN_TMPL_DEF + ' return ' + sReturn + ';}'; // 'function nodeTemplate($state, $options){ return ' + sReturn + ';}';
 			}else{
 				return sReturn; // 内部箭头函数默认返回
 			}
@@ -116,24 +120,66 @@ function attrsStringify(attrs){
 		return null;
 	}
 
-	let rs = [];
+	let kvs = [];
+	let objs = [];
+	let cls = {};
 
 	for ( let k in attrs ) {
-		rs.push('"' + k + '": ' + util.getExpression(attrs[k]))
+		if ( (k.startsWith(options.ExpressionStart) && k.endsWith(options.ExpressionEnd)) || (k.startsWith(options.ExpressionUnescapeStart) && k.endsWith(options.ExpressionUnescapeEnd)) ) {
+			// 键名是表达式，是个单纯的属性键值对象 <tag {prop} />
+			let expr = util.getExpression(k);
+			//expr.startsWith('(')
+			objs.push(expr.startsWith('(') ? expr : expr.substring(expr.indexOf('('))); // escapeHtml(....) => (....)
+		}else{
+			if ( attrs[k] === true ) {
+				// 这是个无值的字符串属性，通常是readonly之类，在m220-syntax-ast中补充赋值的true
+				kvs.push('"' + k + '": 1'); // 用1代表true
+			}else{
+				kvs.push('"' + k + '": ' + util.getExpression(attrs[k]));
+				if ( k == 'class' ) {
+					if ( attrs[k].indexOf(options.ExpressionStart) >=0 || attrs[k].indexOf(options.ExpressionUnescapeStart) >=0 ) {
+						// class中含表达式
+					}else{
+						kvs.pop();
+						kvs.push('"' + k + '": ' + JSON.stringify(classStrToObject(attrs[k])) );  // class="abc def" => {class:{abc:1, def:1}}
+						//cls.class = classStrToObject(attrs[k]); // class="abc def" => {class:{abc:1, def:1}}
+					}
+				}
+			}
+		}
 	}
 
-	return '{' + rs.join(',') + '}';
+	let rs = '{' + kvs.join(',') + '}';
+	if ( objs.length ) {
+		rs = `rpose.assign(${rs}, ${objs.join(',')})`;
+	}
+	return rs;
+}
+
+function classStrToObject(cls){
+	if ( !cls.trim()) {
+		return {};
+	}
+	let ary = cls.split(/\s/);
+	let rs = {};
+	ary.forEach(v => v.trim() && (rs[v]=1));
+	return rs;
 }
 
 // 抽取并删除事件属性，返回事件属性
 function getDomEvents(attrs, isStdTag, $methodKeys){
-	if ( !isStdTag || !attrs ) {
+	//if ( !isStdTag || !attrs ) {
+	if ( !attrs ) {
 		return null;
 	}
 
 	let rs = [], keys = [];
 	for ( let key in attrs ) {
 		if ( REG_EVENTS.test(key) ) {
+			if ( !attrs[key].trim() ) {
+				continue; // 未定义，忽略
+			}
+
 			if ( attrs[key].indexOf('{') < 0 ) {
 				// 没有表达式，检查指定方法是否存在
 				if ( !$methodKeys.includes(attrs[key].trim()) ) {
@@ -145,7 +191,7 @@ function getDomEvents(attrs, isStdTag, $methodKeys){
 		}
 	}
 
-	keys.forEach(k => delete attrs[k]);
+	isStdTag && keys.forEach(k => delete attrs[k]);
 
 	if ( rs.length ) {
 		return '{' + rs.join(',') + '}';
@@ -153,35 +199,40 @@ function getDomEvents(attrs, isStdTag, $methodKeys){
 	return null;
 }
 
-// 检查是否有变量缩写，有则补足。 以支持{$data.abcd}简写为{abcd}
+// 检查是否有变量缩写，有则补足。 以支持{$state.abcd}简写为{abcd}
+// TODO 检查$state、$options为null时是否正确使用参数
 function checkAndInitVars(src, $dataKeys, $optsKeys){
-	// 参数添加转义函数进行检查 'function nodeTemplate($data, $options){' => 'function nodeTemplate($data, $options, escapeHtml){'
-	let tmpFnDef = FN_TMPL_DEF.replace('){', ', ' + options.NameFnEscapeHtml.split('.')[0]) + '){'; // 'function nodeTemplate($data, $options, escapeHtml){'
-	let tmp = src.replace(FN_TMPL_DEF, tmpFnDef);
-	let scope = acornGlobals(tmp);
-	if ( !scope.length ) {
-		return src; // 正常，直接返回
+	// 参数添加转义函数进行检查 'function nodeTemplate($state, $options){' => 'function nodeTemplate($state, $options, escapeHtml, window){'
+	let tmpFnDef = FN_TMPL_DEF.replace('){', ', ' + options.NameFnEscapeHtml.split('.')[0]) + ', window){'; // 'function nodeTemplate($state, $options, escapeHtml, window){'
+	let scope, tmp = src.replace(FN_TMPL_DEF, tmpFnDef);
+
+	try{
+		scope = acornGlobals(tmp);
+		if ( !scope.length ) return src; // 正常，直接返回
+	}catch(e){
+		console.error(MODULE, '[source syntax error]', src); // 多数表达式中有语法错误导致
+		throw e;
 	}
 
 	// 函数内部添加变量声明赋值后返回
 	let vars = [];
-//	scope.forEach(v => vars.push(`let ${v.name} = $data.${v.name};`));
 
 	for ( let i=0, v; i<scope.length; i++ ) {
 		v = scope[i];
 		let inc$data = $dataKeys.includes(v.name);
 		let inc$opts = $optsKeys.includes(v.name);
-		if ( !inc$data && !inc$opts ) {
-			throw new Error('template variable undefined: ' + v.name); // 变量无法识别来自$data还是$opts
+		let incJsVars = JS_VARS.includes(v.name);
+		if ( !inc$data && !inc$opts && !incJsVars) {
+			throw new Error('template variable undefined: ' + v.name);		// 变量不在$state或$options的属性范围内
 		}
 		if ( inc$data && inc$opts ) {
-			throw new Error('template variable uncertainty: ' + v.name); // 变量同时存在于$data和$opts，需指定
+			throw new Error('template variable uncertainty: ' + v.name);	// 变量同时存在于$state和$options，无法自动识别来源，需指定
 		}
 
 
 		if ( inc$data ) {
-			vars.push(`let ${v.name} = $data.${v.name};`)
-		}else {
+			vars.push(`let ${v.name} = $state.${v.name};`)
+		}else if ( inc$opts ) {
 			vars.push(`let ${v.name} = $options.${v.name};`)
 		}
 	}
@@ -189,10 +240,15 @@ function checkAndInitVars(src, $dataKeys, $optsKeys){
 	return FN_TMPL_DEF + vars.join('\n') + src.substring(FN_TMPL_DEF.length);
 }
 
-function getObjectKeys(jsonStr){ // jsonStr = {....}
+function getObjectKeys(jsonStr){ // jsonStr = null 或 {....}
+	if ( jsonStr.trim() == 'null' ) {
+		return [];
+	}
+
     let ast = acorn.parse('let x = ' + jsonStr);
 	let props = ast.body[0].declarations[0].init.properties;
 	let keys = [];
+
 	props.forEach(node => keys.push(node.key.name));
 	return keys;
 }
