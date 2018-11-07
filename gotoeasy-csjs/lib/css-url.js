@@ -4,7 +4,7 @@ const File = require('gotoeasy-file');
 const miniCss = require("./mini-css");
 
 
-module.exports =  function cssUrl(basePath, css, cssFileTo, callback){
+module.exports =  function cssUrl(basePath, css, cssFileTo, assetsPath, callback){
 
 	const options = {
 		url: 'copy',
@@ -13,7 +13,7 @@ module.exports =  function cssUrl(basePath, css, cssFileTo, callback){
 		to: cssFileTo,
 		
 		basePath: basePath,
-		assetsPath: '../images',			// css文件所在目录中建img文件夹存放图片
+		assetsPath: assetsPath,		// '../images',			// css文件所在目录中建img文件夹存放图片
 		useHash: true				// hash图片文件名
 	};
 

@@ -83,6 +83,7 @@ function listFiles(path, matchers) {
 	//console.info(path, matchers)
 	let result = [];
 	findFiles(path, getMatcher(path, matchers), result);
+//console.info('gotoeasy-file----------result-------', result)
 	return result;
 }
 
@@ -99,11 +100,11 @@ function getMatcher(path, matchers){
 			match = match.substring(1);
 		}
 		if ( match.startsWith('/') ) {
-			match = match.substring(1);
+			match = match.substring(1);  // 开始字符是目录分隔符的话，总是去掉
 		}
 		if ( match.endsWith('/') ) {
 			isDir = true;
-			match = match.substring(0, match.length-1);
+			match = match.substring(0, match.length-1);  // 结束字符是目录分隔符的话，总是去掉
 		}
 		if ( match == '' ) {
 			continue;
@@ -122,6 +123,9 @@ function getMatcher(path, matchers){
 			return false;
 		}
 		target = target.substring(path.length);
+		if ( target.startsWith('/') ) {
+			target = target.substring(1);  // 开始字符是目录分隔符的话，总是去掉
+		}
 		let match;
 
 		// 排除规则先做
@@ -141,6 +145,7 @@ function getMatcher(path, matchers){
 		// 匹配规则后做
 		for ( let i=0; i<includes.length; i++ ) {
 			match = includes[i];
+//console.info('gotoeasy-file--------match---------', match, target)
 			if ( match.reg.test(target) ) { // 只要文件，不用考虑目录，直接匹配
 				return true;
 			}
@@ -174,6 +179,7 @@ function convert(match){
 	reg = reg.replace(/\]/g, '\\]');
 	reg = reg.replace(/\{/g, '\\{');
 	reg = reg.replace(/\}/g, '\\}');
+	reg = reg.replace(/\//g, '\\/');
 
 	reg = reg.replace(/\?/g, '.');			// [.]  - 单个问号，替换为查找单个字符
 	reg = reg.replace(/\*{2,}/g, '\\S\\n');	// [\S] - 两个以上星号，替换为查找非空白字符
@@ -182,7 +188,7 @@ function convert(match){
 	reg = reg.replace(/\\n/g, '*');
 
 	reg = '^' + reg + '$';
-	//console.info(reg)
+//console.info('gotoeasy-file--------reg---------', reg)
 	return reg;
 }
 
@@ -192,6 +198,7 @@ function findFiles(path, matcher, result){
 	files.forEach( file => {
 		let absName = path + "/" + file;
 		if ( isFile(absName) ) {
+//console.info('gotoeasy-file--------absName---------', absName)
 			// 文件，匹配保存
 			matcher(absName) && result.push(absName);
 		}else{
