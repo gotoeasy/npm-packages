@@ -2,12 +2,22 @@
 // 自动添加CSS前缀
 // ---------------------------
 
-// 仅支持异步回调处理,回调参数为转换后css
+// 传入callback则自动回调，不传callback则返回Promise
 module.exports = function (src, callback){
 	const autoprefixer = require('autoprefixer');
 	const postcss = require('postcss')([autoprefixer]);
 
-	postcss.process(src).then(rs => {
-		callback(rs.css);
-	});
+	if ( callback ) {
+		postcss.process(src).then(rs => {
+			rs.warnings().forEach( w => console.warn(w.toString()) );
+			callback(rs.css);
+		});
+	}else{
+		return new Promise(function(resolve, reject){
+			postcss.process(src).then(rs => {
+				rs.warnings().forEach( w => console.warn(w.toString()) );
+				resolve(rs.css);
+			});
+		});
+	}
 };

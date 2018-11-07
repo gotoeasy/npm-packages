@@ -1,7 +1,7 @@
 
 
 
-module.exports = function ss(src, opts={level:2}){
+module.exports = function (src, opts={level:2}){
 
 	const CleanCSS = require('clean-css');
 	let rs = new CleanCSS(opts).minify(src);

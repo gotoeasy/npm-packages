@@ -2,7 +2,7 @@
 gotoeasy-csjs
 
 [version] // 版本号 （必填）
-0.0.12
+0.1.1
 
 
 
@@ -10,19 +10,26 @@ gotoeasy-csjs
 index.js
 
 [dependencies] // 依赖库 （选填）
+gotoeasy-file = *
 less = *
 prettier = *
 less-plugin-autoprefix = *
 clean-css = *
+postcss-url = *
 uglify-es = *
+babel-core = *
+babel-preset-es2015 = *
 
 [devDependencies] // 开发依赖库 （选填）
 less = *
 prettier = *
 less-plugin-autoprefix = *
 clean-css = *
+postcss-url = *
 uglify-es = *
 gotoeasy-btf = *
+babel-core = *
+babel-preset-es2015 = *
 
 [description] // 描述 （选填）
 CSS、JS常用的编译、美化、压缩操作封装，支持ES6

@@ -1,21 +1,28 @@
 {
   "name": "gotoeasy-csjs",
-  "version": "0.0.12",
+  "version": "0.1.1",
   "main": "index.js",
   "dependencies": {
+    "gotoeasy-file": "*",
     "less": "*",
     "prettier": "*",
     "less-plugin-autoprefix": "*",
     "clean-css": "*",
-    "uglify-es": "*"
+    "postcss-url": "*",
+    "uglify-es": "*",
+    "babel-core": "*",
+    "babel-preset-es2015": "*"
   },
   "devDependencies": {
     "less": "*",
     "prettier": "*",
     "less-plugin-autoprefix": "*",
     "clean-css": "*",
+    "postcss-url": "*",
     "uglify-es": "*",
-    "gotoeasy-btf": "*"
+    "gotoeasy-btf": "*",
+    "babel-core": "*",
+    "babel-preset-es2015": "*"
   },
   "bin": {},
   "scripts": {
