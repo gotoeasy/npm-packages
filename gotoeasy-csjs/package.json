@@ -1,10 +1,12 @@
 {
   "name": "gotoeasy-csjs",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "main": "index.js",
   "dependencies": {
     "gotoeasy-file": "*",
     "less": "*",
+    "lesshat": "*",
+    "node-sass": "*",
     "prettier": "*",
     "less-plugin-autoprefix": "*",
     "clean-css": "*",

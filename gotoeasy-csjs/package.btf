@@ -2,7 +2,7 @@
 gotoeasy-csjs
 
 [version] // 版本号 （必填）
-0.1.2
+0.1.5
 
 
 
@@ -12,6 +12,8 @@ index.js
 [dependencies] // 依赖库 （选填）
 gotoeasy-file = *
 less = *
+lesshat = *
+node-sass = *
 prettier = *
 less-plugin-autoprefix = *
 clean-css = *

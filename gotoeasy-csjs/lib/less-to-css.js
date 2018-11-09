@@ -33,17 +33,42 @@ less\lib\less\contexts.js
     'rewriteUrls'        // option - whether to adjust URL's to be relative
 */
 
+const File = require('gotoeasy-file');
+
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
 // opts注意设定filename或paths以便正确处理imports
-module.exports = function(src, opts={}){
-	opts.javascriptEnabled = true;
-	opts.plugins = opts.plugins || [];
-	
-	// autoprefixer
-	var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-    autoprefixPlugin = new LessPluginAutoPrefix({browsers: ["last 2 versions"]});
-	opts.plugins.push(autoprefixPlugin);
+module.exports = (function(importLesshat){
 
-	return require('less').render(src, opts);
-}
+	// 默认支持lesshat @import ".../lesshat.less";
+	let ary = __dirname.replace(/\\/g, '/').split('/');
+	ary.pop(); // lib
+	ary.pop(); // gotoeasy-csjs
+	ary.push('lesshat/lesshat.less');
+	importLesshat = ary.join('/'); // 用相对目录找出lesshat.less
+	if ( !File.exists(importLesshat) ) {
+		importLesshat = '';
+	}else{
+		importLesshat = '@import "' + importLesshat + '";\n';
+	}
 
+	return function(file, src, opts={}){
+		let srcLess = importLesshat + src; // 自动添加 @import ".../lesshat.less";
+
+		opts.javascriptEnabled = true;
+		opts.plugins = opts.plugins || [];
+		
+		// autoprefixer
+		var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
+		autoprefixPlugin = new LessPluginAutoPrefix({browsers: ["last 2 versions"]});
+		opts.plugins.push(autoprefixPlugin);
+
+		try{
+			return require('less').render(srcLess, opts);
+		}catch(e){
+			console.error(MODULE, 'less compile failed, file:', file)
+			console.error(MODULE, e)
+			throw e;
+		}
+	}
+})();
