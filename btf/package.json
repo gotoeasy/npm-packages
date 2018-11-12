@@ -1,0 +1,36 @@
+{
+  "name": "@gotoeasy/btf",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "@gotoeasy/file": "*"
+  },
+  "devDependencies": {},
+  "bin": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "A JavaScript Block-Text-File Parser",
+  "keywords": [
+    "btf",
+    "gotoeasy",
+    "btf file",
+    "block-text-file",
+    "block text file",
+    "btf文件",
+    "块文本文件"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/gotoeasy-btf.git"
+  },
+  "homepage": "https://github.com/gotoeasy/gotoeasy-btf/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/gotoeasy-btf/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
