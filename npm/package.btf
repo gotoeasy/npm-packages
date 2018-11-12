@@ -1,0 +1,41 @@
+[name]
+@gotoeasy/npm
+
+[version]
+0.0.0
+
+
+
+[main]
+index.js
+
+[dependencies]
+gotoeasy-file = *
+compressing = *
+https-proxy-agent = *
+
+[description]
+npm常用操作封装
+
+[keywords] // 多个关键字用半角逗号分隔
+
+[scripts]
+test = echo "Error: no test specified" && exit 1
+
+[repository]
+type= git
+url = git+https://github.com/gotoeasy/npm-packages.git
+
+[homepage]
+https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-npm/README.md
+
+[bugs]
+url = https://github.com/gotoeasy/npm-packages/issues
+
+[author]
+name = 青松
+email= gotoeasy@163.com
+
+[license]
+Apache-2.0
+

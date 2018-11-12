@@ -1,0 +1,50 @@
+[name] // 项目名 （必填）
+@gotoeasy/rpose
+
+[version] // 版本号 （必填）
+0.0.7
+
+
+
+[main] // 入口文件
+index.js
+
+[dependencies] // 依赖库
+@gotoeasy/btf = *
+@gotoeasy/bus = *
+@gotoeasy/csjs = *
+@gotoeasy/util = *
+acorn-globals = *
+xxhashjs = *
+chokidar = *
+
+[devDependencies] // 开发依赖库 （选填）
+@gotoeasy/csjs = *
+
+[scripts] // 脚本命令
+build = node scripts/build
+test = echo "Error: no test specified" && exit 1
+
+[description] // 描述
+gotoeasy with rpose
+
+[keywords] // 检索关键字，多个关键字用半角逗号分隔
+gotoeasy, rpose
+
+[repository] // 仓库
+type= git
+url = git+https://github.com/gotoeasy/npm-packages.git
+
+[homepage] // 主页，github项目会自动识别设定
+https://github.com/gotoeasy/npm-packages/blob/master/csjs/README.md
+
+[bugs] // BUG提交地址，github项目会自动识别设定
+url = https://github.com/gotoeasy/npm-packages/issues
+
+[author] // 作者信息
+name = 青松
+email= gotoeasy@163.com
+
+[license] // 协议
+Apache-2.0
+

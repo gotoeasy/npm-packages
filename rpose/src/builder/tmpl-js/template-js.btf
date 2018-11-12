@@ -1,0 +1,70 @@
+[template]
+
+// ------------------------------------------------------------------------------------------------------
+// 组件 <%= $data['$componentName'] %>
+// 注:应通过rpose.newComponentProxy方法创建组件代理对象后使用，而不是直接调用方法或用new创建
+// ------------------------------------------------------------------------------------------------------
+<% if ( $data['singleton'] ){ %>
+    // 这是个单例组件
+    <%= $data['$componentName'] %>.Singleton = true;
+<% } %>
+
+// 属性接口定义
+<%= $data['$componentName'] %>.prototype.$OPTION_KEYS = <%= $data['optionkeys'] %>;  // 可通过标签配置的属性，未定义则不支持外部配置
+<%= $data['$componentName'] %>.prototype.$STATE_KEYS = <%= $data['statekeys'] %>;    // 可更新的state属性，未定义则不支持外部更新state
+
+// 组件函数
+function <%= $data['$componentName'] %>(options={}) {
+
+    // 组件默认选项值
+    this.$options = <%= $data['options'] %>;
+    rpose.extend(this.$options, options, this.$OPTION_KEYS);    // 按属性接口克隆配置选项
+
+    // 组件默认数据状态值 （TODO：声明式简化实现数据双向绑定？）
+    this.$state = <%= $data['state'] %>;
+    rpose.extend(this.$state, options, this.$STATE_KEYS);       // 按属性接口克隆数据状态
+
+    <% if ( $data['actions'] != '{}' ){ %>
+    // 事件处理器
+    this.$actions = <%= $data['actions'] %>;
+    for (let k in this.$actions){
+        this.$actions[k].bind(this);
+    }
+    <% } %>
+
+    <% if ( $data['methods'] != '{}' ){ %>
+    // 自定义方法
+    this.$methods = <%= $data['methods'] %>;
+    for (let k in this.$methods){
+        this.$methods[k].bind(this);
+    }
+    <% } %>
+
+    <% if ( $data['updater'] != 'null' ){ %>
+    // 组件更新函数
+    this.$updater = <%= $data['updater'] %>;
+    <% } %>
+
+    <% let actionskeys = JSON.parse($data['actionskeys']); %>
+    <% if ( actionskeys.includes('window.onload') ){ %>
+        rpose.once('window.onload', this.$actions['window.onload'].bind(this)); // 自定义方法中有window.onload时，自动调用
+    <% } %>
+    <% let methodskeys = JSON.parse($data['methodskeys']); %>
+    <% if ( methodskeys.includes('render') ){ %>
+        this.render = this.$methods.render; // 自定义方法中有render时，使用自定义的render
+    <% } %>
+}
+
+/**
+ * 节点模板函数
+ */
+<%= $data['$componentName'] %>.prototype.nodeTemplate = <%= $data['$fnTemplate'] %>
+
+<% if ( $data['mount'] ){ %>
+    // 组件挂载
+    rpose.mount( rpose.newComponentProxy('<%=$data['tag']%>').render(), '<%= $data['mount'] %>' );
+<% } %>
+
+
+
+

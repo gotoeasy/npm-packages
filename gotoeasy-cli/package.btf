@@ -1,0 +1,44 @@
+[name] // 项目名 （必填）
+@gotoeasy/gotoeasy-cli
+
+[version] // 版本号 （必填）
+0.0.6
+
+[main] // 入口文件
+index.js
+
+[dependencies] // 依赖库
+@gotoeasy/btf: *
+commander: *
+sync-exec: *
+
+[bin] // cli命令
+gotoeasy = bin/gotoeasy
+ge = bin/gotoeasy
+
+[scripts] // 脚本命令
+test = echo "Error: no test specified" && exit 1
+
+[description] // 描述
+gotoeasy-cli
+
+[keywords] // 检索关键字，多个关键字用半角逗号分隔
+gotoeasy, cli, gotoeasy-cli
+
+[repository] // 仓库
+type= git
+url = git+https://github.com/gotoeasy/npm-packages.git
+
+[homepage] // 主页，github项目会自动识别设定
+https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-cli/README.md
+
+[bugs] // BUG提交地址，github项目会自动识别设定
+url = https://github.com/gotoeasy/npm-packages/issues
+
+[author] // 作者信息
+name = 青松
+email= gotoeasy@163.com
+
+[license] // 协议
+Apache-2.0
+

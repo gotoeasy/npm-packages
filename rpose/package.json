@@ -1,0 +1,40 @@
+{
+  "name": "@gotoeasy/rpose",
+  "version": "0.0.7",
+  "main": "index.js",
+  "dependencies": {
+    "@gotoeasy/btf": "*",
+    "@gotoeasy/bus": "*",
+    "@gotoeasy/csjs": "*",
+    "@gotoeasy/util": "*",
+    "acorn-globals": "*",
+    "xxhashjs": "*",
+    "chokidar": "*"
+  },
+  "devDependencies": {
+    "@gotoeasy/csjs": "*"
+  },
+  "bin": {},
+  "scripts": {
+    "build": "node scripts/build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "gotoeasy with rpose",
+  "keywords": [
+    "gotoeasy",
+    "rpose"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/csjs/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

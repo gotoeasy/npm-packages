@@ -1,0 +1,37 @@
+{
+  "name": "@gotoeasy/gotoeasy-cli",
+  "version": "0.0.6",
+  "main": "index.js",
+  "dependencies": {
+    "@gotoeasy/btf": "*",
+    "commander": "*",
+    "sync-exec": "*"
+  },
+  "devDependencies": {},
+  "bin": {
+    "gotoeasy": "bin/gotoeasy",
+    "ge": "bin/gotoeasy"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "gotoeasy-cli",
+  "keywords": [
+    "gotoeasy",
+    "cli",
+    "gotoeasy-cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-cli/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
