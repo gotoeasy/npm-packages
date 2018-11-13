@@ -1,0 +1,29 @@
+{
+  "name": "gotoeasy-process",
+  "version": "0.0.4",
+  "main": "index.js",
+  "dependencies": {
+    "gotoeasy-process": "*"
+  },
+  "bin": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "child_process的简单封装",
+  "keywords": [
+    "Java formater"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-process/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

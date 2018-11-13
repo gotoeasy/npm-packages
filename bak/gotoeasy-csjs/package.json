@@ -1,0 +1,53 @@
+{
+  "name": "gotoeasy-csjs",
+  "version": "0.1.7",
+  "main": "index.js",
+  "dependencies": {
+    "gotoeasy-file": "*",
+    "less": "*",
+    "lesshat": "*",
+    "node-sass": "*",
+    "prettier": "*",
+    "less-plugin-autoprefix": "*",
+    "clean-css": "*",
+    "postcss-url": "*",
+    "uglify-es": "*",
+    "babel-core": "*",
+    "babel-preset-es2015": "*"
+  },
+  "devDependencies": {
+    "less": "*",
+    "prettier": "*",
+    "less-plugin-autoprefix": "*",
+    "clean-css": "*",
+    "postcss-url": "*",
+    "uglify-es": "*",
+    "gotoeasy-btf": "*",
+    "babel-core": "*",
+    "babel-preset-es2015": "*"
+  },
+  "bin": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "CSS、JS常用的编译、美化、压缩操作封装，支持ES6",
+  "keywords": [
+    "CSS代码美化",
+    "CSS代码压缩",
+    "JS代码美化",
+    "JS代码压缩"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-csjs/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
