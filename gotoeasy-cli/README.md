@@ -27,7 +27,7 @@ ge initpackage
 ```
 
 
-## package.btf文件内容样本
+## package.btf文件内容样本 （btf格式参照底部链接）
 ```js
 // -------------------------------------------------
 // 这是个替代package.json用的配置文件
@@ -98,7 +98,8 @@ Apache-2.0
 
 ## package.btf修改好后，使用命令发布npm包
 ```js
-// 累加package.btf文件中的小版本号后转换为package.js，使用npm publish命令发布，更新package.btf小版本号
+// 累加package.btf文件中的小版本号后转换为package.js
+// 然后使用npm publish命令发布，成功后更新package.btf文件
 gotoeasy publish
 
 // 也可使用缩写命令
@@ -107,5 +108,5 @@ ge p
 
 
 ## `Links`
+* `Block-Text-File Specification` https://github.com/gotoeasy/block-text-file
 * `npm-packages` https://github.com/gotoeasy/npm-packages
-
