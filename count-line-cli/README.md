@@ -1,4 +1,4 @@
-# npm-packages
+# @gotoeasy/count-line-cli
 代码行数统计
 <br>
 * 统计指定目录代码行数
