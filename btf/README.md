@@ -16,6 +16,7 @@ npm i @gotoeasy/btf
 ## API
 * BlockTextFile.getDocuments() - get the Document array
 * BlockTextFile.getText(blockName) - get text of blockName from the first Document
+* BlockTextFile.getMap(blockName) - get key-value map of blockName from the first Document
 * Document.getText(blockName) - get text of blockName from the Document
 
 ```js
