@@ -1,4 +1,4 @@
-# gotoeasy-csjs
+# @gotoeasy/csjs
 CSS、JS的编译、美化、压缩等常用操作封装
 <br>
 <br>
@@ -7,6 +7,11 @@ CSS、JS的编译、美化、压缩等常用操作封装
 [![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 <br>
 <br>
+
+## Install
+```
+npm i @gotoeasy/csjs
+```
 
 ## Sample
 ```js
@@ -19,15 +24,17 @@ let lessCode = `
 	    color: @base;
 	}`;
 
-let css = csjs.lessToCss(lessCode);
-console.info(css);
-/*
-.box {
-  color: #f938ab;
-}
-*/
+(async function(){
+	let rs = await csjs.lessToCss(lessCode);
+	console.info(rs.css);
+	/*
+	.box {
+	  color: #f938ab;
+	}
+	*/
+})();
 
-let cssFmt = csjs.formatCss(css);
+let cssFmt = csjs.formatCss('.box { color: #f938ab; }');
 console.info(cssFmt);
 /*
 .box {
@@ -101,3 +108,8 @@ console.info(jsFmt);
 
 
 ```
+
+
+## `Links`
+* `npm-packages` https://github.com/gotoeasy/npm-packages
+

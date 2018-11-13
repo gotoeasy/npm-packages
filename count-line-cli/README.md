@@ -46,3 +46,8 @@ count-line init
 ## NOTE
 * 根目录有`.gitignore`文件时将被利用并忽略相关文件，但解析匹配可能有搞错的情况
 * 行数统计没有使用语言级别的严格的词法解析，不能确保完全正确，特别是JSP等多语言混用的时候
+
+
+## `Links`
+* `npm-packages` https://github.com/gotoeasy/npm-packages
+

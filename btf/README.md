@@ -27,6 +27,10 @@ value1
 [key2]
 value2
 
+[key-value]
+k1 : v1
+k2 = v2
+
 ================
 [name1]
 111
@@ -36,12 +40,16 @@ value2
 
 ```js
 // parser sample.btf
-const BlockTextFile = require('gotoeasy-btf');
+const BlockTextFile = require('@gotoeasy/btf');
 
 let btf = new BlockTextFile('sample.btf');
 
 console.info(btf.getText('key1') == 'value1'); // true
 console.info(btf.getText('key2') == 'value2\n'); // true
+
+let map = btf.getMap('key-value');
+console.info(map.get('k1') == 'v1'); // true
+console.info(map.get('k2') == 'v2'); // true
 
 let docs = btf.getDocuments(); // array
 console.info(docs.length == 2); // true
@@ -57,5 +65,6 @@ console.info(doc2.getText('name2') == '222'); // true
 <br>
 
 ## `Links`
-* `Block-Text-File` Specification https://github.com/gotoeasy/block-text-file
+* `Block-Text-File Specification` https://github.com/gotoeasy/block-text-file
+* `npm-packages` https://github.com/gotoeasy/npm-packages
 
