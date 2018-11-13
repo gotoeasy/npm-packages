@@ -26,8 +26,8 @@ bus.once('once', function(txt){
 
 bus.at('input', 'abc'); // input ... abc
 
-bus.at('once', 'abc'); // input ... abc
-bus.at('once', 'abc'); // do nothing
+bus.at('once', '123'); // once ... 123
+bus.at('once', '123'); // do nothing
 
 bus.off('input');
 bus.at('input', 'abc'); // do nothing
