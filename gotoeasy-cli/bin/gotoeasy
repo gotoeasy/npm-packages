@@ -5,6 +5,7 @@ const commander = require('commander')
 commander
   .version(require('../package').version)
   .usage('<command> [options]')
-  .command('publish', 'npm publish')
-  .command('p', 'npm publish')
+  .command('initpackage', 'copy sample file of package.btf')
+  .command('publish', 'convert package.btf to package.js and publish')
+  .command('p', 'same to publish')
   .parse(process.argv);

@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options] [path]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+let opts = {
+	workDir: cmmd.args.length ? cmmd.args[0] : process.cwd(),
+	debug: !!cmmd.debug
+};
+
+!opts.debug && (console.debug = x=>x);
+
+require('../lib/npm-initpackage')(opts);
+
