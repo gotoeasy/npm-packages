@@ -1,13 +1,13 @@
 {
   "name": "@gotoeasy/gotoeasy-cli",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
+    "@gotoeasy/util": "*",
     "commander": "*",
     "sync-exec": "*"
   },
-  "devDependencies": {},
   "bin": {
     "gotoeasy": "bin/gotoeasy",
     "ge": "bin/gotoeasy"

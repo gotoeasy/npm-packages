@@ -22,7 +22,7 @@ api.isEmpty = obj => {
 	if ( !obj ) return true;
 
 	if ( api.isArray(obj) ) {
-		return !!obj.length;
+		return !obj.length;
 	}
 
 	if ( api.isPlainObject(obj) ) {

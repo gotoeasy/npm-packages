@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.9
 
 
 
@@ -36,7 +36,7 @@ type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/csjs/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/rpose/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

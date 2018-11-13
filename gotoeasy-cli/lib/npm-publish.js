@@ -1,5 +1,6 @@
 const File = require('@gotoeasy/file');
 const Btf = require('@gotoeasy/btf');
+const util = require('@gotoeasy/util');
 const syncExec = require('sync-exec');
 
 function publish(opts){
@@ -31,7 +32,12 @@ function publish(opts){
 		bugs : getJson(btf, 'bugs', ['url']),
 		author : getJson(btf, 'author', ['name', 'email']),
 		license : getLineString(btf, 'license'),
+		engines : getJson(btf, 'engines'),
 	};
+
+	// 删除空属性
+	Object.keys(oPackage).forEach(k => util.isEmpty(oPackage[k]) && delete oPackage[k] );
+
 	File.write(filePackageJson, JSON.stringify(oPackage, null, 2))
 	console.debug('save file:', filePackageJson);
 		

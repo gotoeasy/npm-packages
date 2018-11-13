@@ -1,7 +1,6 @@
-
+const File = require('@gotoeasy/file');
 const https = require('https');
 const HttpsProxyAgent = require('https-proxy-agent');
-const File = require('gotoeasy-file');
 const fs = require('fs');
 
 const npmrc = require('./npmrc')();
@@ -14,7 +13,7 @@ const tmpdir = require('./homedir')() + '/.temp';
 File.mkdir(tmpdir);
 
 // url： 下载地址，不支持重定向
-// dist: 指定时保存为该路径文件名，未指定时使用临时目录
+// dist: 指定时保存为该路径文件名，未指定时使用临时目录随机文件名
 function download(url, dist){
 
 	let options = require('url').parse(url);

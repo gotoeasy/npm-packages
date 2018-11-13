@@ -1,12 +1,11 @@
 {
   "name": "@gotoeasy/rpose-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/rpose": "*",
     "commander": "*"
   },
-  "devDependencies": {},
   "bin": {
     "rpose": "bin/rpose",
     "rp": "bin/rpose"
@@ -23,7 +22,7 @@
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/bus/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/rpose-cli/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

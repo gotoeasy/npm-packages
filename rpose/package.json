@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
@@ -14,7 +14,6 @@
   "devDependencies": {
     "@gotoeasy/csjs": "*"
   },
-  "bin": {},
   "scripts": {
     "build": "node scripts/build",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,7 +27,7 @@
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/csjs/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/rpose/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

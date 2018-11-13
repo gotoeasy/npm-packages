@@ -1,6 +1,4 @@
-
-const File = require('gotoeasy-file');
-
+const File = require('@gotoeasy/file');
 
 module.exports = (function(){
 
@@ -10,6 +8,9 @@ module.exports = (function(){
 
 	return async function(pkgName, version='latest'){
 		let url = `https://registry.npmjs.org/${pkgName}/${version}`;
+		if ( pkgName.indexOf("@") >= 0 ) {
+			url = `https://registry.npmjs.org/${pkgName}/`; // @sope时不能指定版本?!!!
+		}
 
 		let rs = await download(url);
 		if ( rs.error ) {

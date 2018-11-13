@@ -1,5 +1,6 @@
-
-const File = require('gotoeasy-file');
+const File = require('@gotoeasy/file');
+const download = require('./download');
+const getRegistryInfo = require('./get-npm-registry-info');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -8,8 +9,6 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = (function(){
 
-	const download = require('./download');
-	const getRegistryInfo = require('./get-registry-info');
 	const path = require('./homedir')() + '/.npm-tarballs';
 	File.mkdir(path);
 

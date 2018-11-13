@@ -1,6 +1,4 @@
-
-const File = require('gotoeasy-file');
-
+const File = require('@gotoeasy/file');
 
 module.exports = (function(){
 
