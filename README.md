@@ -9,6 +9,6 @@
 
 
 ## Packages
-* `count-line-cli`: [![NPM version](https://img.shields.io/npm/v/count-line-cli.svg)](https://www.npmjs.com/package/count-line-cli) https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/README.md
-* `is-ignore`: [![NPM version](https://img.shields.io/npm/v/is-ignore.svg)](https://www.npmjs.com/package/is-ignore) https://github.com/gotoeasy/npm-packages/blob/master/is-ignore/README.md
+* `count-line-cli`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/count-line-cli.svg)](https://www.npmjs.com/package/@gotoeasy/count-line-cli) https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/README.md
+* `is-ignore`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/is-ignore.svg)](https://www.npmjs.com/package/@gotoeasy/is-ignore) https://github.com/gotoeasy/npm-packages/blob/master/is-ignore/README.md
 

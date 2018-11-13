@@ -15,33 +15,6 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('源文件解析', function(){
 
-	let indexFile, lessIndexText=null;
-	bus.on('LESS编译', async function(file, less){
-		if ( lessIndexText === null ) {
-			const env = bus.at('编译环境');
-			indexFile = env.path.src_less + '/index.less';
-			File.exists(indexFile) ? (lessIndexText = File.read(indexFile)) : (lessIndexText = '');
-		}
-		
-		let rs = await csjs.lessToCss(file, lessIndexText + less, {filename: indexFile});
-		console.debug(MODULE, 'less compile finish');
-		return rs.css;
-	});
-
-	let scssIndexText=null;
-	bus.on('SCSS编译', async function(file, scss){
-		if ( scssIndexText === null ) {
-			const env = bus.at('编译环境');
-			let indexFile = env.path.src_less + '/index.scss';
-			File.exists(indexFile) ? (scssIndexText = File.read(indexFile)) : (scssIndexText = '');
-		}
-
-		let rs = csjs.scssToCss(file, scssIndexText + scss);
-		console.info(MODULE, 'scss compile finish');
-		return rs.css;
-	});
-
-
 	return async function(file){
 		console.debug(MODULE, 'parse btf:', file);
 		let btf =  new Btf(file);
@@ -129,10 +102,10 @@ async function editDocument(doc, file){
 	manager.tagRequires[doc.tag] = doc.requires;			// 本组件所直接依赖的其他组件（set）
 
 	if ( doc.less ) {
-		doc['css'] = await bus.at('LESS编译', file, doc.less + '\n' + doc.css);
+		doc['css'] = await bus.at('LESS编译', doc.less + '\n' + doc.css, file);
 	}
 	if ( doc.scss ) {
-		doc['css'] = await bus.at('SCSS编译', file, doc.scss + '\n' + doc.css);
+		doc['css'] = await bus.at('SCSS编译', doc.scss + '\n' + doc.css, file);
 	}
 
 }

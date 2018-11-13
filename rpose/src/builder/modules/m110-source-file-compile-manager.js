@@ -4,7 +4,6 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('编译管理', function(){
 
-	let env = bus.at('编译环境');
 	let todoCompSet = new Set(); // 待编译成组件的文件
 	let todoPageSet = new Set(); // 待编译成页面的文件
 
@@ -48,6 +47,7 @@ module.exports = bus.on('编译管理', function(){
 	async function compileFile(file){
 		todoCompSet.add(file); // 该文件的组件编译中
 
+		let env = bus.at('编译环境');
 		result.btfs[file] = await bus.at('源文件解析', file);
 
 		if ( file.startsWith(env.path.src_pages) ) {

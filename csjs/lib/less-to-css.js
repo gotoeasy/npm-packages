@@ -53,7 +53,8 @@ module.exports = (function(importLesshat){
 		importLesshat = '@import "' + importLesshat + '";\n';
 	}
 
-	return function(file, src, opts={}){
+	// file仅用于出错信息提示
+	return function(src, file, opts={}){
 		let srcLess = importLesshat + src; // 自动添加 @import ".../lesshat.less";
 
 		opts.javascriptEnabled = true;

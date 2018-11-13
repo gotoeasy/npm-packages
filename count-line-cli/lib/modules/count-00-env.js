@@ -1,5 +1,5 @@
-const File = require('gotoeasy-file');
-const Btf = require('gotoeasy-btf');
+const File = require('@gotoeasy/file');
+const Btf = require('@gotoeasy/btf');
 const event = require('../event');
 
 

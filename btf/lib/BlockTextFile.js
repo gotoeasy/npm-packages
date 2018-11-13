@@ -2,8 +2,8 @@ const File = require('@gotoeasy/file');
 
 class BlockTextFile{
 
-    constructor(fileName) {
-		let text = File.read(fileName);
+    constructor(fileName, isText) {
+		let text = isText ? fileName : File.read(fileName);
 		this.LF = text.indexOf('\r\n') >=0 ? '\r\n' : '\n';
 
 		let lines = text.split(this.LF);

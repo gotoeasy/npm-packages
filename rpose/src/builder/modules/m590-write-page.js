@@ -9,9 +9,9 @@ module.exports = bus.on('页面代码输出', function(rposeJs, resetCss, iStart
 	return function(pageTag, pages){
 		let env = bus.at('编译环境');
 		if ( !rposeJs ) {
-			rposeJs = bus.at('rpose源码');
-			resetCss = File.read(env.path.src_resources_css + '/reset.css');
 			iStart = env.path.src_pages.length; // src_pages目录长度，用于截取子目录
+			rposeJs = bus.at('rpose源码');
+			resetCss = bus.at('reset样式源码');
 		}
 
 		let manager = bus.at('编译管理');

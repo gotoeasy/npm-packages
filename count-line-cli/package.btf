@@ -1,21 +1,22 @@
 [name]
-count-line-cli
+@gotoeasy/count-line-cli
 
 [version]
-1.0.3
+1.0.2
 
 
 [bin]
 count-line = bin/count-line
+cl = bin/count-line
 
 [main]
 index.js
 
 [dependencies]
+@gotoeasy/btf = *
+@gotoeasy/is-ignore = *
 commander = *
 git-pull-or-clone = *
-gotoeasy-btf = *
-is-ignore = *
 
 [scripts]
 test = echo "Error: no test specified" && exit 1

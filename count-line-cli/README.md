@@ -7,14 +7,14 @@
 <br>
 <br>
 
-[![NPM version](https://img.shields.io/npm/v/count-line-cli.svg)](https://www.npmjs.com/package/count-line-cli)
+[![NPM version](https://img.shields.io/npm/v/@gotoeasy/count-line-cli.svg)](https://www.npmjs.com/package/@gotoeasy/count-line-cli)
 [![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 <br>
 <br>
 
 ## Install
 ```
-npm i -g count-line-cli
+npm i -g @gotoeasy/count-line-cli
 ```
 
 
@@ -24,6 +24,10 @@ npm i -g count-line-cli
 ```
 // 统计指定目录的代码行数，统计结果以csv形式输出到当前目录
 count-line dir --csv d:/target-path/test
+
+// 也可以使用命令缩写cl
+cl dir d:/target-path/test
+
 ```
 
 * `count-line giturl --csv git仓库地址`

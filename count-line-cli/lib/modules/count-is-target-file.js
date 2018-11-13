@@ -1,4 +1,4 @@
-const File = require('gotoeasy-file');
+const File = require('@gotoeasy/file');
 const event = require('../event');
 
 module.exports = event.on('对象文件判断', function(){

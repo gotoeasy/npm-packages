@@ -1,16 +1,17 @@
 {
-  "name": "count-line-cli",
-  "version": "1.0.3",
+  "name": "@gotoeasy/count-line-cli",
+  "version": "1.0.2",
   "main": "index.js",
   "dependencies": {
+    "@gotoeasy/btf": "*",
+    "@gotoeasy/is-ignore": "*",
     "commander": "*",
-    "git-pull-or-clone": "*",
-    "gotoeasy-btf": "*",
-    "is-ignore": "*"
+    "git-pull-or-clone": "*"
   },
   "devDependencies": {},
   "bin": {
-    "count-line": "bin/count-line"
+    "count-line": "bin/count-line",
+    "cl": "bin/count-line"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

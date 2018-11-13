@@ -6,7 +6,7 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = (function(){
 
-	return function(file, src, opts={}){
+	return function(src, file, opts={}){
 		let rs;
 
 		try{

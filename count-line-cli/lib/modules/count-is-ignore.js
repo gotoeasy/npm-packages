@@ -1,5 +1,5 @@
 const event = require('../event');
-const IsIgnore = require('is-ignore');
+const IsIgnore = require('@gotoeasy/is-ignore');
 
 
 module.exports = event.on('is-ignore', function(result={}){

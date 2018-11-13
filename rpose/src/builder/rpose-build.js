@@ -10,7 +10,7 @@ function build(opts){
 	let env = bus.at('编译环境', opts);
 	bus.at('clean');
 
-	let files = File.files(env.path.src, 'components/**.btf', 'pages/**.btf');
+	let files = File.files(env.path.src_btf, 'components/**.btf', 'pages/**.btf');
 //console.info('-------------files------------',files)
 	bus.at('源文件清单', files );
 	files.forEach(file => bus.at('添加源文件', file.replace(/\\/g, '/')) );

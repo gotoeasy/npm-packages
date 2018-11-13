@@ -10,11 +10,11 @@ module.exports = bus.on('rpose源码', function(src){
 	ary.pop() > ary.pop() > ary.pop();
 	let root = ary.join('/');
 
-	let srcDir = path + '/src/rpose';
-	let fileDist = path + '/dist/rpose.js';
+	let srcDir = root + '/src/rpose';
+	let fileDist = root + '/dist/rpose.js';
 
 	return function(rebuild){
-		if ( rebuild ) {
+		if ( !src || rebuild ) {
 			src = File.concat(srcDir);
 			src = csjs.formatJs(src);
 			File.write(fileDist, src);

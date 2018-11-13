@@ -1,5 +1,5 @@
 [target-file]
-*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.tld, *.sh, *.sql, *.ts, *.less
+*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.tld, *.sh, *.sql, *.ts, *.less, *.lua
 
 [java]
 line-comment=//
@@ -92,4 +92,9 @@ line-comment=#
 
 [yaml]
 line-comment=#
+
+[lua]
+line-comment=--
+block-comment-start=--[[
+block-comment-end=]]
 

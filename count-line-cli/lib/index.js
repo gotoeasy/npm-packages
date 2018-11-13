@@ -1,4 +1,4 @@
-const File = require('gotoeasy-file');
+const File = require('@gotoeasy/file');
 const gitpullorclone = require('git-pull-or-clone');
 const event = require('./event');
 

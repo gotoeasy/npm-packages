@@ -2,7 +2,7 @@
 @gotoeasy/btf
 
 [version] // 版本号 （必填）
-0.0.0
+0.0.3
 
 
 
@@ -10,26 +10,26 @@
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/file
+@gotoeasy/file = *
 
 [description] // 描述
 A JavaScript Block-Text-File Parser
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-btf, gotoeasy, btf file, block-text-file, block text file, btf文件, 块文本文件
+btf, btf file, block-text-file, block text file, btf文件, 块文本文件
 
 [scripts] // 脚本命令
 test = echo "Error: no test specified" && exit 1
 
 [repository] // 仓库
 type= git
-url = git+https://github.com/gotoeasy/gotoeasy-btf.git
+url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/gotoeasy-btf/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/btf/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
-url = https://github.com/gotoeasy/gotoeasy-btf/issues
+url = https://github.com/gotoeasy/npm-packages/issues
 
 [author] // 作者信息
 name = 青松
