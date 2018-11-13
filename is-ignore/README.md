@@ -1,23 +1,23 @@
-# npm-packages
+# @gotoeasy/is-ignore
 根据`.gitignore`文件的配置，判断指定文件或目录是否要忽略。<br>
 指定git仓库的文件目录即可，`.gitignore`文件将自动读取
 <br>
 <br>
 
-[![NPM version](https://img.shields.io/npm/v/is-ignore.svg)](https://www.npmjs.com/package/is-ignore)
+[![NPM version](https://img.shields.io/npm/v/@gotoeasy/is-ignore.svg)](https://www.npmjs.com/package/@gotoeasy/is-ignore)
 [![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 <br>
 <br>
 
 ## Install
 ```
-npm i is-ignore
+npm i @gotoeasy/is-ignore
 ```
 
 
 ## API
 
-* `const IsIgnore = require('is-ignore')`: return the class of `is-ignore`
+* `const IsIgnore = require('@gotoeasy/is-ignore')`: return the class of `is-ignore`
 * `let ignore = new IsIgnore(opts)`: create instance
   * `opts.path`: target directory.
 * `ignore.isIgnore(file)`: returns `true` if pattern is ignored, `false` otherwise.
@@ -30,7 +30,7 @@ D:/test/.gitignore
 ```
 
 ```js
-const IsIgnore = require('is-ignore');
+const IsIgnore = require('@gotoeasy/is-ignore');
 
 let ignore = new IsIgnore({path: 'D:/test'});
 
