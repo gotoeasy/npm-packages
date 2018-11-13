@@ -20,8 +20,19 @@ const bus = require('@gotoeasy/bus');
 bus.on('input', function(txt){
     console.log('input ...', txt);
 })
+bus.once('once', function(txt){
+    console.log('once ...', txt);
+})
 
 bus.at('input', 'abc'); // input ... abc
+
+bus.at('once', 'abc'); // input ... abc
+bus.at('once', 'abc'); // do nothing
+
+bus.off('input');
+bus.at('input', 'abc'); // do nothing
+
+bus.clear();            // clear all events
 
 ```
 <br>
