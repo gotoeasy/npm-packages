@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/count-line-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
@@ -8,7 +8,6 @@
     "commander": "*",
     "git-pull-or-clone": "*"
   },
-  "devDependencies": {},
   "bin": {
     "count-line": "bin/count-line",
     "cl": "bin/count-line"

@@ -1,5 +1,5 @@
 [target-file]
-*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.tld, *.sh, *.sql, *.ts, *.less, *.lua
+*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.tld, *.sh, *.sql, *.ts, *.less, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle
 
 [java]
 line-comment=//
