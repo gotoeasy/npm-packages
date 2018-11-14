@@ -1,7 +1,7 @@
 # @gotoeasy/gotoeasy-cli
 简化操作
 <br>
-* 把package.js简化为package.btf，方便阅读编辑
+* 把package.json简化为package.btf，方便阅读编辑
 * 简化发布过程，自动累加最小版本号
 <br>
 <br>
@@ -98,7 +98,7 @@ Apache-2.0
 
 ## package.btf修改好后，使用命令发布npm包
 ```js
-// 累加package.btf文件中的小版本号后转换为package.js
+// 累加package.btf文件中的小版本号后转换为package.json
 // 然后使用npm publish命令发布，成功后更新package.btf文件
 gotoeasy publish
 
