@@ -2,7 +2,7 @@
 @gotoeasy/bus
 
 [version] // 版本号 （必填）
-0.0.6
+0.0.8
 
 
 
@@ -11,6 +11,10 @@ index.js
 
 [dependencies] // 依赖库
 
+[devDependencies] // 开发依赖库
+ava = *
+nyc = *
+
 [description] // 描述
 event bus
 
@@ -18,7 +22,7 @@ event bus
 gotoeasy, event, bus, event bus
 
 [scripts] // 脚本命令
-test = echo "Error: no test specified" && exit 1
+test = nyc ava
 
 [repository] // 仓库
 type= git
