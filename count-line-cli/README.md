@@ -41,7 +41,14 @@ count-line giturl --csv https://github.com/gotoeasy/npm-packages.git
 // 创建代码行数统计的配置文件，进行个性化设定
 count-line init
 ```
+
+
+## Sample
+![count line](https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/img/countline.jpg)
+
+
 <br>
+
 
 ## NOTE
 * 根目录有`.gitignore`文件时将被利用并忽略相关文件，但解析匹配可能有搞错的情况
