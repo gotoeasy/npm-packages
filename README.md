@@ -17,5 +17,6 @@
 * `@gotoeasy/gotoeasy-cli`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/gotoeasy-cli.svg)](https://www.npmjs.com/package/@gotoeasy/gotoeasy-cli) https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-cli
 * `@gotoeasy/is-ignore`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/is-ignore.svg)](https://www.npmjs.com/package/@gotoeasy/is-ignore) https://github.com/gotoeasy/npm-packages/blob/master/is-ignore
 * `@gotoeasy/npm`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/npm.svg)](https://www.npmjs.com/package/@gotoeasy/npm) https://github.com/gotoeasy/npm-packages/blob/master/npm
+* `@gotoeasy/os`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/os.svg)](https://www.npmjs.com/package/@gotoeasy/os) https://github.com/gotoeasy/npm-packages/blob/master/os
 * `@gotoeasy/util`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/util.svg)](https://www.npmjs.com/package/@gotoeasy/util) https://github.com/gotoeasy/npm-packages/blob/master/util
 
