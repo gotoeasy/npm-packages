@@ -44,7 +44,7 @@ count-line init
 
 
 ## Sample
-[![count line](https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/img/countline.jpg)](#)
+[![https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/img/countline.jpg](https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/img/countline.jpg)](https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli/img/countline.jpg)
 
 
 <br>
