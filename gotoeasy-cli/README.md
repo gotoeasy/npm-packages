@@ -31,7 +31,7 @@ ge initpackage
 ```js
 // -------------------------------------------------
 // 这是个替代package.json用的配置文件
-// 结合gotoeasy-cli命令行轻松化
+// 结合gotoeasy-cli命令行，发布前转换为package.json
 // 
 // 主要是因为json配置文件看得不爽
 // 更是因为package.json竟然不能写注释

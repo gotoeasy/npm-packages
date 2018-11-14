@@ -10,7 +10,7 @@ module.exports = bus.on('编译环境', function(result){
 	// 默认配置文件
 	let ary = __dirname.replace(/\\/g, '/').split('/');
 	ary.pop() > ary.pop();
-	let defaultConf = ary.join('/') + '/settings/default-rpose.config.btf'; // 默认配置
+	let defaultConf = ary.join('/') + '/project-template/rpose.config.btf'; // 默认配置
 	let btfDefault = new Btf(defaultConf);
 	let mapPathDefault = btfDefault.getMap('path');
 

@@ -18,9 +18,9 @@ function read(file, encoding='utf-8') {
 }
 
 // 创建指定目录（或指定文件所在的目录）
-function mkdir(file) {
+function mkdir(file, ignorePoint) {
 	let dirs = file.split(/[/\\]/);
-	if(dirs[dirs.length - 1].indexOf('.') >= 0){
+	if(!ignorePoint && dirs[dirs.length - 1].indexOf('.') >= 0){
 		dirs.length = dirs.length -1;
 	}
 

@@ -2,7 +2,7 @@
 @gotoeasy/gotoeasy-cli
 
 [version] // 版本号 （必填）
-0.0.11
+0.0.12
 
 [main] // 入口文件
 index.js
@@ -24,7 +24,7 @@ test = echo "Error: no test specified" && exit 1
 gotoeasy-cli
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, cli, gotoeasy-cli
+gotoeasy-cli
 
 [repository] // 仓库
 type= git

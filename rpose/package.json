@@ -1,12 +1,13 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.9",
+  "version": "0.0.13",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
     "@gotoeasy/bus": "*",
     "@gotoeasy/csjs": "*",
     "@gotoeasy/util": "*",
+    "@gotoeasy/os": "*",
     "acorn-globals": "*",
     "xxhashjs": "*",
     "chokidar": "*"

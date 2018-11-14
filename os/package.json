@@ -1,29 +1,23 @@
 {
-  "name": "@gotoeasy/gotoeasy-cli",
-  "version": "0.0.12",
+  "name": "@gotoeasy/os",
+  "version": "0.0.2",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/btf": "*",
-    "@gotoeasy/util": "*",
-    "commander": "*",
-    "sync-exec": "*"
-  },
-  "bin": {
-    "gotoeasy": "bin/gotoeasy",
-    "ge": "bin/gotoeasy"
+    "os-locale": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "gotoeasy-cli",
+  "description": "os info",
   "keywords": [
-    "gotoeasy-cli"
+    "os",
+    "locale"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-cli/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/os/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },
