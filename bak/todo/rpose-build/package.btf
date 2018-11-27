@@ -1,0 +1,38 @@
+[name] // 项目名 （必填）
+rpose-build
+
+[version] // 版本号 （必填）
+0.2.12
+
+
+
+[main] // 入口文件 （必填）
+
+[dependencies] // 依赖库 （选填）
+
+[devDependencies] // 开发依赖库 （选填）
+
+[scripts] // 脚本命令 （选填）
+test = echo "Error: no test specified" && exit 1
+
+[description] // 描述 （选填）
+
+[keywords] // 检索关键字 （选填），多个关键字用半角逗号分隔
+
+[repository] // 仓库 （选填）
+type= git
+url = git+https://github.com/gotoeasy/rpose.git
+
+[homepage] // 主页 （选填），github项目会自动识别设定
+https://github.com/gotoeasy/rpose#readme
+
+[bugs] // BUG提交地址 （选填），github项目会自动识别设定
+url = https://github.com/gotoeasy/rpose/issues
+
+[author] // 作者信息 （选填）
+name = 青松
+email= gotoeasy@163.com
+
+[license] // 协议 （选填）
+Apache-2.0
+

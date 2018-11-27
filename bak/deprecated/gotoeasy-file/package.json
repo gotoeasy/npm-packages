@@ -1,0 +1,25 @@
+{
+  "name": "gotoeasy-file",
+  "version": "0.1.3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "常用文件操作封装",
+  "keywords": [
+    "fs",
+    "file"
+  ],
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

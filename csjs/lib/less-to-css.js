@@ -65,12 +65,7 @@ module.exports = (function(importLesshat){
 		autoprefixPlugin = new LessPluginAutoPrefix({browsers: ["last 2 versions"]});
 		opts.plugins.push(autoprefixPlugin);
 
-		try{
-			return require('less').render(srcLess, opts);
-		}catch(e){
-			console.error(MODULE, 'less compile failed, file:', file)
-			console.error(MODULE, e)
-			throw e;
-		}
+		// 返回Promise对象
+		return require('less').render(srcLess, opts);
 	}
 })();

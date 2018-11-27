@@ -1,0 +1,29 @@
+[name] // 项目名 （必填）
+gotoeasy-file
+
+[version] // 版本号 （必填）
+0.1.3
+
+
+
+[main] // 入口文件 （必填）
+index.js
+
+[dependencies] // 依赖库 （选填）
+
+[description] // 描述 （选填）
+常用文件操作封装
+
+[keywords] // 检索关键字 （选填），多个关键字用半角逗号分隔
+fs, file
+
+[scripts] // 脚本命令 （选填）
+test = echo "Error: no test specified" && exit 1
+
+[author] // 作者信息 （选填）
+name = 青松
+email= gotoeasy@163.com
+
+[license] // 协议 （选填）
+Apache-2.0
+

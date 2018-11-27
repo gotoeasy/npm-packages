@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.14
+0.0.15
 
 
 
@@ -15,6 +15,7 @@ index.js
 @gotoeasy/csjs = *
 @gotoeasy/util = *
 @gotoeasy/os = *
+@gotoeasy/p-task = *
 acorn-globals = *
 xxhashjs = *
 chokidar = *

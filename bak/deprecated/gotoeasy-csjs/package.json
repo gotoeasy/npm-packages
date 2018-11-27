@@ -1,9 +1,9 @@
 {
-  "name": "@gotoeasy/csjs",
-  "version": "0.0.6",
+  "name": "gotoeasy-csjs",
+  "version": "0.1.8",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/file": "*",
+    "gotoeasy-file": "*",
     "less": "*",
     "lesshat": "*",
     "node-sass": "*",
@@ -12,6 +12,17 @@
     "clean-css": "*",
     "postcss-url": "*",
     "uglify-es": "*",
+    "babel-core": "*",
+    "babel-preset-es2015": "*"
+  },
+  "devDependencies": {
+    "less": "*",
+    "prettier": "*",
+    "less-plugin-autoprefix": "*",
+    "clean-css": "*",
+    "postcss-url": "*",
+    "uglify-es": "*",
+    "gotoeasy-btf": "*",
     "babel-core": "*",
     "babel-preset-es2015": "*"
   },
@@ -26,12 +37,11 @@
     "JS代码压缩"
   ],
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+    "type": "",
+    "url": ""
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/csjs/README.md",
   "bugs": {
-    "url": "https://github.com/gotoeasy/npm-packages/issues"
+    "url": ""
   },
   "author": {
     "name": "青松",
