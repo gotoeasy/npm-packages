@@ -13,7 +13,7 @@ function complie(doc, opts){
 	// 自定义选项
 	options(opts);
 
-	let tokenParser = new TokenParser(doc.html);
+	let tokenParser = new TokenParser(doc);
 	let tokens = tokenParser.parse();
 	//console.info(tokens);
 
@@ -24,7 +24,7 @@ function complie(doc, opts){
 //	console.info(JSON.stringify(ast, null, 4));
 
 	let editor = new AstEditor();	// 合并连续的文本节点
-	editor.edit(ast);
+	editor.edit(ast, doc);
 //	console.info('-----------------------2----------------------------------');
 //	console.info(JSON.stringify(ast, null, 4));
 

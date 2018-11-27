@@ -1,21 +1,23 @@
-const Btf = require('@gotoeasy/btf');
-const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 
 
-function build(opts){
+module.exports = function build(opts){
+	(async function(){
+console.time('build');
 
-	require('./loadModules')();
+		try{
+			require('./loadModules')();
 
-	let env = bus.at('编译环境', opts);
-	bus.at('clean');
+			let env = bus.at('编译环境', opts);
+			bus.at('clean');
 
-	let files = File.files(env.path.src_btf, 'components/**.btf', 'pages/**.btf');
-//console.info('-------------files------------',files)
-	bus.at('源文件清单', files );
-	files.forEach(file => bus.at('添加源文件', file.replace(/\\/g, '/')) );
+			await bus.at('编译全部页面');
+		}catch(e){
+			console.error(e);
+			throw e;
+		}
+
+console.timeEnd('build');
+	})();
 }
-
-
-module.exports = build;
 

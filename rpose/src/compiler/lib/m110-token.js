@@ -34,10 +34,11 @@ let tokenParser = new TokenParser(html);
 let tokens = tokenParser.parse();
 console.info(tokens);
 */
-function TokenParser(src){
+function TokenParser(doc){
 
 	// ------------ 变量 ------------
-	src = escape(src);
+	let file = escape(doc.file);
+	let src = escape(doc.view);
 	let reader = new TemplateReader(src);
 	let tokens = [];
 
@@ -130,7 +131,7 @@ function TokenParser(src){
 
 		}else{
 			// error
-			throw new Error('E001(pos=' + (reader.getPos() - val.length) + ')'); // 标签结束符漏，如<tag 
+			throw new Error('E001(pos=' + (reader.getPos() - val.length) + ', file=' + file + ')'); // 标签结束符漏，如<tag 
 		}
 
 		// 子节点解析通过递归解决
@@ -235,7 +236,7 @@ function TokenParser(src){
 					val += reader.readChar();	// 只要不是【'】就算属性值
 				}
 				if ( reader.eof() ) {
-					throw new Error('invalid expression of AttributeValue: ' + val); // 属性值表达式有误
+					throw new Error('invalid expression of AttributeValue: ' + val + ', file:' + file); // 属性值表达式有误
 				}
 
 				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
@@ -247,7 +248,7 @@ function TokenParser(src){
 				}
 
 				if ( val.trim() == '' ) {
-					throw new Error('E002(pos=' + (reader.getPos() - val.length) + ')'); // 属性值漏，如<tag aaa= />
+					throw new Error('E002(pos=' + (reader.getPos() - val.length) + ', file=' + file + ')'); // 属性值漏，如<tag aaa= />
 				}
 				token = { type: options.TypeAttributeValue, text: unescape(unescapeHtml(val)) };	// Token: 属性值
 				tokens.push(token);

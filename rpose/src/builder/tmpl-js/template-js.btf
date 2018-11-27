@@ -10,8 +10,8 @@
 <% } %>
 
 // 属性接口定义
-<%= $data['$componentName'] %>.prototype.$OPTION_KEYS = <%= $data['optionkeys'] %>;  // 可通过标签配置的属性，未定义则不支持外部配置
-<%= $data['$componentName'] %>.prototype.$STATE_KEYS = <%= $data['statekeys'] %>;    // 可更新的state属性，未定义则不支持外部更新state
+<%= $data['$componentName'] %>.prototype.$OPTION_KEYS = <%= JSON.stringify($data['optionkeys']) %>;  // 可通过标签配置的属性，未定义则不支持外部配置
+<%= $data['$componentName'] %>.prototype.$STATE_KEYS = <%= JSON.stringify($data['statekeys']) %>;    // 可更新的state属性，未定义则不支持外部更新state
 
 // 组件函数
 function <%= $data['$componentName'] %>(options={}) {
@@ -45,11 +45,11 @@ function <%= $data['$componentName'] %>(options={}) {
     this.$updater = <%= $data['updater'] %>;
     <% } %>
 
-    <% let actionskeys = JSON.parse($data['actionskeys']); %>
+    <% let actionskeys = $data['actionskeys'] || []; %>
     <% if ( actionskeys.includes('window.onload') ){ %>
         rpose.once('window.onload', this.$actions['window.onload'].bind(this)); // 自定义方法中有window.onload时，自动调用
     <% } %>
-    <% let methodskeys = JSON.parse($data['methodskeys']); %>
+    <% let methodskeys = $data['methodskeys'] || []; %>
     <% if ( methodskeys.includes('render') ){ %>
         this.render = this.$methods.render; // 自定义方法中有render时，使用自定义的render
     <% } %>

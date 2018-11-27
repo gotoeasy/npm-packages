@@ -103,7 +103,7 @@ function i18n(key, defaultMessage=''){
 function initMessages(){
 
 	let locales = ['zh_CN', 'ja_JP', 'en_US'];
-	const msgLocale = locales.includes(os.locale) ? os.locale : 'en_US';
+	const msgLocale = locales.includes(os.locale()) ? os.locale() : 'en_US';
 
 	let msgs = {
 			zh_CN: {

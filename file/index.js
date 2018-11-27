@@ -244,6 +244,21 @@ function concat(path, handle) {
 	return ary.join('\r\n');
 };
 
+
+// ---------------------------------
+function readPromise(file){
+	return new Promise(function(resolve, reject){
+		fs.readFile(file, 'utf-8', (err, data) => err ? reject(err) : resolve(data));
+	});
+}
+function writePromise(file, content){
+	return new Promise(function(resolve, reject){
+		mkdir(file);
+		fs.writeFile(file, content, 'utf-8', (err, data) => err ? reject(err) : resolve(data));
+	});
+}
+
+
 // 导出接口
 let api = {};
 api.write = write;
@@ -263,5 +278,8 @@ api.remove = remove;
 api.rm = remove;
 api.del = remove;
 api.concat = concat;
+
+api.readPromise = readPromise;
+api.writePromise = writePromise;
 
 module.exports = api;

@@ -21,10 +21,9 @@ class AstGen{
 		this.ast = ast;
 		this.doc = doc;
 
-		this.$dataKeys = JSON.parse(doc.statekeys) || [];	// 已解析的statekeys
-		this.$optsKeys = JSON.parse(doc.optionkeys) || [];	// 已解析的optionkeys
-		//this.$actionsKeys = getObjectKeys(doc.actions);		// 方法对象的源码，如{a:function(){},b:()=>{}......}，从中取出key（数组）
-		this.$actionsKeys = JSON.parse(doc.actionskeys);	// 已解析的方法对象属性名名
+		this.$dataKeys = doc.statekeys;		// 已解析的statekeys
+		this.$optsKeys = doc.optionkeys;		// 已解析的optionkeys
+		this.$actionsKeys = doc.actionskeys;	// 已解析的方法对象属性名名
 
 		this.$counter = 0;
 	}
@@ -33,7 +32,7 @@ class AstGen{
 		let tagSet = new Set();
 		//tagSet.add(this.doc.tag);
 		let src = this.parseChildren(this.ast, tagSet);
-		this.doc.requires = tagSet; // 本组件所直接依赖的其他组件
+		this.doc.requires = [...tagSet]; // 本组件所直接依赖的其他组件
 //console.info(MODULE, this.doc.tag, JSON.stringify([...tagSet]));
 console.debug(MODULE, src);
 		return checkAndInitVars(this.doc, src, this.$dataKeys, this.$optsKeys);
@@ -93,8 +92,8 @@ console.debug(MODULE, src);
 					let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
 					let cnt = ++this.$counter;
 
-					//!isStdTag && tagSet.add(tag + ':' + npmPkg);   // TODO
-					!isStdTag && tagSet.add(tag);
+					let tagpkg = npmPkg ? (tag + ':' + npmPkg) : tag;					// 标签全名
+					!isStdTag && tagSet.add( tagpkg );
 
 					let childSrc = node.children && node.children.length ? this.parseChildren(node.children, tagSet, false, isSvgTag, slotNmaes) : null;
 

@@ -1,5 +1,5 @@
 # `@gotoeasy/os`
-os info
+os info util
 <br>
 <br>
 
@@ -17,8 +17,8 @@ npm i @gotoeasy/os
 ```js
 const os = require('@gotoeasy/os');
 
-console.log('homedir:', os.homedir);
-console.log('locale:', os.locale);
+console.log('homedir:', os.homedir());
+console.log('locale:', os.locale());
 ```
 <br>
 <br>

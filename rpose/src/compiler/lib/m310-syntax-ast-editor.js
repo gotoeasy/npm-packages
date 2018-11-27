@@ -6,7 +6,7 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 // 连续的文本、表达式，合并为一个表达式
 function AstEditor(){
 
-	this.edit = function(ast) {
+	this.edit = function(ast, doc) {
 		joinText(ast);
 		return ast;
 	}

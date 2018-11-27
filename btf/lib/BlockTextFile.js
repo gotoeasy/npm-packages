@@ -11,14 +11,14 @@ class BlockTextFile{
 		parse(this.list, lines, this.LF);
 
 		this.list.forEach(doc => {
-			// getText
+			// document.getText
 			Object.defineProperty(doc, 'getText', {
 				enumerable: false,
 				configurable: false,
 				get: () => name => doc[(name+'').toLowerCase()]
 			});
 			
-			// getMap
+			// document.getMap
 			Object.defineProperty(doc, 'getMap', {
 				enumerable: false,
 				configurable: false,

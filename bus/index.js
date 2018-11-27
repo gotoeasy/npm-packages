@@ -70,10 +70,4 @@ function Bus(){
 	this.clear = clear;
 }
 
-
-function singleBus(){
-	return singleBus.bus || (singleBus.bus = new Bus());
-}
-
-// 默认单例
-module.exports = singleBus();
+module.exports = new Bus();

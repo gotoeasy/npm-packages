@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/os",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "main": "index.js",
   "dependencies": {
     "os-locale": "*"
@@ -8,9 +8,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "os info",
+  "description": "os info util",
   "keywords": [
     "os",
+    "homedir",
     "locale"
   ],
   "repository": {

@@ -52,4 +52,9 @@ test('安装、使用、卸载、清除', t => {
 	bus.off('xxxx');
 	t.is(bus.at('add', 1, 2), 3);
 
+	bus.clear();
+	let bus2 = bus.newInstance();
+	bus2.on('add', add);
+	t.is(bus2.at('add', 1, 2), 3);
+
 });

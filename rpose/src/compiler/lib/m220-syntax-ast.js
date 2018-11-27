@@ -12,6 +12,7 @@ function AstParser(tokens, doc){
 	syntaxCheck(tokens); // 删除空白文本
 	let reader = new TokenReader(tokens);
 	let ast = [];
+	let file = doc.file;
 
 	// ------------ 接口方法 ------------
 	// 解析
@@ -70,11 +71,11 @@ function AstParser(tokens, doc){
 				if ( reader.getCurrentToken().text == node.tag ) {
 					reader.skip(1); // 跳过闭合标签
 				}else{
-					console.error(MODULE, doc.file, 'close tag unmatch:', node.tag, '/', reader.getCurrentToken().text);
+					console.error(MODULE, file, 'close tag unmatch:', node.tag, '/', reader.getCurrentToken().text);
 					throw new Error('close tag unmatch: ' + node.tag + ' / ' + reader.getCurrentToken().text); // 闭合标签名不匹配
 				}
 			}else{
-				console.error(MODULE, doc.file, 'tag not close:', node.tag);
+				console.error(MODULE, file, 'tag not close:', node.tag);
 				throw new Error('tag not close: ' + node.tag ); // 标签没有闭合
 			}
 		}

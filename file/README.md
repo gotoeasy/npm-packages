@@ -1,5 +1,5 @@
-# gotoeasy-file
-常用文件操作封装
+# @gotoeasy/file
+file util
 <br>
 <br>
 
@@ -7,3 +7,24 @@
 [![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 <br>
 <br>
+
+
+
+## Sample
+```js
+const File = require('@gotoeasy/file');
+
+let txt = File.read('d:/abc.txt');
+
+File.write('d:/abc.txt', 'abcd');
+
+...
+...
+...
+
+```
+
+
+## `Links`
+* `npm-packages` https://github.com/gotoeasy/npm-packages
+
