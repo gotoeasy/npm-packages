@@ -47,11 +47,11 @@ module.exports = bus.on('编译环境', function(result){
 			result.path.build_temp = getConfPath(root, mapPathDefault, mapPath, 'build_temp');
 			result.path.build_dist = getConfPath(root, mapPathDefault, mapPath, 'build_dist');
 
-			// reset.css、less、sass入口文件
-			result.file.reset_css = root + '/' + (mapCommon.get('reset_css') || '').split('/').filter(v => !!v).join('/');
+			// common.css、less、sass入口文件
+			result.file.common_css = root + '/' + (mapCommon.get('common_css') || '').split('/').filter(v => !!v).join('/');
 			result.file.index_less = root + '/' + (mapCommon.get('index_less') || '').split('/').filter(v => !!v).join('/');
 			result.file.index_sass = root + '/' + (mapCommon.get('index_sass') || '').split('/').filter(v => !!v).join('/');
-			!File.existsFile(result.file.reset_css) && (result.file.reset_css = null);
+			//!File.existsFile(result.file.common_css) && (result.file.common_css = null);
 			!File.existsFile(result.file.index_less) && (result.file.index_less = null);
 			!File.existsFile(result.file.index_sass) && (result.file.index_sass = null);
 

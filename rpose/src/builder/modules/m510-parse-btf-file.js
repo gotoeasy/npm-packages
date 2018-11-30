@@ -1,19 +1,28 @@
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
-const File = require('@gotoeasy/file');
 const Btf = require('@gotoeasy/btf');
 const acorn = require('acorn');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 module.exports = bus.on('解析源文件', function(){
 
 	let ptask = new PTask((resolve, reject, isBroken) => async function(btfFile){
-		let text = await File.readPromise(btfFile);
-		let btf = new Btf(text, true);
-		let doc = btf.getDocuments()[0];
-		editBtfDocument(doc, btfFile);
-		resolve( btf );
+
+		try{
+			let text = await bus.at('异步读文件', btfFile);
+			if ( text === undefined ) {
+				reject(MODULE + 'file not found: ' + btfFile);
+				return;
+			}
+
+			let btf = new Btf(text, true);
+			editBtfDocument(btf.getDocument(), btfFile);
+
+			resolve( btf );
+		}catch(e){
+			reject(Error.err(MODULE + 'parse btf failed', btfFile, e));
+		}
 	});
 
 

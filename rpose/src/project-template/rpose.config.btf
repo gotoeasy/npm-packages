@@ -10,7 +10,7 @@ build_temp          : build/temp
 build_dist          : build/dist
 
 [common] // 定义文件
-reset_css           : src/common/css/reset.css
+common_css          : src/common/css/common.css
 index_less          : src/common/less/index.less
 index_sass          : src/common/less/index.scss
 

@@ -5,19 +5,23 @@ const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const ClsTemplate = require('../ClsTemplate');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 module.exports = bus.on('编译模板JS', function(){
 
 	let ptask = new PTask((resolve, reject, isBroken) => async function(){
-		console.debug('----------- m020-template-js ----------- (js component template)');
+		try{
+			console.debug('----------- m020-template-js ----------- (js component template)');
 
-		let dirname = __dirname.replace(/\\/g, '/');
-		let fileNm = dirname.substring(0, dirname.lastIndexOf('/')) + '/tmpl-js/template-js.btf';
-		const btf = new Btf(fileNm);
-		const clsTemplate = new ClsTemplate(btf.getText('template').replace(/\\/g, "\\\\"), '$data');
+			let dirname = __dirname.replace(/\\/g, '/');
+			let fileNm = dirname.substring(0, dirname.lastIndexOf('/')) + '/tmpl-js/template-js.btf';
+			const btf = new Btf(fileNm);
+			const clsTemplate = new ClsTemplate(btf.getText('template').replace(/\\/g, "\\\\"), '$data');
 
-		resolve(clsTemplate.toString);
+			resolve(clsTemplate.toString);
+		}catch(e){
+			reject( Error.err(MODULE + 'build template js failed', 'tmpl-js/template-js.btf', e) )
+		}
 	});
 
 

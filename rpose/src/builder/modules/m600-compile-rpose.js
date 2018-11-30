@@ -3,7 +3,7 @@ const PTask = require('@gotoeasy/p-task');
 const csjs = require('@gotoeasy/csjs');
 const bus = require('@gotoeasy/bus');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 module.exports = bus.on('编译RPOSE', function(pResult){
 
@@ -15,15 +15,18 @@ module.exports = bus.on('编译RPOSE', function(pResult){
 	let fileDist = root + '/dist/rpose.js';
 
 	let ptask = new PTask((resolve, reject, isBroken) => async function(){
-		let src = File.concat(srcDir);	// 合并源码
-		src = csjs.formatJs(src, true); // 删除注释
+		try{
+			let src = File.concat(srcDir);	// 合并源码
+			src = csjs.formatJs(src, true); // 删除注释
 
-console.debug(MODULE, 'rpose compile ok');
-		resolve(src);
+			resolve(src);
 
-		Promise.resolve()
-			.then( File.write(fileDist, src) )
-			.catch(e=>console.error(MODULE, e));
+			Promise.resolve()
+				.then( File.write(fileDist, src) )
+				.catch(e=>console.error(MODULE, e));
+		}catch(e){
+			reject(Error.err(MODULE + 'compile rpose failed', e));
+		}
 	});
 
 

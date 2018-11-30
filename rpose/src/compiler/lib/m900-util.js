@@ -1,6 +1,6 @@
 const options = require('./m020-options')();
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 function lineString(str, quote = '"') {
 	if ( str == null ) {

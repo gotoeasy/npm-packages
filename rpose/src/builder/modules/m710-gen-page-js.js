@@ -1,25 +1,23 @@
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 module.exports = bus.on('汇总页面关联JS代码', function(){
 
 	return async function(btfFile, allrequires){
-		// 组装代码返回
-		let src;
 		try{
-			src = await pageJs(allrequires);
+			// 组装代码
+			let src = await pageJs(allrequires);
+
+			// 默认美化，release时则压缩
+			let env = bus.at('编译环境');
+			src = env.release ? csjs.miniJs(src) : csjs.formatJs(src);
+
+			return src;
 		}catch(e){
-			console.error(MODULE, 'gen page js failed', btfFile);
-			throw e;
+			throw Error.err(MODULE + 'gen page js failed', btfFile, e)
 		}
-
-		// 默认美化，release时则压缩
-		let env = bus.at('编译环境');
-		src = env.release ? csjs.miniJs(src) : csjs.formatJs(src);
-
-		return src;
 	};
 
 }());
@@ -28,22 +26,9 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 // 页面代码组装
 async function pageJs(allrequires){
 
-	let srcRpose,srcComponents;
-	try{
-		srcRpose = await bus.at('编译RPOSE');
-	}catch(e){
-		console.error(MODULE, 'compile rpose failed');
-		throw e;
-	}
-
+	let srcRpose = await bus.at('编译RPOSE');
 	let srcStmt = getSrcRegisterComponents(allrequires);
-
-	try{
-		srcComponents = await getSrcComponents(allrequires);
-	}catch(e){
-		console.error(MODULE, 'gen component js failed');
-		throw e;
-	}
+	let srcComponents = await getSrcComponents(allrequires);
 
 	let src = `
 			${srcRpose}
@@ -70,8 +55,7 @@ function getSrcRegisterComponents(allrequires){
 
 		return `rpose.registerComponents(${JSON.stringify(obj).replace(/"/g,'')});`;
 	}catch(e){
-		console.error(MODULE, 'gen register stmt failed', e);
-		throw e;
+		throw Error.err(MODULE + 'gen register stmt failed', allrequires, e);
 	}
 }
 
@@ -85,7 +69,6 @@ async function getSrcComponents(allrequires){
 		}
 		return ary.join('\n');
 	}catch(e){
-		console.error(MODULE, 'get component src failed');
-		throw e;
+		throw Error.err(MODULE + 'get component src failed', allrequires, e);
 	}
 }

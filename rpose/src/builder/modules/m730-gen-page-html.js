@@ -6,7 +6,6 @@ module.exports = bus.on('生成页面HTML代码', function(){
 	let ptask = new PTask(resolve => function(btfFile){
 
 		let fileName = btfFile.substring(btfFile.lastIndexOf('/') + 1, btfFile.length - 4); // btf/pages/abc-def.btf => acd-def
-
 		resolve( `
 
 <!doctype html>

@@ -20,7 +20,7 @@ let opts = {
 
 !opts.debug && (console.debug = x=>x);
 
- 
+opts.mode = 'watch';
 rpose.watch(opts);
 
 

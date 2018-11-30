@@ -14,5 +14,6 @@ let opts = {
 
 !opts.debug && (console.debug = x=>x);
 
+opts.mode = 'publish';
 rpose.publish(opts);
 

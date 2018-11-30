@@ -246,9 +246,13 @@ function concat(path, handle) {
 
 
 // ---------------------------------
-function readPromise(file){
+function readPromise(file, defaultContent){
 	return new Promise(function(resolve, reject){
-		fs.readFile(file, 'utf-8', (err, data) => err ? reject(err) : resolve(data));
+		if ( exists(file) ) {
+			fs.readFile(file, 'utf-8', (err, data) => err ? reject(err) : resolve(data));
+		}else{
+			defaultContent === undefined ? reject('file not found: ' + file) : resolve(defaultContent);
+		}
 	});
 }
 function writePromise(file, content){

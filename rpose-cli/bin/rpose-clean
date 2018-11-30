@@ -15,6 +15,7 @@ let opts = {
 
 !opts.debug && (console.debug = x=>x);
 
+opts.mode = 'clean';
 rpose.clean(opts);
 
 

@@ -1,9 +1,9 @@
 
+const CleanCSS = require('clean-css');
 
-
+// CSS压缩
 module.exports = function (src, opts={level:2}){
 
-	const CleanCSS = require('clean-css');
 	let rs = new CleanCSS(opts).minify(src);
 
 	rs.warnings.forEach(v=>console.error(v));

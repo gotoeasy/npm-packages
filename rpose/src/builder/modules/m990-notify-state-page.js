@@ -4,8 +4,8 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('页面编译状态', function(){
 
-	return function(btfFile, state){
-		state ? console.info(MODULE, 'page build ok:', btfFile) : console.info(MODULE, 'page build ng:', btfFile);;
+	return function(htmlFile, state){
+		state ? console.info(MODULE, 'build ok:', htmlFile) : console.info(MODULE, 'build ng:', htmlFile);;
 	}
 
 }());

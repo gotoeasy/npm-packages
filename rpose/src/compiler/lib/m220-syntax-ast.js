@@ -3,7 +3,7 @@ const options = require('./m020-options')();
 const TokenReader = require('./m200-syntax-token-reader');
 const syntaxCheck = require('./m210-syntax-check');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 // ------------ 构建AST ------------
 function AstParser(tokens, doc){
@@ -71,12 +71,11 @@ function AstParser(tokens, doc){
 				if ( reader.getCurrentToken().text == node.tag ) {
 					reader.skip(1); // 跳过闭合标签
 				}else{
-					console.error(MODULE, file, 'close tag unmatch:', node.tag, '/', reader.getCurrentToken().text);
-					throw new Error('close tag unmatch: ' + node.tag + ' / ' + reader.getCurrentToken().text); // 闭合标签名不匹配
+					//console.error(MODULE, 'close tag unmatch:', node.tag, '/', reader.getCurrentToken().text);
+					throw Error.err(MODULE + 'close tag unmatch: ' + node.tag + ' / ' + reader.getCurrentToken().text, file); // 闭合标签名不匹配
 				}
 			}else{
-				console.error(MODULE, file, 'tag not close:', node.tag);
-				throw new Error('tag not close: ' + node.tag ); // 标签没有闭合
+				throw Error.err(MODULE + 'tag not close: ' + node.tag, file); // 标签没有闭合
 			}
 		}
 

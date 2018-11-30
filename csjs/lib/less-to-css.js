@@ -34,6 +34,7 @@ less\lib\less\contexts.js
 */
 
 const File = require('@gotoeasy/file');
+const less = require('less');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -48,6 +49,7 @@ module.exports = (function(importLesshat){
 	ary.push('lesshat/lesshat.less');
 	importLesshat = ary.join('/'); // 用相对目录找出lesshat.less
 	if ( !File.exists(importLesshat) ) {
+		console.warn(MODULE, 'file not found:', 'lesshat.less');
 		importLesshat = '';
 	}else{
 		importLesshat = '@import "' + importLesshat + '";\n';
@@ -60,12 +62,8 @@ module.exports = (function(importLesshat){
 		opts.javascriptEnabled = true;
 		opts.plugins = opts.plugins || [];
 		
-		// autoprefixer
-		var LessPluginAutoPrefix = require('less-plugin-autoprefix'),
-		autoprefixPlugin = new LessPluginAutoPrefix({browsers: ["last 2 versions"]});
-		opts.plugins.push(autoprefixPlugin);
-
 		// 返回Promise对象
-		return require('less').render(srcLess, opts);
+		return less.render(srcLess, opts);
 	}
+
 })();

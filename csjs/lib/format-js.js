@@ -1,6 +1,8 @@
 // ---------------------------
 // 美化JS
 // ---------------------------
+const uglifyEs = require("uglify-es");
+const prettier = require("prettier");
 
 const optUglify = {
 	compress: false,		// 不压缩
@@ -15,8 +17,8 @@ const optUglify = {
     keep_fnames: true,		// 不修函数名
 };
 
-function uglify(src){
-	let rs = require("uglify-es").minify(src, optUglify);
+function uglifyFormat(src){
+	let rs = uglifyEs.minify(src, optUglify);
 	if ( rs.error ) {
 		console.error(rs.error); // 要抛异常否？
 		return src;
@@ -28,9 +30,9 @@ function uglify(src){
 
 const optPrettier = { parser: "babylon", printWidth: 150, tabWidth: 4 };
 
-function prettier(src){
+function prettierFormat(src){
 	try{
-		return require('prettier').format(src, optPrettier);
+		return prettier.format(src, optPrettier);
 	}catch(e){
 		console.error('format error:', e);
 		return src;
@@ -39,5 +41,5 @@ function prettier(src){
 
 // 呃... 删除注释用uglify-es， 保留注释用prettier
 module.exports = function formatJs(src, removeComments){
-	return removeComments ? uglify(src) : prettier(src);
+	return removeComments ? uglifyFormat(src) : prettierFormat(src);
 }

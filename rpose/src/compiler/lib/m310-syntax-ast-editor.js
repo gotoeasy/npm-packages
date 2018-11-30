@@ -1,6 +1,6 @@
 const options = require('./m020-options')();
 const util = require('./m900-util')
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 // ------------ Ast编辑器 ------------
 // 连续的文本、表达式，合并为一个表达式

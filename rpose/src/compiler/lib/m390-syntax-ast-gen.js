@@ -9,11 +9,12 @@ const util = require('./m900-util');
 const acorn = require('acorn');
 const acornGlobals = require('acorn-globals');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 const FN_TMPL_DEF = `function nodeTemplate($state, $options, $actions){`; // 模板方法开始行
 
 const JS_VARS = options.NameFnEscapeHtml.split('.')[0] + 'window,assignOptions,rpose,$SLOT,Object,Map,Set,WeakMap,WeakSet,Date,Math,Array,String,Number,JSON,Error,Function,arguments,Boolean,Promise,Proxy,Reflect,RegExp,alert,console,window,document'.split(',');
+
 
 // ------------ Ast代码编译器 ------------
 class AstGen{
@@ -146,7 +147,7 @@ console.debug(MODULE, src);
 			for ( let i=0; i<arySrc.length; i++) {
 				if ( arySrc[i].startsWith(startStr) ) {
 					if ( isFn && str ) {
-						throw new Error('invlid tag count'); // 模板函数返回的标签数量最多只能一个
+						throw Error.err(MODULE + 'invlid tag count'); // 模板函数返回的标签数量最多只能一个
 					}
 					str && (str += ', ');
 					str += arySrc[i].substring(len, arySrc[i].length-2); // ${aryNm}.push(xxxxxxx); => xxxxxxx
@@ -361,7 +362,7 @@ function getDomEvents(attrs, isStdTag, $actionsKeys){
 			if ( attrs[key].indexOf('{') < 0 ) {
 				// 没有表达式，检查指定方法是否存在
 				if ( !$actionsKeys.includes(attrs[key].trim()) ) {
-					throw new Error('action not found: ' + attrs[key]); // 指定方法找不到，需要定义
+					throw Error.err(MODULE + 'action not found: ' + attrs[key]); // 指定方法找不到，需要定义
 				}else{
 					attrs[key] = '{=$actions.' + attrs[key].trim() + '}'; // onclick="fnClick" => onclick="{=$actions.fnClick}"
 				}
@@ -394,9 +395,7 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		scope = acornGlobals(src);
 		if ( !scope.length ) return src; // 正常，直接返回
 	}catch(e){
-		console.error(MODULE, 'source syntax error:', doc.file);
-		console.error(MODULE, src); // 多数表达式中有语法错误导致
-		throw e;
+		throw Error.err(MODULE + 'source syntax error', doc.file, src); // 多数表达式中有语法错误导致
 	}
 
 	// 函数内部添加变量声明赋值后返回
@@ -408,14 +407,10 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		let inc$opts = $optsKeys.includes(v.name);
 		let incJsVars = JS_VARS.includes(v.name);
 		if ( !inc$data && !inc$opts && !incJsVars) {
-			console.error(MODULE, 'template variable undefined:', v.name, 'file:', doc.file, $dataKeys);
-			console.error(MODULE, src);
-			throw new Error('template variable undefined: ' + v.name);		// 变量不在$state或$options的属性范围内
+			throw Error.err(MODULE + 'template variable undefined: ' + v.name, doc.file, $dataKeys);	// 变量不在$state或$options的属性范围内
 		}
 		if ( inc$data && inc$opts ) {
-			console.error(MODULE, 'template variable uncertainty, file:', doc.file);
-			console.error(MODULE, src);
-			throw new Error('template variable uncertainty: ' + v.name);	// 变量同时存在于$state和$options，无法自动识别来源，需指定
+			throw Error.err(MODULE + 'template variable uncertainty: ' + v.name, doc.file);				// 变量同时存在于$state和$options，无法自动识别来源，需指定
 		}
 
 

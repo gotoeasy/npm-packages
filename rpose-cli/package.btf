@@ -2,7 +2,7 @@
 @gotoeasy/rpose-cli
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.9
 
 
 
@@ -18,12 +18,14 @@ rp = bin/rpose
 commander = *
 chalk = *
 inquirer = *
+v8-compile-cache = *
 
 [devDependencies] // 开发依赖库
 @gotoeasy/rpose = *
 commander = *
 chalk = *
 inquirer = *
+v8-compile-cache = *
 
 [description] // 描述
 rpose-cli

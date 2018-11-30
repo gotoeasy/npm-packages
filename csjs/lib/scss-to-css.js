@@ -4,6 +4,7 @@ const sass = require('node-sass');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
+// SASS编译
 module.exports = (function(){
 
 	return function(src, file, opts={}){

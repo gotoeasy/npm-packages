@@ -1,19 +1,20 @@
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 
-const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 module.exports = bus.on('源文件清单', function (fileSet){
 
 	// add=true添加，false则删除
-	return function(files, add=true){
+	return function(files, add=true, reload=false){
 
-		if ( !fileSet ) {
+		if ( reload || !fileSet ) {
 			// 初期检索源文件清单
 			let env = bus.at('编译环境');
-			let files = File.files(env.path.src_btf, 'components/**.btf', 'pages/**.btf');
+			let files = File.files(env.path.src_btf, '**.btf');
 			fileSet = new Set(files);
-console.debug(MODULE, 'init file list', fileSet);
+//console.info(MODULE, 'init file list', fileSet);
+			return [...fileSet];
 		}
 
 

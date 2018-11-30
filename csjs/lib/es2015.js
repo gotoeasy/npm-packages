@@ -1,4 +1,5 @@
 const File = require('@gotoeasy/file');
+const babelCore = require('babel-core');
 
 // es2015
 module.exports =  (function(babel, options){
@@ -20,5 +21,5 @@ module.exports =  (function(babel, options){
 		return rs.code;
 	}
 
-})(require("babel-core"));
+})(babelCore);
 

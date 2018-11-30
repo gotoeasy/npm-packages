@@ -10,15 +10,17 @@ class BlockTextFile{
 		this.list = [];
 		parse(this.list, lines, this.LF);
 
+		!this.list.length && this.list.push({});
+
 		this.list.forEach(doc => {
-			// document.getText
+			// getText
 			Object.defineProperty(doc, 'getText', {
 				enumerable: false,
 				configurable: false,
 				get: () => name => doc[(name+'').toLowerCase()]
 			});
 			
-			// document.getMap
+			// getMap
 			Object.defineProperty(doc, 'getMap', {
 				enumerable: false,
 				configurable: false,
@@ -26,6 +28,10 @@ class BlockTextFile{
 			});
 		});
 
+    }
+
+    getDocument(){
+        return this.list[0];
     }
 
     getDocuments(){

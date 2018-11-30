@@ -1,18 +1,20 @@
 {
   "name": "@gotoeasy/rpose-cli",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/rpose": "*",
     "commander": "*",
     "chalk": "*",
-    "inquirer": "*"
+    "inquirer": "*",
+    "v8-compile-cache": "*"
   },
   "devDependencies": {
     "@gotoeasy/rpose": "*",
     "commander": "*",
     "chalk": "*",
-    "inquirer": "*"
+    "inquirer": "*",
+    "v8-compile-cache": "*"
   },
   "bin": {
     "rpose": "bin/rpose",
