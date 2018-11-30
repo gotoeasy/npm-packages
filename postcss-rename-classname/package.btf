@@ -1,0 +1,47 @@
+[name] // 项目名 （必填）
+postcss-rename-classname
+
+[version] // 版本号 （必填）
+0.0.1
+
+
+
+[main] // 入口文件
+index.js
+
+[bin] // cli命令
+
+[dependencies] // 依赖库
+postcss = *
+
+[devDependencies] // 开发依赖库
+postcss = *
+ava = *
+nyc = *
+
+[scripts] // 脚本命令
+test = nyc ava
+
+[description] // 描述
+change css classname
+
+[keywords] // 检索关键字，多个关键字用半角逗号分隔
+change classname, css, postcss
+
+[repository] // 仓库
+type= git
+url = git+https://github.com/gotoeasy/npm-packages.git
+
+[homepage] // 主页，github项目会自动识别设定
+https://github.com/gotoeasy/npm-packages/blob/master/postcss-rename-classname/README.md
+
+[bugs] // BUG提交地址，github项目会自动识别设定
+url = https://github.com/gotoeasy/npm-packages/issues
+
+[author] // 作者信息
+name = 青松
+email= gotoeasy@163.com
+
+[license] // 协议
+Apache-2.0
+

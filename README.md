@@ -18,5 +18,6 @@
 * `@gotoeasy/is-ignore`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/is-ignore.svg)](https://www.npmjs.com/package/@gotoeasy/is-ignore) https://github.com/gotoeasy/npm-packages/blob/master/is-ignore
 * `@gotoeasy/npm`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/npm.svg)](https://www.npmjs.com/package/@gotoeasy/npm) https://github.com/gotoeasy/npm-packages/blob/master/npm
 * `@gotoeasy/os`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/os.svg)](https://www.npmjs.com/package/@gotoeasy/os) https://github.com/gotoeasy/npm-packages/blob/master/os
+* `@gotoeasy/postcss-rename-classname`: [![NPM version](https://img.shields.io/npm/v/postcss-rename-classname.svg)](https://www.npmjs.com/package/postcss-rename-classname) https://github.com/gotoeasy/npm-packages/blob/master/postcss-rename-classname
 * `@gotoeasy/util`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/util.svg)](https://www.npmjs.com/package/@gotoeasy/util) https://github.com/gotoeasy/npm-packages/blob/master/util
 

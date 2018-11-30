@@ -1,0 +1,35 @@
+{
+  "name": "postcss-rename-classname",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "postcss": "*"
+  },
+  "devDependencies": {
+    "postcss": "*",
+    "ava": "*",
+    "nyc": "*"
+  },
+  "scripts": {
+    "test": "nyc ava"
+  },
+  "description": "change css classname",
+  "keywords": [
+    "change classname",
+    "css",
+    "postcss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/postcss-rename-classname/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
