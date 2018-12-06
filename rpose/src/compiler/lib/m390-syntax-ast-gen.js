@@ -89,7 +89,7 @@ console.debug(MODULE, src);
 					let isSvgTag = isSVG || /^svg$/i.test(tag);							// 是否SVG标签或SVG子标签
 					let isStdTag = isSvgTag || REG_TAGS.test(tag);						// 是否标准标签
 					let events = getDomEvents(node.attrs, isStdTag, this.$actionsKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
-					let attrs = attrsStringify(node);									// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
+					let attrs = attrsStringify(node, this.doc);							// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
 					let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
 					let cnt = ++this.$counter;
 
@@ -209,7 +209,7 @@ function radom(min, max){
 
 
 // JSON对象转字符串形式，值含函数调用
-function attrsStringify(node){
+function attrsStringify(node, doc){
 	let attrs = node.attrs;
 	if ( !attrs ) {
 		node.x = 1;
@@ -238,7 +238,7 @@ function attrsStringify(node){
 				let expr = '(' + ary.join(' + ') + ')';
 
 				if ( k == 'class' ) {
-					kvs.push('"' + k + '": ' + JSON.stringify(classStrToObject(attrs[k])) );  // class="abc def" => {class:{abc:1, def:1}}
+					kvs.push('"' + k + '": ' + JSON.stringify(classStrToObject(attrs[k], doc)) );  // class="abc def" => {class:{abc:1, def:1}}
 				}else{
 					kvs.push('"' + k + '": ' + expr);
 				}
@@ -334,13 +334,19 @@ function parseExpression(ary, val){
 }
 
 
-function classStrToObject(cls){
+function classStrToObject(cls, doc){
 	if ( !cls.trim()) {
 		return {};
 	}
 	let ary = cls.split(/\s/);
 	let rs = {};
-	ary.forEach(v => v.trim() && (rs[v]=1));
+
+	for ( let i=0,cls; i<ary.length; i++) {
+		cls = ary[i].trim();
+		doc.mapping[cls] && (cls = doc.mapping[cls]);
+		rs[cls] = 1;
+	}
+
 	return rs;
 }
 

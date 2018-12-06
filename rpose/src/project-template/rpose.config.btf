@@ -11,8 +11,6 @@ build_dist          : build/dist
 
 [common] // 定义文件
 common_css          : src/common/css/common.css
-index_less          : src/common/less/index.less
-index_sass          : src/common/less/index.scss
-
-
+common_less         : src/common/less/common.less
+common_sass         : src/common/less/common.scss
 

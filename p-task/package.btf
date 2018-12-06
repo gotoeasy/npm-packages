@@ -2,7 +2,7 @@
 @gotoeasy/p-task
 
 [version] // 版本号 （必填）
-0.0.2
+0.0.5
 
 
 
@@ -20,7 +20,7 @@ string-hash = *
 promise task
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-promise task
+gotoeasy, p-task, promise task, task
 
 [scripts] // 脚本命令
 test = echo "Error: no test specified" && exit 1

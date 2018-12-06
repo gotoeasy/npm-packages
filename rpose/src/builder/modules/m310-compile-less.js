@@ -12,10 +12,10 @@ module.exports = bus.on('编译LESS', function(lessIndexText){
 			const env = bus.at('编译环境');
 			let file = btfFile.substring(env.path.src_btf.length + 1);
 			if ( lessIndexText === undefined ) {
-				lessIndexText = File.exists(env.file.index_less) ? File.read(env.file.index_less) : '';
+				lessIndexText = File.exists(env.file.common_less) ? File.read(env.file.common_less) : '';
 			}
 		
-			let rs = await csjs.lessToCss(lessIndexText + less, file, {filename: env.file.index_less});
+			let rs = await csjs.lessToCss(lessIndexText + less, {filename: env.file.common_less});
 			console.debug(MODULE, 'less compile ok');
 			resolve( rs.css );
 		}catch(e){

@@ -18,7 +18,8 @@ console.time('build')
 			if ( bus.at('是否页面源文件', btfFile) ) {
 				bus.at('删除已生成的页面代码文件', btfFile);
 			}
-			
+
+
 			// 仅针对页面
 			let writePages = [];
 			for ( let i=0,file,allrequires; file=files[i++]; ) {
@@ -29,18 +30,22 @@ console.time('build')
 				try{
 					allrequires = await bus.at('查找页面依赖组件', file);
 				}catch(e){
-					writePages.push( bus.at('输出页面代码文件', file) ); // 原来就编译失败，直接尝试重新编译输出
-					continue;
+					try{
+						allrequires = await bus.at('查找页面依赖组件', file, true);	// 原来就编译失败，尝试重新编译查找
+						writePages.push( bus.at('输出页面代码文件', file) );			// 直接尝试重新编译输出
+					}catch(e){
+						errs.push( Error.err(MODULE + 'compile page failed', file, e, cplErr) );
+						continue;
+					}
 				}
 
 				if ( allrequires.includes(tagpkg) ) {
-					bus.at('查找页面依赖组件', file, true); // 异步任务重新查找页面依赖组件
+					bus.at('查找页面依赖组件', file, true);							// 异步任务重新查找页面依赖组件
 					writePages.push( bus.at('输出页面代码文件', file) );
 				}
 			}
 
 			await Promise.all(writePages);
-
 		}catch(e){
 			throw Error.err(MODULE + 'build failed on file remove', btfFile, e);
 		}

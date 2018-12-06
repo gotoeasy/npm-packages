@@ -16,7 +16,7 @@ module.exports = bus.on('编译SCSS', function(scssIndexText){
 			
 			if ( scssIndexText === undefined ) {
 				const env = bus.at('编译环境');
-				scssIndexText = File.exists(env.file.index_sass) ? File.read(env.file.index_sass) : '';
+				scssIndexText = File.exists(env.file.common_sass) ? File.read(env.file.common_sass) : '';
 			}
 			
 			// TODO 友好的出错信息提示

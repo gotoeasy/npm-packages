@@ -13,11 +13,9 @@ CSS、JS的编译、美化、压缩等常用操作封装
 npm i @gotoeasy/csjs
 ```
 
-## Sample
+## Sample - less to css
 ```js
 const csjs = require('@gotoeasy/csjs');
-
-// CSS
 let lessCode = `
         @base: #f938ab;
 	.box {
@@ -27,40 +25,73 @@ let lessCode = `
 (async function(){
 	let rs = await csjs.lessToCss(lessCode);
 	console.info(rs.css);
-	/*
-	.box {
-	  color: #f938ab;
-	}
-	*/
 })();
 
-let cssFmt = csjs.formatCss('.box { color: #f938ab; }');
-console.info(cssFmt);
 /*
 .box {
-    color: #f938ab;
+  color: #f938ab;
 }
 */
+```
 
-let cssMin = csjs.miniCss(cssFmt);
-console.info(cssMin);
+## Sample - sass to css
+```js
+const csjs = require('@gotoeasy/csjs');
+let sassCode = `
+        $base: #f938ab;
+	.box {
+	    color: $base;
+	}`;
+
+(async function(){
+	let css = await csjs.sassToCss(sassCode);
+	console.info(css);
+})();
+
+/*
+.box {
+  color: #f938ab;
+}
+*/
+```
+
+## Sample - format css
+```js
+const csjs = require('@gotoeasy/csjs');
+(async function(){
+	let rs = await csjs.formatCss('.box { color: #f938ab; }');
+	console.info(rs.css);
+})();
+
+/*
+.box {
+  color: #f938ab;
+}
+*/
+```
+
+## Sample - minify css
+```js
+const csjs = require('@gotoeasy/csjs');
+(async function(){
+	let rs = await csjs.miniCss('.box { color: #f938ab; }');
+	console.info(rs.css);
+})();
 /*
 .box{color:#f938ab}
 */
+```
 
-
-// JS
+## Sample - format js
+```js
+const csjs = require('@gotoeasy/csjs');
 let jsCode = `
 (function(window){
-
 	class Component { constructor(html, props={}, defaults={}) {
 			let template = new Template(html, '$props, $data');
-
-			this.render = $data =>{ let model = extend(defaults, $data); return createDocumentFragment( template.toString(props, model) );}
-		}
-	}
-
-	window.TheComponent = Component;
+		this.render = $data =>{ let model = extend(defaults, $data); 
+return createDocumentFragment( template.toString(props, model) );}
+	}} window.TheComponent = Component;
 
 }(window))
 `;
@@ -72,41 +103,40 @@ console.info(jsFmt);
     class Component {
         constructor(html, props = {}, defaults = {}) {
             let template = new Template(html, "$props, $data");
-
             this.render = $data => {
                 let model = extend(defaults, $data);
                 return createDocumentFragment(template.toString(props, model));
             };
         }
     }
-
     window.TheComponent = Component;
 })(window);
 */
+```
 
-let jsMin = csjs.miniJs(jsFmt);
-console.info(jsMin);
+## Sample - minify js
+```js
+const csjs = require('@gotoeasy/csjs');
+let jsCode = `
+(function(window) {
+    class Component {
+        constructor(html, props = {}, defaults = {}) {
+            let template = new Template(html, "$props, $data");
+            this.render = $data => {
+                let model = extend(defaults, $data);
+                return createDocumentFragment(template.toString(props, model));
+            };
+        }
+    }
+    window.TheComponent = Component;
+})(window);
+`;
+
+let jsMin = csjs.miniJs(jsCode);
+console.info(jsCode);
 /*
 !function(e){e.TheComponent=class{constructor(e,t={},n={}){let r=new Template(e,"$props, $data");this.render=(e=>{let o=extend(n,e);return createDocumentFragment(r.toString(t,o))})}}}(window);
 */
-
-jsFmt = csjs.formatJs(jsMin);
-console.info(jsFmt);
-/*
-!(function(e) {
-    e.TheComponent = class {
-        constructor(e, t = {}, n = {}) {
-            let r = new Template(e, "$props, $data");
-            this.render = e => {
-                let o = extend(n, e);
-                return createDocumentFragment(r.toString(t, o));
-            };
-        }
-    };
-})(window);
-*/
-
-
 ```
 
 

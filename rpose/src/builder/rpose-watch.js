@@ -67,7 +67,7 @@ async function buildAllPages(){
 // 暂用文件内容哈希判断是否真的变了
 const mapFileHash = new Map();
 function notifyAdd(file){
-	console.info(MODULE, 'add ------', file);
+	console.info(MODULE, 'add ......', file);
 
 	bus.at('异步读文件', file, true)
 		.then(txt => {
@@ -80,12 +80,12 @@ function notifyAdd(file){
 		.catch(e=>console.error(MODULE, e));
 }
 function notifyChange(file){
-	console.info(MODULE, 'change ------', file);
 
 	bus.at('异步读文件', file, true)
 		.then(txt => {
 			let hashVal = hash(txt);
 			if ( mapFileHash.get(file) != hashVal ) {
+console.info(MODULE, 'change ......', file);
 				mapFileHash.set(file, hashVal);
 				bus.at('重新编译被更新源文件', file).catch(e=>console.error(MODULE, e));
 			}
@@ -95,7 +95,7 @@ function notifyChange(file){
 function notifyRemove(file){
 
 	(async ()=>{
-		console.info(MODULE, 'remove ------', file);
+		console.info(MODULE, 'remove ......', file);
 		try{
 			await bus.at('源文件删除时再编译', file);
 		}catch(e){

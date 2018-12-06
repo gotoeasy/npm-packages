@@ -12,12 +12,7 @@ module.exports = bus.on('汇总页面关联CSS代码', function(){
 		try{
 			// 组装代码返回
 			let src = await pageCss(allrequires);
-
-			// 默认美化，release时则压缩
-			let env = bus.at('编译环境');
-			src = env.release ? csjs.miniCss(src) : csjs.formatCss( csjs.miniCss(src) );
-
-			return src;
+			return await bus.at('编译页面CSS', src, btfFile);
 		}catch(e){
 			throw Error.err(MODULE + 'gen page css failed', btfFile, allrequires, e)
 		}
@@ -30,10 +25,12 @@ async function pageCss(allrequires){
 	let env = bus.at('编译环境');
 	let cssCommon = '';
 	if ( File.exists(env.file.common_css) ) {
-		cssCommon = await bus.at('异步读文件', env.file.common_css);
+	//	cssCommon = await bus.at('异步读文件', env.file.common_css);
 	}
 
-	let ary = [cssCommon];
+	let ary = [];
+	ary.push('@import-normalize;');		// postcss-normalize插件专用语句，根据browserslist从normalize.css选择使用必要内容
+	ary.push(cssCommon);				// 项目公共css
 	for ( let i=0,tagpkgOrFile,btf; tagpkgOrFile=allrequires[i++]; ) {
 		btf = await bus.at('编译组件', tagpkgOrFile);
 		ary.push( btf.getDocument().css );

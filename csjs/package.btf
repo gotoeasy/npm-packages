@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.10
 
 
 
@@ -10,17 +10,51 @@
 index.js
 
 [dependencies] // 依赖库
+prettier = *
+uglify-es = *
+babel-core = *
+babel-preset-es2015 = *
+
 @gotoeasy/file = *
 less = *
 lesshat = *
 node-sass = *
-prettier = *
-less-plugin-autoprefix = *
-clean-css = *
+find-node-modules = *
+
+browserslist = *
+postcss = *
+postcss-devtools = *
+postcss-preset-env = *
+postcss-normalize = *
+postcss-import = *
+postcss-discard-comments = *
+postcss-normalize-whitespace = *
+postcss-minify-selectors = *
+postcss-minify-params = *
+postcss-svgo = *
+postcss-discard-empty = *
+postcss-normalize-string = *
+postcss-normalize-display-values = *
+postcss-normalize-positions = *
+postcss-normalize-repeat-style = *
+postcss-minify-font-values = *
+postcss-minify-gradients = *
+postcss-color-hex-alpha = *
+postcss-merge-longhand = *
+postcss-combine-duplicated-selectors = *
+postcss-discard-duplicates = *
+postcss-merge-rules = *
 postcss-url = *
-uglify-es = *
-babel-core = *
-babel-preset-es2015 = *
+postcss-rename-classname = *
+stylefmt = *
+
+[devDependencies] // 开发依赖库
+@gotoeasy/file = *
+postcss-preset-env = *
+browserslist = *
+ava = *
+nyc = *
+
 
 [description] // 描述
 CSS、JS常用的编译、美化、压缩操作封装，支持ES6

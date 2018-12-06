@@ -262,6 +262,37 @@ function writePromise(file, content){
 	});
 }
 
+function dirname(file){
+	if ( exists(file) ) {
+		if ( isDirectory(file) ) {
+			return file.replace(/\\/g, '/');
+		}
+		return require('path').dirname(file).replace(/\\/g, '/');
+	}
+
+	let str = file.replace(/\\/g, '/');
+	let idx = str.lastIndexOf('/');
+	if ( idx < 0 ) {
+		return str; // d:
+	}
+	let name = str.substring(idx + 1);
+	if ( name == '' || name.indexOf('.') < 0 ) {
+		return str; // d:/a/ 或 d:/a 都按目录看待
+	}
+	return str.substring(0, idx);
+}
+
+function filename(file){
+	return require('path').parse(file).base;
+}
+
+function relative(from, to){
+	return require('path').relative(dirname(from), to).replace(/\\/g, '/');
+}
+
+function resolve(path, file){
+	return require('path').resolve(dirname(path), file).replace(/\\/g, '/');
+}
 
 // 导出接口
 let api = {};
@@ -285,5 +316,15 @@ api.concat = concat;
 
 api.readPromise = readPromise;
 api.writePromise = writePromise;
+
+api.path = dirname;
+api.dir = dirname;
+api.dirname = dirname;
+api.extname = require('path').extname;  // d:/b/c/abc.txt => .txt
+api.ext = require('path').extname;
+api.filename = filename;				// d:/b/c/abc.txt => abc.txt
+api.relative = relative;				// d:/a/b/c, d:/a/b/e/f  => ../e/f
+api.resolve = resolve;
+
 
 module.exports = api;

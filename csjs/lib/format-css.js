@@ -1,16 +1,11 @@
-// ---------------------------
-// ”ü‰»CSS
-// ---------------------------
-const prettier = require('prettier');
 
-const fmtOpt = { parser: "css", tabWidth: 4 };
+const postcssProcess = require('./postcss-process');
 
-module.exports = function(src){
-	try{
-		return prettier.format(src, fmtOpt);
-	}catch(e){
-		console.error('format error:', e);
-		return src;
-	}
+// CSSç¾åŒ–
+module.exports = function (css, opts){
+
+	opts.format = (opts.format === undefined ? true : opts.format ); // é»˜è®¤æ ¼å¼åŒ–
+
+	return postcssProcess(css, opts);
 };
 

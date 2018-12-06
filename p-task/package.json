@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/p-task",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "main": "index.js",
   "dependencies": {
     "string-hash": "*"
@@ -10,7 +10,10 @@
   },
   "description": "promise task",
   "keywords": [
-    "promise task"
+    "gotoeasy",
+    "p-task",
+    "promise task",
+    "task"
   ],
   "repository": {
     "type": "git",

@@ -15,7 +15,7 @@ function publish(opts){
 
 	// package.btf -> package.json
 	let btf = new Btf(filePackageBtf);
-	let newVersion = getNextVersion(btf, 'version');
+	let newVersion = getNextVersion(btf, 'version', opts.fixversion);
 	let oPackage = {
 		name : getLineString(btf, 'name'),
 		version : newVersion,
@@ -73,8 +73,8 @@ function publish(opts){
 	}
 }
 
-function getNextVersion(btf, name){
-	return getLineString(btf, name).split('.').map( (v,i)=> i==2?(v-0+1):v ).join('.')
+function getNextVersion(btf, name, fix){
+	return getLineString(btf, name).split('.').map( (v,i)=> i==2?(fix?v:(v-0+1)):v ).join('.')
 }
 function getLineString(btf, name){
 	return (btf.getText(name) || '').replace(/\r/g, '').replace(/\n/g, '').trim();

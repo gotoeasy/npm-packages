@@ -19,7 +19,7 @@ bus.on('输出页面代码文件', function(){
 			
 			htmlFile = await bus.at('输出页面HTML文件', btfFile);
 
-			//bus.at('页面编译状态', htmlFile, true);
+			bus.at('页面编译状态', htmlFile, true);
 		}catch(e){
 			//bus.at('页面编译状态', htmlFile || btfFile, false);
 			throw Error.err(MODULE + 'write page failed', htmlFile || btfFile, e);

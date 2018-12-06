@@ -12,7 +12,7 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 
 			// 默认美化，release时则压缩
 			let env = bus.at('编译环境');
-			src = env.release ? csjs.miniJs(src) : csjs.formatJs(src);
+			src = (env.mode == 'release' ? csjs.miniJs(src) : csjs.formatJs(src));
 
 			return src;
 		}catch(e){

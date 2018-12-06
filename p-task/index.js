@@ -26,10 +26,17 @@ module.exports = function PTask(fnTaskGetter){
 			});
 			pResult.set(hashCode, rs);
 
-			// 延后状态判断，尽量只调用函数一次
-			Promise.resolve().then( async ()=>{
-				let fnTask = fnTaskGetter(rs.resolve, rs.reject, rs.isBroken);
-				await fnTask(...args); // 执行
+			// 延后执行，尽量只调用一次
+			setTimeout(async ()=>{
+				if ( !rs.isBroken() ) {
+					let fnTask = fnTaskGetter(rs.resolve, rs.reject, rs.isBroken);
+					try{
+						await fnTask(...args);	// 执行
+						rs.resolve();			// 避免执行函数漏调用resolve
+					}catch(e){
+						rs.reject(e);
+					}
+				}
 			});
 		}
 		return rs.promise;
@@ -41,7 +48,7 @@ module.exports = function PTask(fnTaskGetter){
 		let rs = pResult.get(hashCode);
 
 		if ( rs ) {
-			rs.state = 1; // 打断(重做)
+			rs.state = 1; // 打断(重做)，如果没有完成则可以通过isBroken得知已被打断
 		}
 
 		// 重新开始
@@ -49,7 +56,7 @@ module.exports = function PTask(fnTaskGetter){
 		let promise = this.start(...args);
 		
 		if ( rs ) {
-			// 末次调用优先（前面调用返回末次结果）
+			// 末次调用优先（前面调用返回末次结果），如果已完成则修改无效
 			rs.resolve( promise );
 		}
 

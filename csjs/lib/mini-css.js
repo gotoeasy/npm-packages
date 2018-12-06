@@ -1,14 +1,11 @@
 
-const CleanCSS = require('clean-css');
+const postcssProcess = require('./postcss-process');
 
 // CSS压缩
-module.exports = function (src, opts={level:2}){
+module.exports = function (css, opts={}){
 
-	let rs = new CleanCSS(opts).minify(src);
+	opts.removeComment = (opts.removeComment === undefined ? true : opts.removeComment ); // 默认删除注释
 
-	rs.warnings.forEach(v=>console.error(v));
-	rs.errors.forEach(v=>console.error(v));
-
-	return rs.styles;
+	return postcssProcess(css, opts);
 };
 

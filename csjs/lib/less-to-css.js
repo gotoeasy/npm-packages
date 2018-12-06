@@ -35,6 +35,7 @@ less\lib\less\contexts.js
 
 const File = require('@gotoeasy/file');
 const less = require('less');
+const findNodeModules = require('find-node-modules');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -42,28 +43,31 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 module.exports = (function(importLesshat){
 
 	// 默认支持lesshat @import ".../lesshat.less";
-	let ary = __dirname.replace(/\\/g, '/').split('/');
-	ary.pop(); // lib
-	ary.pop(); // csjs
-	ary.pop(); // @gotoeasy
-	ary.push('lesshat/lesshat.less');
-	importLesshat = ary.join('/'); // 用相对目录找出lesshat.less
-	if ( !File.exists(importLesshat) ) {
+	importLesshat = getImportLesshat(); // 用相对目录找出lesshat.less
+	if ( !importLesshat ) {
 		console.warn(MODULE, 'file not found:', 'lesshat.less');
 		importLesshat = '';
-	}else{
-		importLesshat = '@import "' + importLesshat + '";\n';
 	}
 
 	// file仅用于出错信息提示
-	return function(src, file, opts={}){
+	return function(src, opts={}){
 		let srcLess = importLesshat + src; // 自动添加 @import ".../lesshat.less";
 
 		opts.javascriptEnabled = true;
 		opts.plugins = opts.plugins || [];
 		
-		// 返回Promise对象
-		return less.render(srcLess, opts);
+		return less.render(srcLess, opts); // 返回Promise对象
 	}
 
 })();
+
+
+function getImportLesshat() {
+	let ary = findNodeModules({ cwd: __dirname, relative: false });
+	for ( let i=0,path,file; path=ary[i++]; ) {
+		file = path.replace(/\\/g, '/') + '/lesshat/lesshat.less';
+		if ( File.exists(file) ) {
+			return '@import "' + file + '";\n';
+		}
+	}
+}
