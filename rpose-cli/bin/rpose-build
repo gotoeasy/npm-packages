@@ -4,21 +4,17 @@ const rpose = require('@gotoeasy/rpose');
 const cmmd = require('commander');
 
 cmmd.usage('[options] [path]')
-	.option('-a, --all', 'build all')
 	.option('-c, --clean', 'clean before build')
 	.option('-r, --release', 'build release')
 	.option('-p, --publish', 'build publish')
 	.option('-d, --debug', 'print debug log')
-	.option('--es5', 'es5')
 	.parse(process.argv);
 
 let opts = {
-	all: !!cmmd.all,
 	clean: !!cmmd.clean,
 	release: !!cmmd.release,
 	publish: !!cmmd.publish,
 	debug: !!cmmd.debug,
-	es5: !!cmmd.es5,
 
 	workDir: cmmd.args.length ? cmmd.args[0] : process.cwd()
 };

@@ -6,7 +6,7 @@
 //    opts.less - true：less （默认false）
 //    opts.lessOptions - less options （默认{}）
 //    opts.debug - true:输出各插件运行时间 （默认false）
-//    opts.removeComment - true:删除注释 （默认false）
+//    opts.removeComments - true:删除注释 （默认false）
 //    opts.rename - 插件postcss-rename-classname的类名修改函数 （默认不修改）
 //    opts.format - true:格式化代码 （默认false）
 //    opts.callback - 传入回调函数则回调[callback(rs, err)]，否则返回Promise对象
@@ -17,7 +17,7 @@ module.exports = async function (src, opts={}){
 	const File = require('@gotoeasy/file');
 
 	// 默认删除注释，压缩优化
-	opts.removeComment = (opts.removeComment == null ? true : false);
+	opts.removeComments = (opts.removeComments == undefined ? true : opts.removeComments);
 
 	let css = src;
 
@@ -49,7 +49,7 @@ module.exports = async function (src, opts={}){
 	plugins.push( require('postcss-preset-env')({stage: 3}) );									// 默认支持使用stage3新特性，已含autoprefixer处理
 	opts.normalize && plugins.push( require('postcss-normalize') );								// 按需引用normalize.css内容
 	plugins.push( require('postcss-import') );													// 导入@import文件内容
-	opts.removeComment && plugins.push( require('postcss-discard-comments')({remove:x=>1}) );	// 删除所有注释
+	opts.removeComments && plugins.push( require('postcss-discard-comments')({remove:x=>1}) );	// 删除所有注释
 	plugins.push( require('postcss-normalize-whitespace') );									// 压缩删除换行空格
 	plugins.push( require('postcss-minify-selectors') );										// 压缩删除选择器空白（h1 + p, h2, h3, h2{color:blue} => h1+p,h2,h3{color:blue}）
 	plugins.push( require('postcss-minify-params') );											// 压缩删除参数空白（@media only screen   and ( min-width: 400px, min-height: 500px    ){} => @media only screen and (min-width:400px,min-height:500px){}）

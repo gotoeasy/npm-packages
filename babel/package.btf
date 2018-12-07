@@ -1,8 +1,8 @@
 [name] // 项目名 （必填）
-@gotoeasy/rpose
+@gotoeasy/babel
 
 [version] // 版本号 （必填）
-0.0.23
+0.0.1
 
 
 
@@ -10,36 +10,25 @@
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/btf = *
-@gotoeasy/bus = *
-@gotoeasy/csjs = *
-@gotoeasy/util = *
-@gotoeasy/os = *
-@gotoeasy/p-task = *
-acorn-globals = *
-chokidar = *
-browser-sync = *
-browserify = *
-
-[devDependencies] // 开发依赖库
-@gotoeasy/csjs = *
-
-[scripts] // 脚本命令
-build = node scripts/build
-test = echo "Error: no test specified" && exit 1
+@babel/core = *
+@babel/preset-env = *
+@babel/polyfill = *
 
 [description] // 描述
-gotoeasy with rpose
+使用固定配置让babel转译代码，简化满足特定需求：语法转译+按需添加兼容补丁
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, rpose
+gotoeasy, babel
+
+[scripts] // 脚本命令
+test = echo "Error: no test specified" && exit 1
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/rpose/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/babel/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

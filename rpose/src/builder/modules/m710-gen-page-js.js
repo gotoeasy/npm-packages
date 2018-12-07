@@ -1,5 +1,7 @@
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
+const File = require('@gotoeasy/file');
+const browserify = require('browserify');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
@@ -8,11 +10,11 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 	return async function(btfFile, allrequires){
 		try{
 			// 组装代码
-			let src = await pageJs(allrequires);
+			let src = await pageJs(allrequires, btfFile);
 
 			// 默认美化，release时则压缩
 			let env = bus.at('编译环境');
-			src = (env.mode == 'release' ? csjs.miniJs(src) : csjs.formatJs(src));
+			src = (env.release ? csjs.miniJs(src) : csjs.formatJs(src));
 
 			return src;
 		}catch(e){
@@ -24,7 +26,7 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 
 
 // 页面代码组装
-async function pageJs(allrequires){
+async function pageJs(allrequires, btfFile){
 
 	let srcRpose = await bus.at('编译RPOSE');
 	let srcStmt = getSrcRegisterComponents(allrequires);
@@ -40,6 +42,19 @@ async function pageJs(allrequires){
 				${srcComponents}
 			})(rpose.$$, rpose.escapeHtml);
 		`;
+
+
+	try{
+		src = csjs.babel(src);
+	}catch(e){
+		throw Error.err(MODULE + 'babel transform page js failed', e)
+	}
+
+	try{
+		src = await csjs.browserify(src);
+	}catch(e){
+		throw Error.err(MODULE + 'browserify transform page js failed', e)
+	}
 
 	return src;
 }

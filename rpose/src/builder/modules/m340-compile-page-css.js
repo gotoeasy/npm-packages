@@ -23,7 +23,7 @@ module.exports = bus.on('编译页面CSS', function(){
 				removeComments: true
 			};
 
-			if ( env.mode == 'release' ) {
+			if ( env.release ) {
 				rs = await csjs.miniCss(css, opt);
 			}else{
 				rs = await csjs.formatCss(css, opt);

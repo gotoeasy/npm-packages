@@ -1,0 +1,31 @@
+{
+  "name": "@gotoeasy/browserify",
+  "version": "0.0.2",
+  "main": "index.js",
+  "dependencies": {
+    "browserify": "*",
+    "into-stream": "*",
+    "stream-to-string": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "使用固定配置让browserify转译代码，简化满足特定需求：把含require的代码转成能在浏览器上运行的代码",
+  "keywords": [
+    "gotoeasy",
+    "browserify"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/browserify/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

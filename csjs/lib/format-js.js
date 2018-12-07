@@ -18,8 +18,7 @@ const optUglify = {
 function uglifyFormat(src){
 	let rs = require("uglify-es").minify(src, optUglify);
 	if ( rs.error ) {
-		console.error(rs.error); // 要抛异常否？
-		return src;
+		throw new Error('uglify-es format js failed\n' + rs.error);
 	}
 
 	return rs.code;
@@ -32,8 +31,7 @@ function prettierFormat(src){
 	try{
 		return require("prettier").format(src, optPrettier);
 	}catch(e){
-		console.error('format error:', e);
-		return src;
+		throw new Error('prettier format js failed\n' + e);
 	}
 };
 

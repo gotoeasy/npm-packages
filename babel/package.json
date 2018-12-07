@@ -1,0 +1,31 @@
+{
+  "name": "@gotoeasy/babel",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "@babel/polyfill": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "使用固定配置让babel转译代码，简化满足特定需求：语法转译+按需添加兼容补丁",
+  "keywords": [
+    "gotoeasy",
+    "babel"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/babel/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

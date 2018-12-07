@@ -25,7 +25,7 @@ module.exports = bus.on('编译组件CSS', function(){
 			//let rs = await csjs.cssUrl(css, opt);
 			let rs = await csjs.miniCss(css, opt);
 
-			await File.writePromise(to, rs.css);
+			//await File.writePromise(to, rs.css);
 			return rs;
 		}catch(e){
 			throw Error.err(MODULE + 'compile component css failed', btfFile, e);

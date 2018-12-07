@@ -9,7 +9,8 @@ api.miniCss = require('./lib/mini-css');
 api.formatJs = require('./lib/format-js');
 api.miniJs = require('./lib/mini-js');
 
-api.babel = require('./lib/babel');
+api.babel = require('@gotoeasy/babel');
+api.browserify = require('@gotoeasy/browserify');
 
 module.exports = api;
 

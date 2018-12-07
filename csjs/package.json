@@ -1,12 +1,11 @@
 {
   "name": "@gotoeasy/csjs",
-  "version": "0.0.13",
+  "version": "0.0.17",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "*",
-    "@babel/core": "*",
-    "@babel/preset-env": "*",
-    "@babel/polyfill": "*",
+    "@gotoeasy/babel": "*",
+    "@gotoeasy/browserify": "*",
     "prettier": "*",
     "uglify-es": "*",
     "find-node-modules": "*",
