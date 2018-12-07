@@ -140,6 +140,36 @@ console.info(jsCode);
 ```
 
 
+## Sample - babel transform js
+```js
+const csjs = require('@gotoeasy/csjs');
+let code = `
+    let fn = (...args) => args.includes('y') ? Promise.resolve(args) : Promise.reject(args);
+`;
+
+let js = csjs.babel(code);
+console.info(js);
+```
+
+
+## Sample - browserify transform js
+```js
+const csjs = require('@gotoeasy/csjs');
+let code = `
+"use strict";
+
+require("core-js/modules/es6.string.starts-with");
+
+var flg = 'abc'.startsWith('a');
+`;
+
+(async function(){
+    let js = await csjs.browserify(code);
+    console.info(js);
+})();
+```
+
+
 ## `Links`
 * `npm-packages` https://github.com/gotoeasy/npm-packages
 

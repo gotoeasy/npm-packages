@@ -2,3 +2,5 @@
 **/package-lock.json
 **/.nyc_output/
 **/.npmrc
+**/.gitconfig
+
