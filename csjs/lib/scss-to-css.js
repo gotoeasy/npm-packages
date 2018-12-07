@@ -1,6 +1,5 @@
 
 const File = require('@gotoeasy/file');
-const sass = require('node-sass');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -12,7 +11,7 @@ module.exports = (function(){
 
 		try{
 			let param = Object.assign({}, opts, {data: src});
-			rs = sass.renderSync(param);
+			rs = require('node-sass').renderSync(param);
 		}catch(e){
 			console.error(MODULE, 'sass compile failed')
 			console.error(MODULE, e)

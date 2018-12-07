@@ -34,7 +34,6 @@ less\lib\less\contexts.js
 */
 
 const File = require('@gotoeasy/file');
-const less = require('less');
 const findNodeModules = require('find-node-modules');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
@@ -56,7 +55,7 @@ module.exports = (function(importLesshat){
 		opts.javascriptEnabled = true;
 		opts.plugins = opts.plugins || [];
 		
-		return less.render(srcLess, opts); // 返回Promise对象
+		return require('less').render(srcLess, opts); // 返回Promise对象
 	}
 
 })();

@@ -47,7 +47,9 @@ module.exports = async function (src, opts={}){
 
 	let plugins = [];
 	opts.debug && plugins.push( require('postcss-devtools') );									// 输出各插件处理时间
-	plugins.push( require('postcss-preset-env')({stage: 0}) );									// 使用预设新特性(给予使用最大范围特性的可能)，已含autoprefixer处理
+	plugins.push( require('postcss-preset-env')({stage: 3}) );									// 默认支持使用stage3新特性，已含autoprefixer处理
+	opts.normalize && plugins.push( require('postcss-normalize') );								// 按需引用normalize.css内容
+	plugins.push( require('postcss-import') );													// 导入@import文件内容
 	opts.removeComment && plugins.push( require('postcss-discard-comments')({remove:x=>1}) );	// 删除所有注释
 	plugins.push( require('postcss-normalize-whitespace') );									// 压缩删除换行空格
 	plugins.push( require('postcss-minify-selectors') );										// 压缩删除选择器空白（h1 + p, h2, h3, h2{color:blue} => h1+p,h2,h3{color:blue}）
@@ -69,6 +71,6 @@ module.exports = async function (src, opts={}){
 	opts.rename && plugins.push( require('postcss-rename-classname')({rename: opts.rename}) );	// 自定义修改类名
 	opts.format && plugins.push( require('stylefmt') );											// 格式化代码
 
-	return postcss(plugins).process(css, opts.postcssOptions || {});
+	return postcss(plugins).process(css, {from, to});
 };
 

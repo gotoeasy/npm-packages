@@ -1,17 +1,18 @@
 {
   "name": "@gotoeasy/csjs",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "main": "index.js",
   "dependencies": {
+    "@gotoeasy/file": "*",
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "@babel/polyfill": "*",
     "prettier": "*",
     "uglify-es": "*",
-    "babel-core": "*",
-    "babel-preset-es2015": "*",
-    "@gotoeasy/file": "*",
+    "find-node-modules": "*",
     "less": "*",
     "lesshat": "*",
     "node-sass": "*",
-    "find-node-modules": "*",
     "browserslist": "*",
     "postcss": "*",
     "postcss-devtools": "*",
@@ -40,16 +41,13 @@
     "stylefmt": "*"
   },
   "devDependencies": {
-    "@gotoeasy/file": "*",
-    "postcss-preset-env": "*",
-    "browserslist": "*",
     "ava": "*",
     "nyc": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "CSS、JS常用的编译、美化、压缩操作封装，支持ES6",
+  "description": "CSS、JS常用的编译、美化、压缩操作封装",
   "keywords": [
     "CSS代码美化",
     "CSS代码压缩",

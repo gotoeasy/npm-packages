@@ -131,7 +131,7 @@ bus.on('组件类名', function(){
 bus.on('页面编译状态', function(){
 
 	return function(htmlFile, state){
-		state ? console.info(MODULE, 'page ok:', htmlFile) : console.info(MODULE, 'page ng:', htmlFile);;
+		state ? console.info(MODULE, 'ok:', htmlFile) : console.info(MODULE, 'ng:', htmlFile);;
 	}
 
 }());

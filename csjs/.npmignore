@@ -3,4 +3,5 @@ package-lock.json
 .nyc_output/
 .gitignore
 .browserslistrc
+babel.config.js
 

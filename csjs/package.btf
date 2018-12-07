@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.0.10
+0.0.12
 
 
 
@@ -10,16 +10,18 @@
 index.js
 
 [dependencies] // 依赖库
+@gotoeasy/file = *
+@babel/core = *
+@babel/preset-env = *
+@babel/polyfill = *
+
 prettier = *
 uglify-es = *
-babel-core = *
-babel-preset-es2015 = *
 
-@gotoeasy/file = *
+find-node-modules = *
 less = *
 lesshat = *
 node-sass = *
-find-node-modules = *
 
 browserslist = *
 postcss = *
@@ -49,15 +51,11 @@ postcss-rename-classname = *
 stylefmt = *
 
 [devDependencies] // 开发依赖库
-@gotoeasy/file = *
-postcss-preset-env = *
-browserslist = *
 ava = *
 nyc = *
 
-
 [description] // 描述
-CSS、JS常用的编译、美化、压缩操作封装，支持ES6
+CSS、JS常用的编译、美化、压缩操作封装
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
 CSS代码美化, CSS代码压缩, JS代码美化, JS代码压缩

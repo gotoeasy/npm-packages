@@ -11,5 +11,7 @@ api.miniJs = require('./lib/mini-js');
 api.es5 = require('./lib/es2015');
 api.es2015 = api.es2015;
 
+api.babel = require('./lib/babel');
+
 module.exports = api;
 
