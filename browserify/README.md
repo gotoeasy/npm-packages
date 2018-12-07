@@ -1,4 +1,4 @@
-# @gotoeasy/babel
+# @gotoeasy/browserify
 使用固定配置让browserify转译代码，简化满足特定需求：把含require的代码转成能在浏览器上运行的代码
 <br>
 <br>
