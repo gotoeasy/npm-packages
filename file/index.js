@@ -229,16 +229,14 @@ function exists(file) {
 	return fs.existsSync(file);
 };
 
-function concat(path, handle) {
+function concat(path, filter) {
 	let rs = files(path);
+
+	// 文件过滤
+	filter && (rs = rs.filter(filter));
+
+	// 排序后合并文件内容返回
 	rs.sort();
-
-	if ( handle ) {
-		handle(rs); // 有回调函数时交由该函数处理
-		return;
-	}
-
-	// 默认合并全部文件内容返回
 	let ary = [];
 	rs.forEach(f=>isFile(f) && ary.push(read(f)));
 	return ary.join('\r\n');

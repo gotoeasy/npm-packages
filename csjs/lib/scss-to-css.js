@@ -1,6 +1,4 @@
 
-const File = require('@gotoeasy/file');
-
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
 // SASS编译

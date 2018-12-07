@@ -1,7 +1,4 @@
 
-const File = require('@gotoeasy/file');
-const postcss = require('postcss');
-
 // ------------------------------------------------------------------------
 // opts - 选项
 //    opts.sass - true：sass/scss （默认false）
@@ -16,6 +13,8 @@ const postcss = require('postcss');
 //    opts.postcssOptions - postcss options （默认{}）
 // ------------------------------------------------------------------------
 module.exports = async function (src, opts={}){
+
+	const File = require('@gotoeasy/file');
 
 	// 默认删除注释，压缩优化
 	opts.removeComment = (opts.removeComment == null ? true : false);
@@ -71,6 +70,6 @@ module.exports = async function (src, opts={}){
 	opts.rename && plugins.push( require('postcss-rename-classname')({rename: opts.rename}) );	// 自定义修改类名
 	opts.format && plugins.push( require('stylefmt') );											// 格式化代码
 
-	return postcss(plugins).process(css, {from, to});
+	return require('postcss')(plugins).process(css, {from, to});
 };
 

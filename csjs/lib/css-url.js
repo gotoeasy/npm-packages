@@ -1,7 +1,3 @@
-const postcss = require("postcss");
-const postcssUrl = require("postcss-url");
-const File = require('@gotoeasy/file');
-const miniCss = require("./mini-css");
 
 // basePath : 源CSS文件目录
 // basePath : CSS内容
@@ -10,7 +6,12 @@ const miniCss = require("./mini-css");
 // callback : 传入此回调函数的话，异步回调。否则同步处理后返回
 module.exports =  function cssUrl(basePath, css, cssFileTo, assetsPath, callback){
 
-	const options = {
+	let postcss = require("postcss");
+	let postcssUrl = require("postcss-url");
+	let File = require('@gotoeasy/file');
+	let miniCss = require("./mini-css");
+
+	let options = {
 		url: 'copy',
 
 		from: 'style.css',

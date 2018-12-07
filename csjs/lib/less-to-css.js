@@ -33,9 +33,6 @@ less\lib\less\contexts.js
     'rewriteUrls'        // option - whether to adjust URL's to be relative
 */
 
-const File = require('@gotoeasy/file');
-const findNodeModules = require('find-node-modules');
-
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
 // opts注意设定filename或paths以便正确处理imports
@@ -62,10 +59,10 @@ module.exports = (function(importLesshat){
 
 
 function getImportLesshat() {
-	let ary = findNodeModules({ cwd: __dirname, relative: false });
+	let ary = require('find-node-modules')({ cwd: __dirname, relative: false });
 	for ( let i=0,path,file; path=ary[i++]; ) {
 		file = path.replace(/\\/g, '/') + '/lesshat/lesshat.less';
-		if ( File.exists(file) ) {
+		if ( require('@gotoeasy/file').exists(file) ) {
 			return '@import "' + file + '";\n';
 		}
 	}
