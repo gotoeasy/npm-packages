@@ -83,7 +83,7 @@ function parseKeys(str){
 	}
 	
 	// key之间可以逗号、冒号、空格分隔
-	let keys = txt.replace(/[,;]/g, ' ').split(/\s/).map(v => v.trim()).filter(v => v != '');
+	let keys = str.replace(/[,;]/g, ' ').split(/\s/).map(v => v.trim()).filter(v => v != '');
 	return [...new Set(keys)];
 }
 

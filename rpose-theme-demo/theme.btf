@@ -1,0 +1,12 @@
+[extend]
+@gotoeasy/theme
+
+[theme]
+// theme of button
+theme-button-min-width      : 80px                                          /* 按钮最小宽度 */
+theme-button-height         : 30px                                          /* 按钮默认高度 */
+theme-button-bg             : linear-gradient(#fafafa 0%, #c9c9c9 100%)     /* 按钮默认线性渐变背景 */
+theme-button-bg-hover       : linear-gradient(#c9c9c9 0%, #fafafa 100%)     /* 按钮鼠标经过时的线性渐变背景 */
+theme-button-bg-focus       : linear-gradient(#c9c9c9 0%, #fafafa 100%)     /* 按钮获得焦点时的线性渐变背景 */
+theme-button-bg-active      : linear-gradient(#999999 0%, #eeeeee 100%)     /* 按钮点击时的线性渐变背景 */
+theme-button-bg-disabled    : #fafafa                                       /* 按钮禁用时的线性渐变背景 */

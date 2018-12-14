@@ -14,16 +14,18 @@ npm i @gotoeasy/btf
 ```
 
 ## API
-* BlockTextFile.getDocuments() - get the Document array
 * BlockTextFile.getText(blockName) - get text of blockName from the first Document
 * BlockTextFile.getMap(blockName) - get key-value map of blockName from the first Document
+* BlockTextFile.getDocument() - get the first Document
+* BlockTextFile.getDocuments() - get the Document array
 * Document.getText(blockName) - get text of blockName from the Document
+* Document.getMap(blockName) - get key-value map of blockName from the Document
 
 ```js
 sample.btf
 [key1]
 value1
-----------------
+---------
 
 [key2]
 value2
@@ -32,7 +34,7 @@ value2
 k1 : v1
 k2 = v2
 
-================
+=========
 [name1]
 111
 [name2]

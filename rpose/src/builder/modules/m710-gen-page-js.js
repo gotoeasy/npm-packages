@@ -43,17 +43,24 @@ async function pageJs(allrequires, btfFile){
 			})(rpose.$$, rpose.escapeHtml);
 		`;
 
+	let env  = bus.at('编译环境');
+	let tag  = bus.at('默认标签名', btfFile);
+	if ( env.release ) {
+		try{
+			console.time(MODULE + 'babel      ' + tag)
+			src = csjs.babel(src);
+			console.timeEnd(MODULE + 'babel      ' + tag)
+		}catch(e){
+			throw Error.err(MODULE + 'babel transform page js failed', e)
+		}
 
-	try{
-		src = csjs.babel(src);
-	}catch(e){
-		throw Error.err(MODULE + 'babel transform page js failed', e)
-	}
-
-	try{
-		src = await csjs.browserify(src);
-	}catch(e){
-		throw Error.err(MODULE + 'browserify transform page js failed', e)
+		try{
+			console.time(MODULE + 'browserify ' + tag)
+			src = await csjs.browserify(src);
+			console.timeEnd(MODULE + 'browserify ' + tag)
+		}catch(e){
+			throw Error.err(MODULE + 'browserify transform page js failed', e)
+		}
 	}
 
 	return src;

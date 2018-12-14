@@ -47,6 +47,8 @@ module.exports = bus.on('编译环境', function(result){
 			result.path.build_temp = getConfPath(root, mapPathDefault, mapPath, 'build_temp');
 			result.path.build_dist = getConfPath(root, mapPathDefault, mapPath, 'build_dist');
 
+			result.theme = ((btf.getText('theme') == null || !btf.getText('theme').trim()) ? '@gotoeasy/theme' : btf.getText('theme').trim());
+
 			// common.css、less、sass入口文件
 			result.file.common_css = root + '/' + (mapCommon.get('common_css') || '').split('/').filter(v => !!v).join('/');
 			result.file.common_less = root + '/' + (mapCommon.get('common_less') || '').split('/').filter(v => !!v).join('/');

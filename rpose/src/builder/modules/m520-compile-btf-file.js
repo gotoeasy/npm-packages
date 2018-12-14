@@ -52,24 +52,27 @@ module.exports = bus.on('编译源文件', function(){
 
 async function parseBtfDocument(doc, file){
 
+	let theme = bus.at('样式风格');
+
 	// CSS先于JS编译，JS编译会使用CSS类名修改前后的映射表
+	let hasCss = !!doc.css
 	try{
 		// CSS预处理-LESS
-		doc.less && (doc.css += '\n' + await bus.at('编译LESS', doc.less, file));
+		doc.less && (doc.css += '\n' + await bus.at('编译LESS', theme.themeLess + doc.less, file));
 	}catch(e){
 		throw Error.err(MODULE + 'compile less failed', e);
 	}
 
 	try{
 		// CSS预处理-SCSS
-		doc.scss && (doc.css += '\n' + await bus.at('编译SCSS', doc.scss, file));
+		doc.scss && (doc.css += '\n' + await bus.at('编译SCSS', theme.themeSass + doc.scss, file));
 	}catch(e){
 		throw Error.err(MODULE + 'compile sass failed', e);
 	}
 
 	// CSS后处理
 	if ( doc.css ) {
-		let rs = await bus.at('编译组件CSS', doc.css, file);
+		let rs = await bus.at('编译组件CSS', (hasCss ? theme.themeCss : '') + doc.css, file);
 		doc.css = rs.css;
 		doc.mapping = rs.mapping; // 样式类名修改前后映射表
 	}

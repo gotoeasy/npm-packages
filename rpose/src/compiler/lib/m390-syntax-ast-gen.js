@@ -22,9 +22,9 @@ class AstGen{
 		this.ast = ast;
 		this.doc = doc;
 
-		this.$dataKeys = doc.statekeys;		// 已解析的statekeys
-		this.$optsKeys = doc.optionkeys;		// 已解析的optionkeys
-		this.$actionsKeys = doc.actionskeys;	// 已解析的方法对象属性名名
+		this.$dataKeys = doc.statekeys || [];		// 已解析的statekeys
+		this.$optsKeys = doc.optionkeys || [];		// 已解析的optionkeys
+		this.$actionsKeys = doc.actionskeys || [];	// 已解析的方法对象属性名名
 
 		this.$counter = 0;
 	}

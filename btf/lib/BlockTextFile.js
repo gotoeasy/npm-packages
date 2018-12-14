@@ -1,9 +1,8 @@
-const File = require('@gotoeasy/file');
 
 class BlockTextFile{
 
     constructor(fileName, isText) {
-		let text = isText ? fileName : File.read(fileName);
+		let text = isText ? fileName : require('fs').readFileSync(fileName, 'utf-8');
 		this.LF = text.indexOf('\r\n') >=0 ? '\r\n' : '\n';
 
 		let lines = text.split(this.LF);
@@ -27,7 +26,6 @@ class BlockTextFile{
 				get: () => name => getMap(doc[(name+'').toLowerCase()])
 			});
 		});
-
     }
 
     getDocument(){
@@ -39,7 +37,7 @@ class BlockTextFile{
     }
 
 	getText(name){
-        return this.list.length ? this.list[0][(name+'').toLowerCase()] : undefined;
+        return this.list[0][(name+'').toLowerCase()];
     }
 
 	getMap(name){
@@ -64,7 +62,7 @@ function parse(list, lines, lf) {
 
 	let documentStart = false;
 	let blockStart = false;
-	let bt = null;
+	let doc = null;
 	let name = null;
 	let buf = null;
 	let tmpName = null;
@@ -72,12 +70,11 @@ function parse(list, lines, lf) {
 
 		if ( isBlockStart(line) ) {
 			tmpName = getBlockName(line);
-
 			if ( !documentStart ) {
-				bt = {};
+				doc = {};
 			}
 			if ( blockStart ) {
-				put(bt, name, buf);
+				addBlock(doc, name, buf);		// 保存上一个Block
 			}
 
 			name = tmpName;
@@ -87,7 +84,7 @@ function parse(list, lines, lf) {
 			blockStart = true;
 		} else if ( isBlockEnd(line) ) {
 			if ( blockStart ) {
-				put(bt, name, buf);
+				addBlock(doc, name, buf);		// 保存当前Block
 			}
 
 			name = null;
@@ -96,19 +93,24 @@ function parse(list, lines, lf) {
 			blockStart = false;
 		} else if ( isDocumentEnd(line) ) {
 			if ( blockStart ) {
-				put(bt, name, buf);
-				addBlockText(list, bt);
+				addBlock(doc, name, buf);		// 保存当前Block
+			}
+			if ( documentStart ) {
+				addDocument(list, doc);			// 保存当前Document
 			}
 
 			name = null;
 			buf = null;
-			bt = null;
+			doc = null;
 
 			documentStart = false;
 			blockStart = false;
 		} else {
 			if ( blockStart ) {
-				buf[buf.length] = line;
+				if ( line.startsWith('\\[') && line.indexOf(']') > 0 || line.startsWith('\\---------') || line.startsWith('\\=========') ) {
+					line = line.substring(1);	// 去除转义字符
+				}
+				buf[buf.length] = line;			// 拼接当前Block内容
 				buf[buf.length] = lf;
 			} else {
 				// ignore line
@@ -118,36 +120,41 @@ function parse(list, lines, lf) {
 	}
 
 	if ( buf != null ) {
-		put(bt, name, buf);
-		addBlockText(list, bt);
+		addBlock(doc, name, buf);
+		addDocument(list, doc);
 	}
 }
 
-function addBlockText(list, bt) {
-	list.push(bt);
+function addDocument(list, doc) {
+	list.push(doc);
 }
 
-function put(bt, name, buf) {
+function addBlock(doc, blockName, buf) {
 	if ( buf.length ) {
 		buf.pop();
 	}
-	bt[name] = buf.join('');
+	doc[blockName] = buf.join('');
 }
 
 function isBlockStart(line) {
-    return line.indexOf('[') == 0 && line.indexOf(']') >= 1;
+	return line.startsWith('[') && line.indexOf(']') > 0;
 }
 
 function isBlockEnd(line) {
-    return line.indexOf('---------') == 0;
+    return line.startsWith('---------');
 }
 
 function isDocumentEnd(line) {
-    return line.indexOf('=========') == 0;
+    return line.startsWith('=========');
 }
 
 function getBlockName(line) {
-    return line.substring(1, line.indexOf(']')).toLowerCase();
+	for ( let i=1; i<line.length; i++) {
+		if ( line.charAt(i-1) !== '\\' && line.charAt(i) === ']' ) {
+			return line.substring(1, i).toLowerCase().replace(/\\\]/g, ']');			 // 名称部分转义 [\]] => ]; 
+		}
+	}
+	return line.substring(1, line.lastIndexOf(']')).toLowerCase().replace(/\\\]/g, ']'); // 最后一个]忽略转义 [\] => \; [\]\] => ]\
 }
 
 // export

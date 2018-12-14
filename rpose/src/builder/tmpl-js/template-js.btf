@@ -16,13 +16,23 @@
 // 组件函数
 function <%= $data['$componentName'] %>(options={}) {
 
+    <% if ( $data['optionkeys'] != null ){ %>
     // 组件默认选项值
     this.$options = <%= $data['options'] %>;
     rpose.extend(this.$options, options, this.$OPTION_KEYS);    // 按属性接口克隆配置选项
+    <% }else{ %>
+    // 组件默认选项值
+    this.$options = <%= $data['options'] %>;
+    <% } %>
 
+    <% if ( $data['statekeys'] != null ){ %>
     // 组件默认数据状态值 （TODO：声明式简化实现数据双向绑定？）
     this.$state = <%= $data['state'] %>;
     rpose.extend(this.$state, options, this.$STATE_KEYS);       // 按属性接口克隆数据状态
+    <% }else{ %>
+    // 组件默认数据状态值 （TODO：声明式简化实现数据双向绑定？）
+    this.$state = <%= $data['state'] %>;
+    <% } %>
 
     <% if ( $data['actions'] != '{}' ){ %>
     // 事件处理器
@@ -40,7 +50,7 @@ function <%= $data['$componentName'] %>(options={}) {
     }
     <% } %>
 
-    <% if ( $data['updater'] != 'null' ){ %>
+    <% if ( $data['updater'] != null ){ %>
     // 组件更新函数
     this.$updater = <%= $data['updater'] %>;
     <% } %>

@@ -1,15 +1,19 @@
 {
   "name": "@gotoeasy/btf",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "main": "index.js",
-  "dependencies": {
-    "@gotoeasy/file": "*"
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*",
+    "opn": "*"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc ava",
+    "coverage": "nyc ava & nyc report --reporter=html & node coverage"
   },
   "description": "A JavaScript Block-Text-File Parser",
   "keywords": [
+    "gotoeasy",
     "btf",
     "btf file",
     "block-text-file",

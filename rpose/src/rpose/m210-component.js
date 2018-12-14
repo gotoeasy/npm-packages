@@ -121,6 +121,8 @@ function createDom(vnode, $thisContext) {
 				for (let k in vnode.e) {
 					if ( isFunction(vnode.e[k]) ) {
 						$$(el).on(k, vnode.e[k] );
+					}else if ( vnode.e[k] == undefined ) {
+						// 没有定义事件处理方法，忽略
 					}else{
 						console.error('invalid event handle:', k, '=', vnode.e[k]); // 绑定的不是方法
 					}

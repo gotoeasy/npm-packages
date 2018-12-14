@@ -1,4 +1,4 @@
-[path] // 定义目录
+[path]
 src                 : src
 src_btf             : src/btf
 src_components      : src/btf/components
@@ -9,8 +9,12 @@ build               : build
 build_temp          : build/temp
 build_dist          : build/dist
 
-[common] // 定义文件
+[common]
 common_css          : src/common/css/common.css
-common_less         : src/common/less/common.less
-common_sass         : src/common/less/common.scss
+index_less          : src/common/less/index.less
+index_sass          : src/common/less/index.scss
+
+[theme] // 样式风格包
+@gotoeasy/theme
+
 
