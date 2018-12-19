@@ -10,7 +10,8 @@
 // & = &amp;
 function escapeHtml(html){
 	if ( typeof html == 'string' ) {
-		return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+//		return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+		return html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	}
 	return html;
 }

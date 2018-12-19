@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const File = require('@gotoeasy/file');
 const PTask = require('@gotoeasy/p-task');
 const csjs = require('@gotoeasy/csjs');
@@ -18,20 +19,16 @@ module.exports = bus.on('编译RPOSE', function(pResult){
 
 		
 		try{
-			if ( File.exists(fileDist) ) {
-				resolve(File.read(fileDist));
-			}else{
-				let src = File.concat(srcDir, f=>!f.endsWith('rpose.js'));	// 合并除rpose.js以外的文件
-				src = csjs.formatJs(src, true);								// 删除注释格式化
+			let src = File.concat(srcDir, f=>!f.endsWith('rpose.js'));	// 合并除rpose.js以外的文件
+			resolve(src);
 
-				resolve(src);
-
-				Promise.resolve()
-					.then( File.write(fileDist, src) )
-					.catch(e=>console.error(MODULE, e));
-			}
+			// 非release时输出文件方便查看
+			let env  = bus.at('编译环境');
+			!env.release && Promise.resolve()
+				.then( File.write(fileDist, csjs.formatJs(src, true)) )
+				.catch(e=>console.error(MODULE, e));
 		}catch(e){
-			reject(Error.err(MODULE + 'compile rpose failed', e));
+			reject(error(MODULE + 'compile rpose failed', e));
 		}
 	});
 

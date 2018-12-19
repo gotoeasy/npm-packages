@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 
@@ -32,5 +33,5 @@ module.exports = bus.on('删除已生成的页面代码文件', function(){
 
 // 在watch模式下，编译失败或删除页面文件时，生成的html文件不删除，便于浏览器同步提示信息
 function syncHtml(e){
-	return `<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>Page build failed or src file removed<p><pre>${e}</pre></body>`;
+	return `<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>Page build failed or src file removed<p><pre>${e.stack.replace(/\[\d{1,2}m/g, '')}</pre></body>`;
 }

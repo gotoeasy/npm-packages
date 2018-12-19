@@ -13,7 +13,9 @@ module.exports = function (opts){
 console.time('build');
 
 		// 初始化
+console.time('load');
 		require('./loadModules')();
+console.timeEnd('load');
 		let env = bus.at('编译环境', opts);
 		bus.at('clean');
 
@@ -58,7 +60,7 @@ async function buildAllPages(){
 		await bus.at('编译全部页面', true);
 		return true;
 	}catch(e){
-		console.error(MODULE, e);
+		console.error(MODULE, e.stack);
 	}
 }
 
@@ -99,7 +101,7 @@ function notifyRemove(file){
 		try{
 			await bus.at('源文件删除时再编译', file);
 		}catch(e){
-			console.error(MODULE, e);
+			console.error(MODULE, e.stack);
 		}
 	})();
 }

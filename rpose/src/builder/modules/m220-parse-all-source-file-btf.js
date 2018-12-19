@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const File = require('@gotoeasy/file');
@@ -16,7 +17,7 @@ module.exports = bus.on('解析全部源文件', function(){
 
 			await Promise.all(promises);
 		}catch(e){
-			throw Error.err(MODULE + 'parse all btf failed', e);
+			throw error(MODULE + 'parse all btf failed', e);
 		}
 	};
 

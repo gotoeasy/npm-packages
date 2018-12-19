@@ -34,23 +34,17 @@ function <%= $data['$componentName'] %>(options={}) {
     this.$state = <%= $data['state'] %>;
     <% } %>
 
-    <% if ( $data['actions'] != '{}' ){ %>
+    <% if ( $data['actions'] ){ %>
     // 事件处理器
-    this.$actions = <%= $data['actions'] %>;
-    for (let k in this.$actions){
-        this.$actions[k].bind(this);
-    }
+    <%= $data['actions'] %>
     <% } %>
 
-    <% if ( $data['methods'] != '{}' ){ %>
+    <% if ( $data['methods'] ){ %>
     // 自定义方法
-    this.$methods = <%= $data['methods'] %>;
-    for (let k in this.$methods){
-        this.$methods[k].bind(this);
-    }
+    <%= $data['methods'] %>;
     <% } %>
 
-    <% if ( $data['updater'] != null ){ %>
+    <% if ( $data['updater'] ){ %>
     // 组件更新函数
     this.$updater = <%= $data['updater'] %>;
     <% } %>
@@ -58,10 +52,6 @@ function <%= $data['$componentName'] %>(options={}) {
     <% let actionskeys = $data['actionskeys'] || []; %>
     <% if ( actionskeys.includes('window.onload') ){ %>
         rpose.once('window.onload', this.$actions['window.onload'].bind(this)); // 自定义方法中有window.onload时，自动调用
-    <% } %>
-    <% let methodskeys = $data['methodskeys'] || []; %>
-    <% if ( methodskeys.includes('render') ){ %>
-        this.render = this.$methods.render; // 自定义方法中有render时，使用自定义的render
     <% } %>
 }
 

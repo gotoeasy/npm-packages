@@ -1,4 +1,6 @@
 
+const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
+
 // ------------------------------------------------------------------------
 // opts - 选项
 //    opts.sass - true：sass/scss （默认false）
@@ -43,12 +45,11 @@ module.exports = async function (src, opts={}){
 	let to = opts.to || 'to.css';
 	let assetsPath = opts.assetsPath || File.relative(to, File.path(to) + '/images');
 	let postcssUrlOpt = {url: 'copy', from, to, basePath:File.path(from), assetsPath, useHash: true};
-
 	let plugins = [];
 	opts.debug && plugins.push( require('postcss-devtools') );									// 输出各插件处理时间
 	plugins.push( require('postcss-preset-env')({stage: 3}) );									// 默认支持使用stage3新特性，已含autoprefixer处理
 	opts.normalize && plugins.push( require('postcss-normalize') );								// 按需引用normalize.css内容
-	plugins.push( require('postcss-import') );													// 导入@import文件内容
+	plugins.push( require('postcss-import')() );												// 导入@import文件内容
 	opts.removeComments && plugins.push( require('postcss-discard-comments')({remove:x=>1}) );	// 删除所有注释
 	plugins.push( require('postcss-normalize-whitespace') );									// 压缩删除换行空格
 	plugins.push( require('postcss-minify-selectors') );										// 压缩删除选择器空白（h1 + p, h2, h3, h2{color:blue} => h1+p,h2,h3{color:blue}）

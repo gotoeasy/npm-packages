@@ -39,6 +39,16 @@ k2 = v2
 111
 [name2]
 222
+[]
+333
+[\]
+\
+[\]]
+]
+[\]\]
+\---------
+[\][\]]
+\=========
 ```
 
 ```js
@@ -62,6 +72,11 @@ console.info(doc1.getText('key2') == 'value2\n'); // true
 let doc2 = docs[1];
 console.info(doc2.getText('name1') == '111'); // true
 console.info(doc2.getText('name2') == '222'); // true
+console.info(doc2.getText('') == '333'); // true
+console.info(doc2.getText('\\') == '\\'); // true
+console.info(doc2.getText(']') == ']'); // true
+console.info(doc2.getText(']\\') == '---------'); // true
+console.info(doc2.getText('][]') == '========='); // true
 
 ```
 <br>

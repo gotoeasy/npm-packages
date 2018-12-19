@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
@@ -12,7 +13,6 @@ module.exports = bus.on('编译SCSS', function(scssIndexText){
 			if ( !scss.trim() ) {
 				return '';
 			}
-//console.info(MODULE, scss, btfFile);
 			
 			if ( scssIndexText === undefined ) {
 				const env = bus.at('编译环境');
@@ -23,7 +23,7 @@ module.exports = bus.on('编译SCSS', function(scssIndexText){
 			let rs = csjs.scssToCss(scssIndexText + scss, btfFile);
 			return rs.css;
 		}catch(e){
-			throw Error.err(MODULE + 'compile scss failed', btfFile, e);
+			throw error(MODULE + 'compile scss failed', btfFile, e);
 		}
 	};
 

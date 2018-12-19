@@ -1,19 +1,17 @@
 // HTML标准所定义的全部标签，以及svg相关标签
 const REG_TAGS = /^(html|link|meta|style|title|address|article|aside|footer|header|h1|h2|h3|h4|h5|h6|hgroup|main|nav|section|blockquote|dd|dir|div|dl|dt|figcaption|figure|hr|li|ol|p|pre|ul|a|abbr|b|bdi|bdo|br|cite|code|data|dfn|em|i|kbd|mark|q|rb|rp|rt|rtc|ruby|s|samp|small|span|strong|sub|sup|time|tt|u|var|wbr|area|audio|img|map|track|video|applet|embed|iframe|noembed|object|param|picture|source|canvas|noscript|script|del|ins|caption|col|colgroup|table|tbody|td|tfoot|th|thead|tr|button|datalist|fieldset|form|input|label|legend|meter|optgroup|option|output|progress|select|textarea|details|dialog|menu|menuitem|summary|content|element|shadow|slot|template|acronym|basefont|bgsound|big|blink|center|command|font|frame|frameset|image|isindex|keygen|listing|marquee|multicol|nextid|nobr|noframes|plaintext|spacer|strike|xmp|head|base|body|math|svg)$/i
-
 // HTML标准所定义的全部标签事件
 const REG_EVENTS = /^(onclick|onchange|onabort|onafterprint|onbeforeprint|onbeforeunload|onblur|oncanplay|oncanplaythrough|oncontextmenu|oncopy|oncut|ondblclick|ondrag|ondragend|ondragenter|ondragleave|ondragover|ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|onfocusin|onfocusout|onformchange|onforminput|onhashchange|oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|onloadedmetadata|onloadstart|onmousedown|onmouseenter|onmouseleave|onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onoffline|ononline|onpagehide|onpageshow|onpaste|onpause|onplay|onplaying|onprogress|onratechange|onreadystatechange|onreset|onresize|onscroll|onsearch|onseeked|onseeking|onselect|onshow|onstalled|onsubmit|onsuspend|ontimeupdate|ontoggle|onunload|onunload|onvolumechange|onwaiting|onwheel)$/i;
 
-const options = require('./m020-options')();
-const util = require('./m900-util');
+const error = require('@gotoeasy/error');
 const acorn = require('acorn');
 const acornGlobals = require('acorn-globals');
+const options = require('./m020-options')();
+const util = require('./m900-util');
 
+const JS_VARS = options.NameFnEscapeHtml.split('.')[0] + 'require,window,assignOptions,rpose,$SLOT,Object,Map,Set,WeakMap,WeakSet,Date,Math,Array,String,Number,JSON,Error,Function,arguments,Boolean,Promise,Proxy,Reflect,RegExp,alert,console,window,document'.split(',');
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
-
 const FN_TMPL_DEF = `function nodeTemplate($state, $options, $actions){`; // 模板方法开始行
-
-const JS_VARS = options.NameFnEscapeHtml.split('.')[0] + 'window,assignOptions,rpose,$SLOT,Object,Map,Set,WeakMap,WeakSet,Date,Math,Array,String,Number,JSON,Error,Function,arguments,Boolean,Promise,Proxy,Reflect,RegExp,alert,console,window,document'.split(',');
 
 
 // ------------ Ast代码编译器 ------------
@@ -147,7 +145,8 @@ console.debug(MODULE, src);
 			for ( let i=0; i<arySrc.length; i++) {
 				if ( arySrc[i].startsWith(startStr) ) {
 					if ( isFn && str ) {
-						throw Error.err(MODULE + 'invlid tag count'); // 模板函数返回的标签数量最多只能一个
+						// 模板函数返回的标签数量最多只能一个
+						throw error(new Error('invlid tag count'));
 					}
 					str && (str += ', ');
 					str += arySrc[i].substring(len, arySrc[i].length-2); // ${aryNm}.push(xxxxxxx); => xxxxxxx
@@ -334,16 +333,17 @@ function parseExpression(ary, val){
 }
 
 
-function classStrToObject(cls, doc){
-	if ( !cls.trim()) {
+function classStrToObject(clas, doc){
+	if ( !clas.trim()) {
 		return {};
 	}
-	let ary = cls.split(/\s/);
-	let rs = {};
 
+	let mapping = doc.mapping || {};
+	let ary = clas.split(/\s/);
+	let rs = {};
 	for ( let i=0,cls; i<ary.length; i++) {
 		cls = ary[i].trim();
-		doc.mapping[cls] && (cls = doc.mapping[cls]);
+		mapping[cls] && (cls = mapping[cls]);
 		rs[cls] = 1;
 	}
 
@@ -368,7 +368,8 @@ function getDomEvents(attrs, isStdTag, $actionsKeys){
 			if ( attrs[key].indexOf('{') < 0 ) {
 				// 没有表达式，检查指定方法是否存在
 				if ( !$actionsKeys.includes(attrs[key].trim()) ) {
-					throw Error.err(MODULE + 'action not found: ' + attrs[key]); // 指定方法找不到，需要定义
+					let msg = 'action not found: ' + attrs[key];
+					throw error(new Error(msg)); // 指定方法找不到，需要定义
 				}else{
 					attrs[key] = '{=$actions.' + attrs[key].trim() + '}'; // onclick="fnClick" => onclick="{=$actions.fnClick}"
 				}
@@ -401,7 +402,7 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		scope = acornGlobals(src);
 		if ( !scope.length ) return src; // 正常，直接返回
 	}catch(e){
-		throw Error.err(MODULE + 'source syntax error', doc.file, src); // 多数表达式中有语法错误导致
+		throw error(MODULE + + doc.file, new Error('source syntax error')); // 多数表达式中有语法错误导致
 	}
 
 	// 函数内部添加变量声明赋值后返回
@@ -413,10 +414,12 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		let inc$opts = $optsKeys.includes(v.name);
 		let incJsVars = JS_VARS.includes(v.name);
 		if ( !inc$data && !inc$opts && !incJsVars) {
-			throw Error.err(MODULE + 'template variable undefined: ' + v.name, doc.file, $dataKeys);	// 变量不在$state或$options的属性范围内
+			let msg = 'template variable undefined: ' + v.name;
+			throw error(MODULE + doc.file, $dataKeys, new Error(msg));	// 变量不在$state或$options的属性范围内
 		}
 		if ( inc$data && inc$opts ) {
-			throw Error.err(MODULE + 'template variable uncertainty: ' + v.name, doc.file);				// 变量同时存在于$state和$options，无法自动识别来源，需指定
+			let msg = 'template variable uncertainty: ' + v.name;
+			throw error(MODULE + doc.file, new Error(msg));				// 变量同时存在于$state和$options，无法自动识别来源，需指定
 		}
 
 

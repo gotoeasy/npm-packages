@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
 const File = require('@gotoeasy/file');
@@ -18,7 +19,7 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 
 			return src;
 		}catch(e){
-			throw Error.err(MODULE + 'gen page js failed', btfFile, e)
+			throw error(MODULE + 'gen page js failed', btfFile, e)
 		}
 	};
 
@@ -31,8 +32,10 @@ async function pageJs(allrequires, btfFile){
 	let srcRpose = await bus.at('编译RPOSE');
 	let srcStmt = getSrcRegisterComponents(allrequires);
 	let srcComponents = await getSrcComponents(allrequires);
+	let requireAxios = ''; // srcComponents.indexOf('axios') > 0 ? 'let axios = require("axios");' : ''; // 简易的按需引入axios
 
 	let src = `
+			${requireAxios}
 			${srcRpose}
 
 			(function($$, escapeHtml){
@@ -51,7 +54,7 @@ async function pageJs(allrequires, btfFile){
 			src = csjs.babel(src);
 			console.timeEnd(MODULE + 'babel      ' + tag)
 		}catch(e){
-			throw Error.err(MODULE + 'babel transform page js failed', e)
+			throw error(MODULE + 'babel transform page js failed', e)
 		}
 
 		try{
@@ -59,7 +62,7 @@ async function pageJs(allrequires, btfFile){
 			src = await csjs.browserify(src);
 			console.timeEnd(MODULE + 'browserify ' + tag)
 		}catch(e){
-			throw Error.err(MODULE + 'browserify transform page js failed', e)
+			throw error(MODULE + 'browserify transform page js failed', e)
 		}
 	}
 
@@ -77,7 +80,7 @@ function getSrcRegisterComponents(allrequires){
 
 		return `rpose.registerComponents(${JSON.stringify(obj).replace(/"/g,'')});`;
 	}catch(e){
-		throw Error.err(MODULE + 'gen register stmt failed', allrequires, e);
+		throw error(MODULE + 'gen register stmt failed', allrequires, e);
 	}
 }
 
@@ -91,6 +94,6 @@ async function getSrcComponents(allrequires){
 		}
 		return ary.join('\n');
 	}catch(e){
-		throw Error.err(MODULE + 'get component src failed', allrequires, e);
+		throw error(MODULE + 'get component src failed', allrequires, e);
 	}
 }

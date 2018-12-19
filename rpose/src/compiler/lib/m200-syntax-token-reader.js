@@ -33,6 +33,9 @@ console.debug(MODULE, tokens);
 		return rs;
 	}
 
+	getPreToken(){
+		return this.pos == 0 ? {} : this.ary[this.pos-1];
+	}
 	getCurrentToken(){
 		return this.pos >= this.maxLength ? {} : this.ary[this.pos];
 	}

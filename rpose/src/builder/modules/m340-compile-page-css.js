@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
@@ -30,7 +31,7 @@ module.exports = bus.on('编译页面CSS', function(){
 			}
 			return rs.css;
 		}catch(e){
-			throw Error.err(MODULE + 'compile page css failed', btfFile, e);
+			throw error(MODULE + 'compile page css failed', btfFile, e);
 		}
 	};
 

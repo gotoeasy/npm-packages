@@ -1,8 +1,8 @@
 [name] // 项目名 （必填）
-@gotoeasy/rpose
+@gotoeasy/error
 
 [version] // 版本号 （必填）
-0.0.27
+0.0.2
 
 
 
@@ -10,39 +10,25 @@
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/btf = *
-@gotoeasy/bus = *
-@gotoeasy/csjs = *
-@gotoeasy/util = *
-@gotoeasy/error = *
-@gotoeasy/os = *
-@gotoeasy/p-task = *
-@gotoeasy/theme = *
-acorn-globals = *
-astring = *
-chokidar = *
-browser-sync = *
-browserify = *
-axios = *
-
-[devDependencies] // 开发依赖库
-
-[scripts] // 脚本命令
-build = node scripts/build
-test = echo "Error: no test specified" && exit 1
+@gotoeasy/file = *
+@babel/code-frame = *
+is-error = *
 
 [description] // 描述
-gotoeasy with rpose
+友好的错误信息
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, rpose
+gotoeasy, rpose, error
+
+[scripts] // 脚本命令
+test = echo "Error: no test specified" && exit 1
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/rpose/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/error/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

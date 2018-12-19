@@ -12,7 +12,7 @@ const DomAttrHandle = (function(){
 
 	// ------------------
 	// 普通属性存取
-	on('*', (el, prop, val) => isFunction(val) || val==null ? el.getAttribute(prop) : el.setAttribute(prop, val) ); // 不支持值为函数的设定，按取值处理
+	on('*', (el, prop, val) => isFunction(val) || val==null || prop.startsWith('$') ? el.getAttribute(prop) : el.setAttribute(prop, val) ); // 不支持值为函数的设定，按取值处理，属性名$开头时仅取值（非法属性名，但又常用于内部特殊判断用途）
 
 	// ------------------
 	// 特殊属性存取定义(简单起见应付常用属性，必要时具体定义) ['autofocus', 'hidden', 'readonly', 'disabled', 'checked', 'selected', 'multiple', 'translate', 'draggable', 'noresize']

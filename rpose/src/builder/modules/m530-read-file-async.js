@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const File = require('@gotoeasy/file');

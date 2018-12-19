@@ -1,11 +1,7 @@
+const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
-
-// Error
-Error.err = function(...args){
-	return new Error(args.join('\n    '));
-}
 
 
 bus.on('是否页面源文件', function(){

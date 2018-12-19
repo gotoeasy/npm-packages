@@ -23,6 +23,7 @@ module.exports = (function (options={}, init){
 	options.TypeAttributeValue = 'AttributeValue';
 	options.TypeEqual = '=';
 	options.TypeText = 'Text';
+	//options.TypeCData = 'CData'; // AS Text
 	
 	// 词素类型
 	options.AutoCloseTags = 'br,hr,input,img,meta,link,area,base,col,command,embed,keygen,param,srouce,trace,wbr'.split(',');

@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
@@ -25,17 +26,19 @@ module.exports = bus.on('编译组件CSS', function(){
 			//let rs = await csjs.cssUrl(css, opt);
 			let rs = await csjs.miniCss(css, opt);
 
-//await File.writePromise(to, rs.css);
-await File.writePromise(to, await csjs.formatCss(rs.css));
+			!env.release && await File.writePromise(to, await csjs.formatCss(rs.css));
 			return rs;
 		}catch(e){
-			throw Error.err(MODULE + 'compile component css failed', btfFile, e);
+			throw error(MODULE + 'compile component css failed', btfFile, e);
 		}
 	};
 
 }());
 
 function renameCssClassName(btfFile, cls){
+	if ( cls == 'hljs' || cls.startsWith('hljs-') ) {
+		return cls; // 语法高亮的.hljs/.hljs-xxx默认支持，不做修改 // TODO，转为配置实现？
+	}
 	let aryHash = [];
 	aryHash.push(bus.at('默认标签名', btfFile));
 	aryHash.push(cls);

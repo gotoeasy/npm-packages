@@ -4,11 +4,11 @@ module.exports = async function(code, basedir){
 		return code;
 	}
 
-	try{
-		let opts = {};
-		opts.entries = [require('into-stream')(code)];
-		opts.basedir = basedir || __dirname;
+	let opts = {};
+	opts.entries = [require('into-stream')(code)];
+	opts.basedir = basedir || __dirname;
 
+	try{
 		let stream = require('browserify')(opts).bundle();
 		return await require('stream-to-string')(stream) ;
 	}catch(e){

@@ -1,6 +1,7 @@
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const File = require('@gotoeasy/file');
+const error = require('@gotoeasy/error');
 const compiler = require('../../compiler/compiler');
 const acorn = require('acorn');
 
@@ -16,7 +17,7 @@ module.exports = bus.on('编译源文件', function(){
 			await parseBtfDocument(doc, file);
 			resolve(btf);
 		}catch(e){
-			reject(Error.err(MODULE + 'compile btf task failed', e));
+			reject(error(MODULE + 'compile btf task failed', e));
 		}
 	});
 
@@ -43,7 +44,7 @@ module.exports = bus.on('编译源文件', function(){
 			// TODO npm pkg
 			throw new Error('TODO npm pkg');
 		}catch(e){
-			throw Error.err(MODULE + 'compile btf failed', e);
+			throw error(MODULE + 'compile btf failed', e);
 		}
 	};
 
@@ -60,14 +61,14 @@ async function parseBtfDocument(doc, file){
 		// CSS预处理-LESS
 		doc.less && (doc.css += '\n' + await bus.at('编译LESS', theme.themeLess + doc.less, file));
 	}catch(e){
-		throw Error.err(MODULE + 'compile less failed', e);
+		throw error(MODULE + 'compile less failed', e);
 	}
 
 	try{
 		// CSS预处理-SCSS
 		doc.scss && (doc.css += '\n' + await bus.at('编译SCSS', theme.themeSass + doc.scss, file));
 	}catch(e){
-		throw Error.err(MODULE + 'compile sass failed', e);
+		throw error(MODULE + 'compile sass failed', e);
 	}
 
 	// CSS后处理

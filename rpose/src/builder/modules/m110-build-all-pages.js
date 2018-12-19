@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
@@ -22,7 +23,7 @@ module.exports = bus.on('编译全部页面', function(){
 
 			await Promise.all(ary);
 		}catch(e){
-			throw Error.err(MODULE + 'compile all pages failed', e);
+			throw error(MODULE + 'compile all pages failed', e);
 		}
 	};
 

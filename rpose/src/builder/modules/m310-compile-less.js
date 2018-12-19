@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
@@ -20,9 +21,7 @@ module.exports = bus.on('编译LESS', function(lessIndexText){
 			resolve( rs.css );
 		}catch(e){
 			// TODO 友好的出错信息提示
-//			console.error(MODULE, 'less compile failed:', file);
-//			reject( {message: e.message, filename: file, block: 'less', extract: e.extract} );
-			reject( Error.err(MODULE + 'compile less failed', e.message, btfFile, e.extract, e) );
+			reject( error(MODULE + 'compile less failed', e.message, btfFile, e.extract, e) );
 		}
 	});
 

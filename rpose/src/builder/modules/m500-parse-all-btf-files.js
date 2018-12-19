@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const File = require('@gotoeasy/file');
@@ -17,7 +18,7 @@ console.info(MODULE, '------------parse all btf-----------');
 
 			await Promise.all(promises);
 		}catch(e){
-			throw Error.err(MODULE + 'parse all btf failed', e);
+			throw error(MODULE + 'parse all btf failed', e);
 		}
 	};
 

@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const Btf = require('@gotoeasy/btf');
 const File = require('@gotoeasy/file');
@@ -28,7 +29,7 @@ module.exports = bus.on('样式风格', function(result){
 			return result;
 
 		}catch(e){
-			throw Error.err(MODULE + 'init theme failed: '+ env.theme, e);
+			throw error(MODULE + 'init theme failed: '+ env.theme, e);
 		}
 	};
 
@@ -67,7 +68,7 @@ function getThemeBtfFile() {
 			return file;
 		}
 
-		throw Error.err(MODULE + 'theme file not found: '+ file);
+		throw error(new Error('theme file not found: '+ file));
 	}
 
 	// 包名形式配置
@@ -82,14 +83,14 @@ function getThemeBtfFileByPkg(themePkg) {
 			return file;
 		}
 	}
-	throw Error.err(MODULE + 'theme file not found: ' + themePkg + '/theme.btf');
+	throw error(new Error('theme file not found: ' + themePkg + '/theme.btf'));
 }
 
 const fileSet = new Set(); // 循环继承检查用
 function getThemeMapByFile(file) {
 	if ( fileSet.has(file) ) {
 		let ary = [...fileSet].push(file);
-		throw Error.err(MODULE + 'theme circular extend', ary);
+		throw error(MODULE, ary, new Error('theme circular extend'));
 	}
 	fileSet.add(file);
 

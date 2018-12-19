@@ -1,4 +1,4 @@
-
+const error = require('@gotoeasy/error');
 const options = require('./m020-options')();
 const TokenReader = require('./m200-syntax-token-reader');
 const syntaxCheck = require('./m210-syntax-check');
@@ -51,15 +51,14 @@ function AstParser(tokens, doc){
 
 	// HTML节点
 	function parseTag() {
-		if ( reader.eof() || (reader.getCurrentToken().type != options.TypeTagOpen && reader.getCurrentToken().type != options.TypeTagSelfClose) ) {
+		let curToken = reader.getCurrentToken();
+		if ( reader.eof() || (curToken.type != options.TypeTagOpen && curToken.type != options.TypeTagSelfClose) ) {
 			return null;
 		}
 
+		let attrs, children, node = {tag: curToken.text};
 
-
-		let attrs, children, node = {tag: reader.getCurrentToken().text};
-
-		let isClose = (reader.getCurrentToken().type == options.TypeTagSelfClose);
+		let isClose = (curToken.type == options.TypeTagSelfClose);
 		reader.skip(1); // 跳过标签名
 
 		// 收集属性
@@ -71,16 +70,18 @@ function AstParser(tokens, doc){
 				if ( reader.getCurrentToken().text == node.tag ) {
 					reader.skip(1); // 跳过闭合标签
 				}else{
-					//console.error(MODULE, 'close tag unmatch:', node.tag, '/', reader.getCurrentToken().text);
-					throw Error.err(MODULE + 'close tag unmatch: ' + node.tag + ' / ' + reader.getCurrentToken().text, file); // 闭合标签名不匹配
+					let msg = 'close tag unmatch: ' + node.tag + ' / ' + reader.getCurrentToken().text;
+					throw error(MODULE + file, new Error(msg)); // 闭合标签名不匹配
 				}
 			}else{
-				throw Error.err(MODULE + 'tag not close: ' + node.tag, file); // 标签没有闭合
+				let err = new Error('tag not close: ' + node.tag);
+				throw error(MODULE + file, err); // 标签没有闭合
 			}
 		}
 
 		attrs && (node.attrs = attrs);
 		children && children.length && (node.children = children);
+
 		return node;
 	}
 

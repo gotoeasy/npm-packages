@@ -73,19 +73,27 @@ function createDom(vnode, $thisContext) {
 		if (vnode.m) { // HTML标准标准定义的标签以外，都按组件看待。推荐自定义标签名用半角减号连接，如my-tag
 			// 子组件渲染
 			let comp = new createComponentByVnode(vnode); // 属性作为配置选项直接全部传入(子虚拟节点也按属性$SLOT传入)
+			comp.parent = $thisContext; // 保存父组件引用
 			vnode.o = comp; // 虚拟节点挂上组件实例
+
+			// 组件有ref属性时，建立关联关系 【refs:{ c:{组件}， e:{节点} }】
+			let refs, cls;
+			if ( vnode.a && vnode.a.ref ) {
+
+				// 默认上下文是当前组件，但slot的话需要由原组件管理 // TODO 原组件不一定是父组件，怎解？
+				refs = ($thisContext.parent.$refs = $thisContext.parent.$refs || {});
+
+				let ref = refs.c = refs.c || {};
+				cls = ref[vnode.a.ref] = ref[vnode.a.ref] || uid('_ref_'); // 类名
+			}
+
 			el = comp.render(); // 渲染为DOM，初始配置已通过选项传入
 			if ( el ) {
 				$$el = $$(el);
 				$$el.addClass(comp.$COMPONENT_ID); // 使用组件对象ID插入到组件根节点class上建立关联
 
 				// 组件有ref属性时，建立关联关系 【refs:{ c:{组件}， e:{节点} }】
-				if ( vnode.a && vnode.a.ref ) {
-					let refs = $thisContext.$refs = $thisContext.$refs || {};
-					let ref = refs.c = refs.c || {};
-					let cls = ref[vnode.a.ref] = ref[vnode.a.ref] || uid('_ref_'); // 类名
-					$$el.addClass(vnode.r = cls);			// r=cls. 查找时，通过引用名查得cls，由cls查得DOM，由DOM查得单个或复合虚拟节点，再遍历比较虚拟节点的r可找到对应的组件虚拟节点，最后拿到组件对象
-				}
+				cls && $$el.addClass(vnode.r = cls);			// r=cls. 查找时，通过引用名查得cls，由cls查得DOM，由DOM查得单个或复合虚拟节点，再遍历比较虚拟节点的r可找到对应的组件虚拟节点，最后拿到组件对象
 			}
 
 		} else {
@@ -98,7 +106,7 @@ function createDom(vnode, $thisContext) {
 				return loadLink(vnode.a);
 			}
 
-			// 创建节点【g属性代表SVG标签或SVG子标签，SVG标签及其子标签都用createElementNS创建，其他操作基本雷同】
+			// 创建节点【g属性代表SVG标签或SVG子标签，SVG标签及其子标签都用createElementNS创建，其他操作雷同】
 			el = vnode.g ? document.createElementNS('http://www.w3.org/2000/svg', vnode.t) : document.createElement(vnode.t);
 			$$el = $$(el);
 
@@ -107,6 +115,7 @@ function createDom(vnode, $thisContext) {
 				for (let k in vnode.a) {
 					if ( k == 'ref' ) {
 						// 对ref属性做特殊处理：添加相应类名便于查找
+						//let refs = vnode.a.slot ? ($thisContext.parent.$refs = $thisContext.parent.$refs || {}) : ($thisContext.$refs = $thisContext.$refs || {});
 						let refs = $thisContext.$refs = $thisContext.$refs || {};
 						let ref = refs.e = refs.e || {};
 						let cls = ref[vnode.a[k]] = ref[vnode.a[k]] || uid('_ref_'); // 类名
@@ -134,8 +143,14 @@ function createDom(vnode, $thisContext) {
 				for ( let i=0,len=vnode.c.length,vn,dom; i<len; i++) {
 					vn = vnode.c[i];
 					if ( vn ) {
-						dom = createDom(vn, $thisContext); // 可能undefined。。。。。。<script>或<link>
-						dom && el.appendChild(dom);
+						if ( vn.a && vn.a.slot ) {
+							// TODO
+							dom = createDom(vn, $thisContext.parent);
+							dom && el.appendChild(dom);
+						}else{
+							dom = createDom(vn, $thisContext); // 可能undefined。。。。。。<script>或<link>
+							dom && el.appendChild(dom);
+						}
 					}
 				}
 			}

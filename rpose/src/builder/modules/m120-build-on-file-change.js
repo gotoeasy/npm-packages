@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
@@ -18,7 +19,8 @@ console.time('build')
 		try{
 			btf = await bus.at('编译组件', btfFile, true);			// 重新解析编译
 		}catch(e){
-			cplErr = Error.err(MODULE + 'compile failed on file change', btfFile, e);
+			error(btfFile, e);
+console.error(MODULE, 'compile failed on file change', e.stack); // TODO
 		}
 
 		// ----------------------------------------------------
@@ -29,7 +31,7 @@ console.time('build')
 				await bus.at('输出页面代码文件', btfFile);
 			}
 		}catch(e){
-			let err = Error.err(MODULE + 'build page failed on change', btfFile, e, cplErr);
+			let err = error(MODULE + 'build page failed on change', btfFile, e);
 			bus.at('删除已生成的页面代码文件', btfFile, err);
 			throw err;
 		}
@@ -53,7 +55,7 @@ console.time('build')
 				try{
 					allrequires = await bus.at('查找页面依赖组件', file, true);	// 原来就编译失败，尝试重新编译查找
 				}catch(e){
-					errs.push( Error.err(MODULE + 'build page failed', file, e, cplErr) );
+					errs.push( error(MODULE + 'build page failed', file, e) );
 					continue;
 				}
 			}
@@ -63,15 +65,19 @@ console.time('build')
 					await bus.at('查找页面依赖组件', file, true);				// 异步任务重新查找页面依赖组件
 					await bus.at('输出页面代码文件', file);
 				}catch(e){
-					let err = Error.err(MODULE + 'build page failed', file, e, cplErr);
+					let err = error(MODULE + 'build page failed', file, e);
 					bus.at('删除已生成的页面代码文件', file, err);
 					errs.push( err );
 				}
 			}
 		}
 
-		if ( errs.length ) {
-			throw new Error(['build page failed on require component change', ...errs].join('\n\n'));
+		if ( errs.length == 1 ) {
+			throw error(e);
+		}else if ( errs.length > 1 ) {
+			let msgs = [];
+			errs.forEach(e => msgs.push(e.stack))
+			throw error(msgs.join('\n\n'), new Error(errs.length + ' errors'));
 		}
 
 

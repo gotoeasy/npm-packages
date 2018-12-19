@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 const fs = require('fs');
@@ -22,7 +23,7 @@ bus.on('输出页面代码文件', function(){
 			bus.at('页面编译状态', htmlFile, true);
 		}catch(e){
 			//bus.at('页面编译状态', htmlFile || btfFile, false);
-			throw Error.err(MODULE + 'write page failed', htmlFile || btfFile, e);
+			throw error(MODULE + 'write page failed', htmlFile || btfFile, e);
 		}
 
 	}; 
@@ -44,7 +45,7 @@ bus.on('输出页面JS文件', function(){
 			let source = await bus.at('汇总页面关联JS代码', btfFile, allrequires);
 			await File.writePromise(jsFile, source);
 		}catch(e){
-			throw Error.err(MODULE + 'write page js failed', btfFile, e);
+			throw error(MODULE + 'write page js failed', btfFile, e);
 		}
 	}; 
 
@@ -65,7 +66,7 @@ bus.on('输出页面CSS文件', function(){
 			let source = await bus.at('汇总页面关联CSS代码', btfFile, allrequires);
 			await File.writePromise(cssFile, source);
 		}catch(e){
-			throw Error.err(MODULE + 'write page css failed', btfFile, e);
+			throw error(MODULE + 'write page css failed', btfFile, e);
 		}
 
 	};
@@ -96,7 +97,7 @@ bus.on('输出页面HTML文件', function(){
 				});
 			});
 		}catch(e){
-			throw Error.err(MODULE + 'write page html failed', btfFile, e)
+			throw error(MODULE + 'write page html failed', btfFile, e)
 		}
 
 	};

@@ -1,4 +1,5 @@
 const csjs = require('@gotoeasy/csjs');
+const error = require('@gotoeasy/error');
 
 const options = require('./lib/m020-options');
 const TokenParser = require('./lib/m110-token');
@@ -12,38 +13,55 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 // 模板编译为JavaScript函数
 module.exports = function complie(doc, opts){
 
+	// 自定义选项
+	options(opts);
+
+	let tokens, ast, js;
+
 	try{
-		// 自定义选项
-		options(opts);
-
 		let tokenParser = new TokenParser(doc);
-		let tokens = tokenParser.parse();
+		tokens = tokenParser.parse();
 		//console.info(tokens);
+	}catch(e){
+		throw error(MODULE + 'view token parse failed', e);
+	}
 
+	try{
 		let astParser = new AstParser(tokens, doc);
-		let ast = astParser.parse();
+		ast = astParser.parse();
+	}catch(e){
+		throw error(MODULE + 'view ast parse failed', e);
+	}
 
 	//	console.info('-----------------------1----------------------------------');
 	//	console.info(JSON.stringify(ast, null, 4));
 
+	try{
 		let editor = new AstEditor();	// 合并连续的文本节点
 		editor.edit(ast, doc);
+	}catch(e){
+		throw error(MODULE + 'view ast edit failed', e);
+	}
+
 	//	console.info('-----------------------2----------------------------------');
 	//	console.info(JSON.stringify(ast, null, 4));
 
+	try{
 		let astGen = new AstGen(ast, doc);
-		let js = astGen.toJavaScript();
-		//console.info('----------------------------------------------------------');
-		//console.info(csjs.formatJs(js));
-		//console.info('----------------------------------------------------------');
-		//console.info(csjs.formatJs(csjs.miniJs(js)));
-
-		//return csjs.formatJs(js);
-		//return csjs.miniJs(js);
-		return js;
+		js = astGen.toJavaScript();
 	}catch(e){
-		throw Error.err(MODULE + 'compile view failed', e);
+		//console.error(MODULE, e);
+		throw error(MODULE + 'view gen js failed', e);
 	}
+
+	//console.info('----------------------------------------------------------');
+	//console.info(csjs.formatJs(js));
+	//console.info('----------------------------------------------------------');
+	//console.info(csjs.formatJs(csjs.miniJs(js)));
+
+	//return csjs.formatJs(js);
+	//return csjs.miniJs(js);
+	return js;
 
 }
 

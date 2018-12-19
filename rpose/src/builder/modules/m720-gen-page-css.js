@@ -1,3 +1,4 @@
+const error = require('@gotoeasy/error');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
 const File = require('@gotoeasy/file');
@@ -14,7 +15,7 @@ module.exports = bus.on('汇总页面关联CSS代码', function(){
 			let src = await pageCss(allrequires);
 			return await bus.at('编译页面CSS', src, btfFile);
 		}catch(e){
-			throw Error.err(MODULE + 'gen page css failed', btfFile, allrequires, e)
+			throw error(MODULE + 'gen page css failed', btfFile, allrequires, e)
 		}
 
 	};
