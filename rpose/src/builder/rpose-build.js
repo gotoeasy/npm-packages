@@ -1,3 +1,4 @@
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
@@ -16,7 +17,7 @@ console.timeEnd('load');
 
 			await bus.at('编译全部页面');
 		}catch(e){
-			console.error(MODULE, 'build failed\n   ', e.stack);
+			console.error(MODULE, Err.cat('build failed', e).toString());
 		}
 
 console.timeEnd('build');

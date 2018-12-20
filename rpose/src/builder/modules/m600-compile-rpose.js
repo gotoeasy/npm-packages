@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const File = require('@gotoeasy/file');
 const PTask = require('@gotoeasy/p-task');
 const csjs = require('@gotoeasy/csjs');
@@ -28,7 +28,7 @@ module.exports = bus.on('编译RPOSE', function(pResult){
 				.then( File.write(fileDist, csjs.formatJs(src, true)) )
 				.catch(e=>console.error(MODULE, e));
 		}catch(e){
-			reject(error(MODULE + 'compile rpose failed', e));
+			reject(Err.cat(MODULE + 'compile rpose failed', e));
 		}
 	});
 

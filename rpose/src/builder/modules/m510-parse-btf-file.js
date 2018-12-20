@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const Btf = require('@gotoeasy/btf');
@@ -22,7 +22,7 @@ module.exports = bus.on('解析源文件', function(){
 
 			resolve( btf );
 		}catch(e){
-			reject(error(MODULE + 'parse btf failed', btfFile, e));
+			reject(Err.cat(MODULE + 'parse btf failed', btfFile, e));
 		}
 	});
 
@@ -37,7 +37,7 @@ module.exports = bus.on('解析源文件', function(){
 function editBtfDocument(doc, file){
 
 	// 注意块名为小写，编辑后的数据对象将作为模板数据对象直接传给代码模板
-	doc.view			= (doc.getText('view') || '').trim();
+	doc.view			= (doc.getText('view') || '');
 	doc.options			= (doc.getText('options') || '').trim() || '{}';
 	doc.state			= (doc.getText('state') || '').trim() || '{}';
 	doc.actions			= (doc.getText('actions') || '').trim() || '{}';

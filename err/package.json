@@ -1,11 +1,10 @@
 {
-  "name": "@gotoeasy/error",
-  "version": "0.0.2",
+  "name": "@gotoeasy/err",
+  "version": "0.0.1",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "*",
-    "@babel/code-frame": "*",
-    "is-error": "*"
+    "@babel/code-frame": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,7 +19,7 @@
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/error/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/err/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

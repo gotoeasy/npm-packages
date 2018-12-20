@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 
 module.exports = bus.on('转换VIEW中代码块', function(){

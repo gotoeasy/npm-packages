@@ -1,7 +1,7 @@
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const File = require('@gotoeasy/file');
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const compiler = require('../../compiler/compiler');
 const acorn = require('acorn');
 
@@ -17,7 +17,7 @@ module.exports = bus.on('编译源文件', function(){
 			await parseBtfDocument(doc, file);
 			resolve(btf);
 		}catch(e){
-			reject(error(MODULE + 'compile btf task failed', e));
+			reject(Err.cat(MODULE + 'compile btf task failed', e));
 		}
 	});
 
@@ -33,7 +33,7 @@ module.exports = bus.on('编译源文件', function(){
 			if ( file.indexOf(':') < 0 ) {
 				let srcFile = bus.at('标签源文件', file);
 				if ( !File.exists(srcFile) ) {
-					throw Error.err(MODULE + 'component not found (tag = ' + file + ')');
+					throw new Err('component not found (tag = ' + file + ')');
 				}
 				bus.at('解析源文件', file, restart);
 				return restart ? ptask.restart(srcFile) : ptask.start(srcFile);
@@ -42,9 +42,9 @@ module.exports = bus.on('编译源文件', function(){
 			}
 
 			// TODO npm pkg
-			throw new Error('TODO npm pkg');
+			throw new Err('TODO npm pkg');
 		}catch(e){
-			throw error(MODULE + 'compile btf failed', e);
+			throw Err.cat(MODULE + 'compile btf failed', e);
 		}
 	};
 
@@ -61,14 +61,14 @@ async function parseBtfDocument(doc, file){
 		// CSS预处理-LESS
 		doc.less && (doc.css += '\n' + await bus.at('编译LESS', theme.themeLess + doc.less, file));
 	}catch(e){
-		throw error(MODULE + 'compile less failed', e);
+		throw Err.cat(MODULE + 'compile less failed', e);
 	}
 
 	try{
 		// CSS预处理-SCSS
 		doc.scss && (doc.css += '\n' + await bus.at('编译SCSS', theme.themeSass + doc.scss, file));
 	}catch(e){
-		throw error(MODULE + 'compile sass failed', e);
+		throw Err.cat(MODULE + 'compile sass failed', e);
 	}
 
 	// CSS后处理

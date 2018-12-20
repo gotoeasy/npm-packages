@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 
@@ -32,7 +32,7 @@ module.exports = bus.on('查找页面依赖组件', function(){
 
 			resolve( allrequires );
 		}catch(e){
-			reject(error(MODULE + 'find ref components failed', e));
+			reject( Err.cat(MODULE + 'find ref components failed', e) );
 		}
 	});
 

@@ -1,4 +1,5 @@
-const error = require('@gotoeasy/error');
+const File = require('@gotoeasy/file');
+const Err = require('@gotoeasy/err');
 const options = require('./m020-options')();
 const TemplateReader = require('./m100-reader');
 
@@ -146,12 +147,18 @@ function TokenParser(doc){
 
 		}else{
 			// error
-			let err = new Error('tag missing ">"');
-			throw error(MODULE + 'tag missing ">"',  'file=' + file, err); // 标签结束符漏，如<tag 
+			let text = File.read(file);
+			let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+			let offset = rs.index + rs[0].length + 1;
+			let start = offset + oPos.start;
+			let end = offset + reader.getPos() + 1;
+			throw Err.cat('tag missing ">"', 'file=' + file, new Err( {text, start, end} )); // 标签结束符漏，如<tag 
 		}
 
 		// 子节点解析通过递归解决
 	}
+
+
 
 	// HTML节点属性
 	function parseAttr() {
@@ -224,9 +231,19 @@ function TokenParser(doc){
 			if ( reader.getCurrentChar() == '"' ) {
 				// 值由双引号包围
 				reader.skip(1);	// 跳过左双引号
-				while ( reader.getCurrentChar() != '"' ) {
+				while ( !reader.eof() && reader.getCurrentChar() != '"' && reader.getCurrentChar() != '\r' && reader.getCurrentChar() != '\n' ) {
 					val += reader.readChar();	// 只要不是【"】就算属性值
 				}
+
+				if ( reader.eof() || reader.getCurrentChar() != '"' ) {
+					let text = File.read(file);
+					let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+					let offset = rs.index + rs[0].length + 1;
+					let start = offset + tokens[tokens.length-2].pos.start;
+					let end = offset + reader.getPos();
+					throw Err.cat('invalid attributeValue', 'file=' + file, new Err( {text, start, end} )); // 属性值右边双引号没写
+				}
+
 				reader.skip(1);	// 跳过右双引号
 				oPos.end = reader.getPos();
 
@@ -235,9 +252,19 @@ function TokenParser(doc){
 			}else if ( reader.getCurrentChar() == "'" ) {
 				// 值由单引号包围
 				reader.skip(1);	// 跳过左单引号
-				while ( reader.getCurrentChar() != "'" ) {
+				while ( !reader.eof() && reader.getCurrentChar() != "'" && reader.getCurrentChar() != '\r' && reader.getCurrentChar() != '\n' ) {
 					val += reader.readChar();	// 只要不是【'】就算属性值
 				}
+
+				if ( reader.eof() || reader.getCurrentChar() != "'" ) {
+					let text = File.read(file);
+					let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+					let offset = rs.index + rs[0].length + 1;
+					let start = offset + tokens[tokens.length-2].pos.start;
+					let end = offset + reader.getPos();
+					throw Err.cat('invalid attributeValue', 'file=' + file, new Err( {text, start, end} )); // 属性值右边单引号没写
+				}
+
 				reader.skip(1);	// 跳过右单引号
 				oPos.end = reader.getPos();
 
@@ -246,6 +273,7 @@ function TokenParser(doc){
 			}else if ( reader.getCurrentChar() == "{" ) {
 				// 值省略引号包围
 				let stack = [];
+				let posStart = reader.getPos();
 				while ( !reader.eof() ) {
 					if ( reader.getCurrentChar() == "{" ) {
 						stack.push('{');
@@ -262,8 +290,12 @@ function TokenParser(doc){
 					val += reader.readChar();	// 只要不是【'】就算属性值
 				}
 				if ( reader.eof() ) {
-					let err = new Error('invalid expression of AttributeValue: ' + val);
-					throw error(MODULE + 'file=' + file, err); // 属性值表达式有误
+					let text = File.read(file);
+					let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+					let offset = rs.index + rs[0].length + 1;
+					let start = offset + posStart;
+					let end = offset + reader.getPos();
+					throw Err.cat('invalid expression of AttributeValue: ' + val, 'file=' + file, new Err( {text, start, end} )); // 属性值表达式有误
 				}
 				oPos.end = reader.getPos();
 				token = { type: options.TypeAttributeValue, text: unescape(val), pos: oPos };	// Token: 属性值
@@ -275,8 +307,12 @@ function TokenParser(doc){
 				}
 
 				if ( val.trim() == '' ) {
-					let err = new Error('attribute value not found');
-					throw error(MODULE + 'pos=' + (reader.getPos() - val.length), err); // 属性值漏，如<tag aaa= />
+					let text = File.read(file);
+					let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+					let offset = rs.index + rs[0].length + 1;
+					let start = offset + tokens[tokens.length-2].pos.start;
+					let end = offset + reader.getPos() - val.length;
+					throw Err.cat('missing attribute value', 'file=' + file, new Err( {text, start, end} )); // 属性值漏，如<tag aaa= />
 				}
 				oPos.end = reader.getPos();
 				token = { type: options.TypeAttributeValue, text: unescape(val), pos: oPos };	// Token: 属性值

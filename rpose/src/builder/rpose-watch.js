@@ -1,6 +1,7 @@
 const Btf = require('@gotoeasy/btf');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
+const Err = require('@gotoeasy/err');
 const chokidar = require('chokidar');
 const bs = require("browser-sync").create('sync');
 const hash = require('string-hash');
@@ -60,7 +61,7 @@ async function buildAllPages(){
 		await bus.at('编译全部页面', true);
 		return true;
 	}catch(e){
-		console.error(MODULE, e.stack);
+		console.error(Err.cat(e).toString());
 	}
 }
 
@@ -76,10 +77,10 @@ function notifyAdd(file){
 			let hashVal = hash(txt);
 			if ( mapFileHash.get(file) != hashVal ) {
 				mapFileHash.set(file, hashVal);
-				bus.at('重新编译被更新源文件', file).catch(e=>console.error(MODULE, e));
+				bus.at('重新编译被更新源文件', file).catch(e=>console.error(Err.cat(e).toString()));
 			}
 		})
-		.catch(e=>console.error(MODULE, e));
+		.catch(e=>console.error(Err.cat(e).toString()));
 }
 function notifyChange(file){
 
@@ -89,10 +90,10 @@ function notifyChange(file){
 			if ( mapFileHash.get(file) != hashVal ) {
 console.info(MODULE, 'change ......', file);
 				mapFileHash.set(file, hashVal);
-				bus.at('重新编译被更新源文件', file).catch(e=>console.error(MODULE, e));
+				bus.at('重新编译被更新源文件', file).catch(e=>console.error(Err.cat(e).toString()));
 			}
 		})
-		.catch(e=>console.error(MODULE, e));
+		.catch(e=>console.error(Err.cat(e).toString()));
 }
 function notifyRemove(file){
 
@@ -101,7 +102,7 @@ function notifyRemove(file){
 		try{
 			await bus.at('源文件删除时再编译', file);
 		}catch(e){
-			console.error(MODULE, e.stack);
+			console.error(Err.cat(e).toString());
 		}
 	})();
 }

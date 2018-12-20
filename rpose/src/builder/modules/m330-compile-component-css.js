@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
@@ -29,7 +29,7 @@ module.exports = bus.on('编译组件CSS', function(){
 			!env.release && await File.writePromise(to, await csjs.formatCss(rs.css));
 			return rs;
 		}catch(e){
-			throw error(MODULE + 'compile component css failed', btfFile, e);
+			throw Err.cat(MODULE + 'compile component css failed', btfFile, e);
 		}
 	};
 

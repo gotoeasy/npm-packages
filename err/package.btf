@@ -1,8 +1,8 @@
 [name] // 项目名 （必填）
-@gotoeasy/error
+@gotoeasy/err
 
 [version] // 版本号 （必填）
-0.0.2
+0.0.1
 
 
 
@@ -12,7 +12,6 @@ index.js
 [dependencies] // 依赖库
 @gotoeasy/file = *
 @babel/code-frame = *
-is-error = *
 
 [description] // 描述
 友好的错误信息
@@ -28,7 +27,7 @@ type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/error/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/err/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

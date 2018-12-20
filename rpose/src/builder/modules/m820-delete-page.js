@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 

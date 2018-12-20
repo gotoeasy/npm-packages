@@ -1,4 +1,5 @@
-const error = require('@gotoeasy/error');
+const File = require('@gotoeasy/file');
+const Err = require('@gotoeasy/err');
 const options = require('./m020-options')();
 const TokenReader = require('./m200-syntax-token-reader');
 const syntaxCheck = require('./m210-syntax-check');
@@ -57,7 +58,6 @@ function AstParser(tokens, doc){
 		}
 
 		let attrs, children, node = {tag: curToken.text};
-
 		let isClose = (curToken.type == options.TypeTagSelfClose);
 		reader.skip(1); // 跳过标签名
 
@@ -70,12 +70,30 @@ function AstParser(tokens, doc){
 				if ( reader.getCurrentToken().text == node.tag ) {
 					reader.skip(1); // 跳过闭合标签
 				}else{
-					let msg = 'close tag unmatch: ' + node.tag + ' / ' + reader.getCurrentToken().text;
-					throw error(MODULE + file, new Error(msg)); // 闭合标签名不匹配
+
+					let token = reader.getCurrentToken();
+					!token.pos && (token = reader.getPreToken());
+
+					let text = File.read(file);
+					let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+					let offset = rs.index + rs[0].length + 1;
+					let start = offset + curToken.pos.start;
+					let end = offset + token.pos.end;
+					let msg = 'close tag unmatch: ' + node.tag + ' / ' + token.text;
+					throw Err.cat(msg, 'file=' + file, new Err( {text, start, end} )); // 标签没有闭合
 				}
 			}else{
-				let err = new Error('tag not close: ' + node.tag);
-				throw error(MODULE + file, err); // 标签没有闭合
+				
+				let token = reader.getCurrentToken();
+				!token.pos && (token = reader.getPreToken());
+
+				let text = File.read(file);
+				let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+				let offset = rs.index + rs[0].length + 1;
+				let start = offset + curToken.pos.start;
+				let end = offset + token.pos.end;
+				let msg = 'tag not close: ' + node.tag;
+				throw Err.cat(msg, 'file=' + file, new Err( {text, start, end} )); // 标签没有闭合
 			}
 		}
 

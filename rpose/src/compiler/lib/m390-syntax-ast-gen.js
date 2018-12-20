@@ -3,7 +3,7 @@ const REG_TAGS = /^(html|link|meta|style|title|address|article|aside|footer|head
 // HTML标准所定义的全部标签事件
 const REG_EVENTS = /^(onclick|onchange|onabort|onafterprint|onbeforeprint|onbeforeunload|onblur|oncanplay|oncanplaythrough|oncontextmenu|oncopy|oncut|ondblclick|ondrag|ondragend|ondragenter|ondragleave|ondragover|ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|onfocusin|onfocusout|onformchange|onforminput|onhashchange|oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|onloadedmetadata|onloadstart|onmousedown|onmouseenter|onmouseleave|onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onoffline|ononline|onpagehide|onpageshow|onpaste|onpause|onplay|onplaying|onprogress|onratechange|onreadystatechange|onreset|onresize|onscroll|onsearch|onseeked|onseeking|onselect|onshow|onstalled|onsubmit|onsuspend|ontimeupdate|ontoggle|onunload|onunload|onvolumechange|onwaiting|onwheel)$/i;
 
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const acorn = require('acorn');
 const acornGlobals = require('acorn-globals');
 const options = require('./m020-options')();
@@ -145,8 +145,8 @@ console.debug(MODULE, src);
 			for ( let i=0; i<arySrc.length; i++) {
 				if ( arySrc[i].startsWith(startStr) ) {
 					if ( isFn && str ) {
-						// 模板函数返回的标签数量最多只能一个
-						throw error(new Error('invlid tag count'));
+						// view模板需要用一个标签包裹，不能有多一个顶部标签
+						throw new Err('invlid tag count');
 					}
 					str && (str += ', ');
 					str += arySrc[i].substring(len, arySrc[i].length-2); // ${aryNm}.push(xxxxxxx); => xxxxxxx
@@ -368,8 +368,8 @@ function getDomEvents(attrs, isStdTag, $actionsKeys){
 			if ( attrs[key].indexOf('{') < 0 ) {
 				// 没有表达式，检查指定方法是否存在
 				if ( !$actionsKeys.includes(attrs[key].trim()) ) {
-					let msg = 'action not found: ' + attrs[key];
-					throw error(new Error(msg)); // 指定方法找不到，需要定义
+					let msg = 'action not found: ' + attrs[key];			// TODO 定位显示
+					throw new Err(msg); // 指定方法找不到，需要定义
 				}else{
 					attrs[key] = '{=$actions.' + attrs[key].trim() + '}'; // onclick="fnClick" => onclick="{=$actions.fnClick}"
 				}
@@ -402,7 +402,7 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		scope = acornGlobals(src);
 		if ( !scope.length ) return src; // 正常，直接返回
 	}catch(e){
-		throw error(MODULE + + doc.file, new Error('source syntax error')); // 多数表达式中有语法错误导致
+		throw Err.cat('source syntax error', 'file='+ doc.file, e); // 多数表达式中有语法错误导致
 	}
 
 	// 函数内部添加变量声明赋值后返回
@@ -415,11 +415,11 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		let incJsVars = JS_VARS.includes(v.name);
 		if ( !inc$data && !inc$opts && !incJsVars) {
 			let msg = 'template variable undefined: ' + v.name;
-			throw error(MODULE + doc.file, $dataKeys, new Error(msg));	// 变量不在$state或$options的属性范围内
+			throw Err.cat(MODULE + doc.file, $dataKeys, new Err(msg));		// 变量不在$state或$options的属性范围内
 		}
 		if ( inc$data && inc$opts ) {
 			let msg = 'template variable uncertainty: ' + v.name;
-			throw error(MODULE + doc.file, new Error(msg));				// 变量同时存在于$state和$options，无法自动识别来源，需指定
+			throw Err.cat(MODULE + doc.file, new Err(msg));					// 变量同时存在于$state和$options，无法自动识别来源，需指定
 		}
 
 
@@ -433,6 +433,7 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 	return FN_TMPL_DEF + vars.join('\n') + src.substring(FN_TMPL_DEF.length);
 }
 
+/*
 function getObjectKeys(jsonStr){ // jsonStr = null 或 {....}
 	if ( jsonStr.trim() == 'null' ) {
 		return [];
@@ -445,6 +446,7 @@ function getObjectKeys(jsonStr){ // jsonStr = null 或 {....}
 	props.forEach(node => keys.push(node.key.name || node.key.value));
 	return keys;
 }
+*/
 
 module.exports = AstGen;
 

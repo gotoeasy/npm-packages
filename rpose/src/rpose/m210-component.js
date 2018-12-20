@@ -18,7 +18,7 @@ function getComponent(name){
 function newComponentProxy(componentKey, opt){
 	let Component = mapTagComponent[componentKey];
 	if ( !Component ) {
-		throw new Error('component not found: ' + componentKey);	// 找不到指定标签的组件
+		throw new Err('component not found: ' + componentKey);	// 找不到指定标签的组件
 	}
 
 	let comp;

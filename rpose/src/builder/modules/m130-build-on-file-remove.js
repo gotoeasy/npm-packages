@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
@@ -40,7 +40,7 @@ console.time('build')
 						allrequires = await bus.at('查找页面依赖组件', file, true);	// 原来就编译失败，尝试重新编译查找
 						writePages.push( bus.at('输出页面代码文件', file) );			// 直接尝试重新编译输出
 					}catch(e){
-						errs.push( error(MODULE + 'compile page failed', file, e) );
+						errs.push( Err.cat(MODULE + 'compile page failed', file, e) );
 						continue;
 					}
 				}
@@ -53,7 +53,7 @@ console.time('build')
 
 			await Promise.all(writePages);
 		}catch(e){
-			throw error(MODULE + 'build failed on file remove', btfFile, e);
+			throw Err.cat(MODULE + 'build failed on file remove', btfFile, e);
 		}
 console.timeEnd('build')
 

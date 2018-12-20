@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.27
+0.0.29
 
 
 
@@ -14,7 +14,7 @@ index.js
 @gotoeasy/bus = *
 @gotoeasy/csjs = *
 @gotoeasy/util = *
-@gotoeasy/error = *
+@gotoeasy/err = *
 @gotoeasy/os = *
 @gotoeasy/p-task = *
 @gotoeasy/theme = *

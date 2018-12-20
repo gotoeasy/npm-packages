@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const csjs = require('@gotoeasy/csjs');
@@ -23,7 +23,7 @@ module.exports = bus.on('编译SCSS', function(scssIndexText){
 			let rs = csjs.scssToCss(scssIndexText + scss, btfFile);
 			return rs.css;
 		}catch(e){
-			throw error(MODULE + 'compile scss failed', btfFile, e);
+			throw Err.cat(MODULE + 'compile scss failed', btfFile, e);
 		}
 	};
 

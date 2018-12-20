@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 
@@ -23,7 +23,7 @@ await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 			}else if ( file.indexOf(':') < 0 ) {
 				let srcFile = bus.at('标签源文件', file);
 				if ( !File.exists(srcFile) ) {
-					throw error(new Error('component file not found (tag = ' + file + ')'));
+					throw new Err('component file not found (tag = ' + file + ')');
 				}
 				let btf = await bus.at('编译源文件', srcFile, restart);
 				let doc = btf.getDocument();
@@ -33,12 +33,12 @@ await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 				return btf;
 			}else{
 				// TODO npm package
-				throw error(new Error('TODO npm pkg'));
+				throw new Err('TODO npm pkg');
 			}
 
 		}catch(e){
 			// console.info(MODULE, '------------------------', file)
-			throw error(MODULE + 'compile component failed', file, e);
+			throw Err.cat(MODULE + 'compile component failed', file, e);
 		}
 	};
 

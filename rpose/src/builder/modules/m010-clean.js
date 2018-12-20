@@ -1,4 +1,4 @@
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 
@@ -18,7 +18,7 @@ module.exports = bus.on('clean', function(){
 				console.debug('----------- p010-clean ----------- (not clean)');
 			}
 		}catch(e){
-			throw error(MODULE + 'clean failed', e);
+			throw Err.cat(MODULE + 'clean failed', e);
 		}
 	}
 

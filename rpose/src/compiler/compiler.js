@@ -1,5 +1,5 @@
 const csjs = require('@gotoeasy/csjs');
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 
 const options = require('./lib/m020-options');
 const TokenParser = require('./lib/m110-token');
@@ -23,14 +23,14 @@ module.exports = function complie(doc, opts){
 		tokens = tokenParser.parse();
 		//console.info(tokens);
 	}catch(e){
-		throw error(MODULE + 'view token parse failed', e);
+		throw Err.cat(MODULE + 'view token parse failed', e);
 	}
 
 	try{
 		let astParser = new AstParser(tokens, doc);
 		ast = astParser.parse();
 	}catch(e){
-		throw error(MODULE + 'view ast parse failed', e);
+		throw Err.cat(MODULE + 'view ast parse failed', e);
 	}
 
 	//	console.info('-----------------------1----------------------------------');
@@ -40,7 +40,7 @@ module.exports = function complie(doc, opts){
 		let editor = new AstEditor();	// 合并连续的文本节点
 		editor.edit(ast, doc);
 	}catch(e){
-		throw error(MODULE + 'view ast edit failed', e);
+		throw Err.cat(MODULE + 'view ast edit failed', e);
 	}
 
 	//	console.info('-----------------------2----------------------------------');
@@ -51,7 +51,7 @@ module.exports = function complie(doc, opts){
 		js = astGen.toJavaScript();
 	}catch(e){
 		//console.error(MODULE, e);
-		throw error(MODULE + 'view gen js failed', e);
+		throw Err.cat(MODULE + 'view gen js failed', e);
 	}
 
 	//console.info('----------------------------------------------------------');

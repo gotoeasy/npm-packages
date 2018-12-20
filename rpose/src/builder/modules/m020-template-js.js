@@ -1,7 +1,7 @@
 const File = require('@gotoeasy/file');
 const Btf = require('@gotoeasy/btf');
 const bus = require('@gotoeasy/bus');
-const error = require('@gotoeasy/error');
+const Err = require('@gotoeasy/err');
 const PTask = require('@gotoeasy/p-task');
 const ClsTemplate = require('../ClsTemplate');
 
@@ -19,7 +19,7 @@ module.exports = bus.on('编译模板JS', function(){
 			const clsTemplate = new ClsTemplate(btf.getText('template').replace(/\\/g, "\\\\"), '$data');
 			resolve(clsTemplate.toString);
 		}catch(e){
-			reject( error(MODULE + 'build template js failed', 'tmpl-js/template-js.btf', e) );
+			reject( Err.cat(MODULE + 'build template js failed', 'tmpl-js/template-js.btf', e) );
 		}
 	});
 

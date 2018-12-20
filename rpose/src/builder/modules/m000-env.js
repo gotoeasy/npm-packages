@@ -2,6 +2,7 @@ const File = require('@gotoeasy/file');
 const Btf = require('@gotoeasy/btf');
 const bus = require('@gotoeasy/bus');
 const util = require('@gotoeasy/util');
+const Err = require('@gotoeasy/err');
 
 // 从根目录的rpose.config.btf读取路径文件配置
 // 读不到则使用默认配置
@@ -19,13 +20,13 @@ module.exports = bus.on('编译环境', function(result){
 			result = {path:{}, file:{}};
 
 			if ( !opts || !opts.workDir ) {
-				throw new Error('opts error');
+				throw new Err('opts error');
 			}
 			opts.workDir = (opts.workDir || '').replace(/\\/g, '/');
 			let root = opts.workDir;
 			(root.lastIndexOf('/') == root.length-1) && (root = root.substring(0, root.lastIndexOf('/')));
 			if ( !File.existsDir(root) ) {
-				throw new Error('work dir not exists: ' + root);
+				throw new Err('work dir not exists: ' + root);
 			}
 
 			// 项目配置文件
