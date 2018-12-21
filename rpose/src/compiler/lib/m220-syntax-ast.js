@@ -19,7 +19,7 @@ function AstParser(tokens, doc){
 	// 解析
 	this.parse = function() {
 		let ast = parseChildren();
-//console.debug(MODULE, JSON.stringify(ast,null,2));
+//console.info(MODULE, JSON.stringify(ast,null,2));
 		return ast;
 	}
 

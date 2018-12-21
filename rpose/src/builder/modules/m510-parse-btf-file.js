@@ -53,7 +53,7 @@ function editBtfDocument(doc, file){
 	doc.methods			= oMethods.src;
 
 	// 代码高亮块，支持md写法，作特殊处理
-	doc.view = bus.at('转换VIEW中代码块', doc.view); // 标签完善及代码转义
+	//doc.view = bus.at('转换VIEW中代码块', doc.view); // 标签完善及代码转义
 
 	// API块特殊处理
 	let oApi			= getApiObject( doc.getMap('api') );
@@ -136,7 +136,7 @@ function generateActions2(actions){
 	}
 
 	let code = actions;
-	let ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module'} );
+	let ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: true} );
 	let map = new Map();
 
 	ast.body.forEach(node => {
@@ -206,7 +206,13 @@ function generateActions(actions){
 // 把对象形式汇总的方法转换成组件对象的一个个方法，同时都直接改成箭头函数（即使function也不确认this，让this指向组件对象）
 function generateMethods(methods){
 	let code = ` oFn = ${methods}`;
-	let ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module'} );
+	let ast;
+
+	try{
+		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: true} );
+	}catch(e){
+		throw Err.cat(e, new Err('syntax error in [methods]'));
+	}
 	let map = new Map();
 
 	let properties = ast.body[0].expression.right.properties;

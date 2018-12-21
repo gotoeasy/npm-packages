@@ -233,8 +233,9 @@ function attrsStringify(node, doc){
 				kvs.push('"' + k + '": 1'); // 用1代表true
 			}else{
 				let ary = [];
-				parseExpression(ary, attrs[k].trim());
-				let expr = '(' + ary.join(' + ') + ')';
+				let espAttr = escapeAttrExpr(attrs[k].trim());				// 把【\{】和【\}】替换为两位特殊字符，避免误当表达式解析
+				parseExpression(ary, espAttr);								// 解析表达式
+				let expr = '(' + unescapeAttrExpr(ary.join(' + ')) + ')';	// 把【\{】和【\}】替换回来
 
 				if ( k == 'class' ) {
 					kvs.push('"' + k + '": ' + JSON.stringify(classStrToObject(attrs[k], doc)) );  // class="abc def" => {class:{abc:1, def:1}}
@@ -260,6 +261,13 @@ function attrsStringify(node, doc){
 	return rs;
 }
 
+function escapeAttrExpr(val){
+	return val.replace(/\\\{/g, '\u0000\u0001').replace(/\\\}/g, '\ufffe\uffff');
+}
+function unescapeAttrExpr(val){
+	return val.replace(/\u0000\u0001/g, '\\{').replace(/\ufffe\uffff/g, '\\}');
+}
+
 function parseAttrValExpr(valTxt){
 	let exprStarts = [options.ExpressionUnescapeStart, options.ExpressionUnescapeStart]; // 长的放前面
 	if ( options.ExpressionUnescapeStart.length >= options.ExpressionStart.length ) {
@@ -267,12 +275,10 @@ function parseAttrValExpr(valTxt){
 	}else{
 		exprStarts[0] = options.ExpressionStart;
 	}
-
-
-
 }
 
 function parseExpression(ary, val){
+	
 	let idx1 = val.indexOf(options.ExpressionStart);
 	let idx2 = val.indexOf(options.ExpressionUnescapeStart);
 	if ( idx1 < 0 && idx2 < 0 ) {
@@ -402,7 +408,7 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 		scope = acornGlobals(src);
 		if ( !scope.length ) return src; // 正常，直接返回
 	}catch(e){
-		throw Err.cat('source syntax error', 'file='+ doc.file, e); // 多数表达式中有语法错误导致
+		throw Err.cat('source syntax error', '\n-----------------', src, '\n-----------------', 'file='+ doc.file, e); // 多数表达式中有语法错误导致
 	}
 
 	// 函数内部添加变量声明赋值后返回

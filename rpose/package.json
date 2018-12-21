@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.29",
+  "version": "0.0.31",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
@@ -16,7 +16,8 @@
     "chokidar": "*",
     "browser-sync": "*",
     "browserify": "*",
-    "axios": "*"
+    "axios": "*",
+    "highlight.js": "*"
   },
   "scripts": {
     "build": "node scripts/build",

@@ -21,7 +21,7 @@ module.exports = function complie(doc, opts){
 	try{
 		let tokenParser = new TokenParser(doc);
 		tokens = tokenParser.parse();
-		//console.info(tokens);
+//console.info('-----------------------tokens-----------------------', tokens);
 	}catch(e){
 		throw Err.cat(MODULE + 'view token parse failed', e);
 	}

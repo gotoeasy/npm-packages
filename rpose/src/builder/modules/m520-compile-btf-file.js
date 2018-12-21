@@ -84,6 +84,7 @@ async function parseBtfDocument(doc, file){
 	doc.$fnTemplate	= await compiler(doc);						// 模板函数源码，html为模板，state、options、methods等用于检查模板变量
 	doc.requires = doc.requires || [];								// 编译后设定直接依赖的组件标签全名数组
 
+
 	// statekeys的$SLOT可在编译期判断得知，所以程序可以省略不写
 	if ( doc.$fnTemplate.indexOf('.$SLOT ') > 0 ) {
 		if ( doc.statekeys == null ) {

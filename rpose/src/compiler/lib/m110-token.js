@@ -2,6 +2,7 @@ const File = require('@gotoeasy/file');
 const Err = require('@gotoeasy/err');
 const options = require('./m020-options')();
 const TemplateReader = require('./m100-reader');
+const highlight = require('./m800-highlight');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
@@ -22,22 +23,6 @@ function unescapeHtml(str){
 	return str;
 }
 
-// ------------ 分词 ------------
-/*
-let html=`
-<!-- 模板例子 -->
-<div>
-{% for (let i=0; i<ary.length; i++) { %}
-	<my-tag type="{ary[i].type}">{ ary[i].text }</my-tag>
-	<input type="text">
-{% } %}
-</div>
-`;
-
-let tokenParser = new TokenParser(html);
-let tokens = tokenParser.parse();
-console.info(tokens);
-*/
 function TokenParser(doc){
 
 	// ------------ 变量 ------------
@@ -51,7 +36,7 @@ function TokenParser(doc){
 	// ------------ 接口方法 ------------
 	// 解析
 	this.parse = function() {
-		while ( parseNode() || parseComment() || parseCdata() || parseCodeBlock() || parseExpression() || parseText() ) {}
+		while ( parseNode() || parseComment() || parseCdata() || parseCodeBlock() || parseExpression() || parseHighlight() || parseText() ) {}
 		//while ( parseNode() || parseComment() || parseCdata() || parseCodeBlock() || parseExpression() || parseText() ) {}
 		return tokens;
 	}
@@ -137,11 +122,47 @@ function TokenParser(doc){
 				tokenTagNm.type = options.TypeTagSelfClose; // 更新 Token: 标签
 			}else{
 				tokenTagNm.type = options.TypeTagOpen; // 更新 Token: 标签
-
 			}
 
 			reader.skip(1);	// 跳过【>】
 			oPos.end = reader.getPos();
+
+
+			// 特殊对待内置的语法高亮组件
+			if ( /^ui-highlight$/ig.test(tokenTagNm.text) && tokenTagNm.type == options.TypeTagOpen ) {
+				let start = reader.getPos();
+				let str = src.substring(start);
+				let rs = /^([\s\S]*?)<\/(ui-highlight)>/i.exec(str);
+				if ( !rs ) {
+					let text = File.read(file);
+					let result = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
+					let offset = result.index + result[0].length + 1;
+					let start = offset + tokenTagNm.pos.start;
+					let end = offset + tokenTagNm.pos.end;
+					throw Err.cat('missing close tag of ui-highlight', 'file=' + file, new Err( {text, start, end} )); // 标签结束符漏，<\ui-highlight>
+				}
+
+				let end = start + rs[1].length;
+				let $code = rs[1];
+				// 大括号会被当做表达式字符解析，需要转义掉
+				$code = highlight($code);
+				$code = $code.replace(/\{/g, '\\{').replace(/\}/g, '\\}')
+
+				token = { type: options.TypeAttributeName, text: '$code', pos: {start, end} };	// Token: 代码属性
+				tokens.push(token);
+				token = { type: options.TypeEqual, text: '=', pos: {start, end} };
+				tokens.push(token);
+				token = { type: options.TypeAttributeValue, text: $code, pos: {start, end} };
+				tokens.push(token);
+				
+				start = end;
+				end = reader.getPos() + rs[0].length;
+				token = { type: options.TypeTagClose, text: rs[2], pos: {start, end} };	// Token: 闭合标签
+				tokens.push(token);
+
+				reader.skip(rs[0].length);	// 跳到【</ui-highlight>】结束处
+			}
+
 
 			return 1;
 
@@ -364,6 +385,76 @@ function TokenParser(doc){
 		return 0;
 	}
 
+	// 代码高亮 ```
+	function parseHighlight() {
+		let pos = reader.getPos(), start, end;
+		if (!(  (pos === 0 || reader.getPrevChar() === '\n') && src.indexOf('```', pos) === pos && src.indexOf('\n```', pos+3) > 0  )) {
+			// 当前位置开始不是代码高亮块时，跳出不用处理
+			return 0;
+		}
+			
+		let str = src.substring(pos);
+		let rs = /(^```[\s\S]*?\r?\n)([\s\S]*?)\r?\n```[\s\S]*?\r?(\n|$)/.exec(str);
+		let len = rs[0].length;
+
+		// 【Token】 <ui-highlight>
+		let token, oPos={};
+		start = pos;
+		end = pos + len;
+		token = { type: options.TypeTagSelfClose, text: 'ui-highlight', pos: {start, end} };			// Token: 代码标签
+		tokens.push(token);
+
+		// 【Token】 lang
+		let match = rs[1].match(/\b\w*\b/);	// 语言（开始行中的单词，可选）
+		let lang = match ? match[0].toLowerCase() : '';
+		if ( lang ) {
+			start = pos + match.index;
+			end = start + lang.length;
+			token = { type: options.TypeAttributeName, text: 'lang', pos: {start, end} };
+			tokens.push(token);
+			token = { type: options.TypeEqual, text: '=', pos: {start, end} };
+			tokens.push(token);
+			token = { type: options.TypeAttributeValue, text: lang, pos: {start, end} };
+			tokens.push(token);
+		}
+
+		// 【Token】 height
+		match = rs[1].match(/\b\d+(\%?|px)/i);						// 高度（开始行中的数字，可选）
+		let height = match && match[0] ? match[0] : '';
+		if ( height ) {
+			start = pos + match.index;
+			end = start + height.length;
+			token = { type: options.TypeAttributeName, text: 'height', pos: {start, end} };
+			tokens.push(token);
+			token = { type: options.TypeEqual, text: '=', pos: {start, end} };
+			tokens.push(token);
+			token = { type: options.TypeAttributeValue, text: height, pos: {start, end} };
+			tokens.push(token);
+		}
+
+		// 【Token】 $code
+		let $code = rs[2].replace(/\u0000\u0001/g, '\\{').replace(/\ufffe\uffff/g, '\\}');	// 转义，确保值为原输入
+		$code = $code.replace(/\n\\```/g, '\n```');					// \n\``` => ```
+		$code.startsWith('\\```') && ($code = $code.substring(1));	// ^\``` => ```
+
+		// 属性值中的大括号会被当做表达式字符解析，需要转义掉
+		$code = highlight($code);
+		$code = $code.replace(/\{/g, '\\{').replace(/\}/g, '\\}')
+
+		start = pos + rs[1].length;
+		end = start + rs[2].length;
+		token = { type: options.TypeAttributeName, text: '$code', pos: {start, end} };
+		tokens.push(token);
+		token = { type: options.TypeEqual, text: '=', pos: {start, end} };
+		tokens.push(token);
+		token = { type: options.TypeAttributeValue, text: $code, pos: {start, end} };
+		tokens.push(token);
+
+
+		reader.skip(len); // 位置更新
+		return 1;
+	}
+
 	// 代码块 {% %}
 	function parseCodeBlock() {
 		let token, pos = reader.getPos();
@@ -396,7 +487,7 @@ function TokenParser(doc){
 			text += reader.readChar();
 			pos = reader.getPos();
 
-			if ( reader.getCurrentChar() == '<' || src.indexOf(options.CodeBlockStart, pos) == pos
+			if ( reader.getCurrentChar() == '<' || reader.getNextString(3) == '```' || src.indexOf(options.CodeBlockStart, pos) == pos
 				|| src.indexOf(options.ExpressionStart, pos) == pos || src.indexOf(options.ExpressionUnescapeStart, pos) == pos ) {
 				break; // 见起始符则停
 			}
