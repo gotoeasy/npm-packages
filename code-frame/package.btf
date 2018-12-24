@@ -1,9 +1,8 @@
 [name] // 项目名 （必填）
-@gotoeasy/err
+@gotoeasy/code-frame
 
 [version] // 版本号 （必填）
 0.0.2
-
 
 
 [main] // 入口文件
@@ -11,23 +10,28 @@ index.js
 
 [dependencies] // 依赖库
 @gotoeasy/file = *
-@gotoeasy/code-frame = *
+
+[devDependencies] // 开发依赖库
+ava = *
+nyc = *
+opn = *
 
 [description] // 描述
-友好的错误信息
+code-frame
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, rpose, error
+gotoeasy, rpose, code-frame
 
 [scripts] // 脚本命令
-test = echo "Error: no test specified" && exit 1
+test = nyc ava
+coverage = nyc ava & nyc report --reporter=html & node coverage
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/err/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/code-frame/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

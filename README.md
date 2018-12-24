@@ -15,7 +15,7 @@
 * `@gotoeasy/bus`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/bus.svg)](https://www.npmjs.com/package/@gotoeasy/bus) https://github.com/gotoeasy/npm-packages/blob/master/bus
 * `@gotoeasy/csjs`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/csjs.svg)](https://www.npmjs.com/package/@gotoeasy/csjs) https://github.com/gotoeasy/npm-packages/blob/master/csjs
 * `@gotoeasy/count-line-cli`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/count-line-cli.svg)](https://www.npmjs.com/package/@gotoeasy/count-line-cli) https://github.com/gotoeasy/npm-packages/blob/master/count-line-cli
-* `@gotoeasy/error`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/error.svg)](https://www.npmjs.com/package/@gotoeasy/error) https://github.com/gotoeasy/npm-packages/blob/master/error
+* `@gotoeasy/err`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/err.svg)](https://www.npmjs.com/package/@gotoeasy/err) https://github.com/gotoeasy/npm-packages/blob/master/err
 * `@gotoeasy/file`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/file.svg)](https://www.npmjs.com/package/@gotoeasy/file) https://github.com/gotoeasy/npm-packages/blob/master/file
 * `@gotoeasy/gotoeasy-cli`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/gotoeasy-cli.svg)](https://www.npmjs.com/package/@gotoeasy/gotoeasy-cli) https://github.com/gotoeasy/npm-packages/blob/master/gotoeasy-cli
 * `@gotoeasy/is-ignore`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/is-ignore.svg)](https://www.npmjs.com/package/@gotoeasy/is-ignore) https://github.com/gotoeasy/npm-packages/blob/master/is-ignore
