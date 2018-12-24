@@ -3,6 +3,7 @@ const Btf = require('@gotoeasy/btf');
 const bus = require('@gotoeasy/bus');
 const util = require('@gotoeasy/util');
 const Err = require('@gotoeasy/err');
+const path = require('path');
 
 // 从根目录的rpose.config.btf读取路径文件配置
 // 读不到则使用默认配置
@@ -43,6 +44,8 @@ module.exports = bus.on('编译环境', function(result){
 			result.path.src_components = getConfPath(root, mapPathDefault, mapPath, 'src_components');
 			result.path.src_pages = getConfPath(root, mapPathDefault, mapPath, 'src_pages');
 			result.path.src_resources = getConfPath(root, mapPathDefault, mapPath, 'src_resources');
+
+			result.path.src_buildin = path.resolve(__dirname, '../../buildin').replace(/\\/g, '/');
 
 			result.path.build = getConfPath(root, mapPathDefault, mapPath, 'build');
 			result.path.build_temp = getConfPath(root, mapPathDefault, mapPath, 'build_temp');

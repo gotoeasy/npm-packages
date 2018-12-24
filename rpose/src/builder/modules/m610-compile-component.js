@@ -18,7 +18,7 @@ module.exports = bus.on('编译组件', function(fnTmpl){
 				let doc = btf.getDocument();
 				doc.js = fnTmpl(doc);
 let to = env.path.build_temp + '/' + bus.at('默认标签名', file) + '.js';		// 假定组件都编译到%build_temp%目录
-await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
+!env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 				return btf;
 			}else if ( file.indexOf(':') < 0 ) {
 				let srcFile = bus.at('标签源文件', file);
@@ -29,7 +29,7 @@ await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 				let doc = btf.getDocument();
 				doc.js = fnTmpl(doc);
 let to = env.path.build_temp + '/' + bus.at('默认标签名', srcFile) + '.js';		// 假定组件都编译到%build_temp%目录
-await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
+!env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 				return btf;
 			}else{
 				// TODO npm package

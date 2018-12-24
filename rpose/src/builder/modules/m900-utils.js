@@ -1,5 +1,6 @@
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
+const stringhash = require('string-hash');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -9,7 +10,7 @@ bus.on('是否页面源文件', function(){
 	// 判断是否页面源文件
 	return function(btfFile){
 		let env = bus.at('编译环境');
-		return !btfFile.startsWith(env.path.src_components); // 非组件目录就按页面看待
+		return !btfFile.startsWith(env.path.src_components) && !btfFile.startsWith(env.path.src_buildin); // 非组件目录就按页面看待
 	}
 
 }());
@@ -22,6 +23,9 @@ bus.on('组件目标JS文件名', function(){
 
 	return function(btfFile){
 		let env = bus.at('编译环境');
+		if ( btfFile.startsWith(env.path.src_buildin) ) {
+			return btfFile.substring(0, btfFile.length-4) + '.js';  // buildin
+		}
 		return env.path.build_temp + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.js'; 
 	};
 
@@ -31,6 +35,9 @@ bus.on('组件目标CSS文件名', function(){
 
 	return function(btfFile){
 		let env = bus.at('编译环境');
+		if ( btfFile.startsWith(env.path.src_buildin) ) {
+			return btfFile.substring(0, btfFile.length-4) + '.css';  // buildin
+		}
 		return env.path.build_temp + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.css'; 
 	};
 
@@ -67,6 +74,10 @@ bus.on('页面目标HTML文件名', function(){
 bus.on('默认标签名', function(){
 
 	return btfFile => {
+		let env = bus.at('编译环境');
+		if ( btfFile.startsWith(env.path.src_buildin) ) {
+			return require('path').parse(btfFile).name;  // buildin 返回文件名（不含路径及扩展名）
+		}
 		let tag = btfFile.substring(btfFile.lastIndexOf('/')+1).split('.')[0].toLowerCase();
 		tag = tag.replace(/\s+/g, '');
 		return tag;
@@ -100,6 +111,11 @@ bus.on('标签全名', function(){
 bus.on('组件类名', function(){
 
 	return (tag, pkg='') => {
+
+		if ( tag === '```' ) {
+			return '$BuildIn$_' + stringhash(tag);  // buildin 特殊处理
+		}
+
 		// ui-tag
 		// ui-tag:def-gh.xyz@1.2.3
 		// ui-tag:@abc/def-gh.xyz@1.2.3

@@ -136,7 +136,14 @@ function generateActions2(actions){
 	}
 
 	let code = actions;
-	let ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: true} );
+	let ast;
+
+	try{
+		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: false} );
+	}catch(e){
+		// TODO 提示具体的语法错误
+		throw Err.cat(e.message, new Err('syntax error in [actions]'));
+	}
 	let map = new Map();
 
 	ast.body.forEach(node => {
@@ -179,7 +186,14 @@ function generateActions2(actions){
 
 function generateActions(actions){
 	let code = ` this.$actions = ${actions}`;
-	let ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module'} );
+	let ast;
+
+	try{
+		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: false} );
+	}catch(e){
+		// TODO 提示具体的语法错误
+		throw Err.cat(e.message, new Err('syntax error in [actions]'));
+	}
 	let names = [];
 
 	let properties = ast.body[0].expression.right.properties;
@@ -209,9 +223,10 @@ function generateMethods(methods){
 	let ast;
 
 	try{
-		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: true} );
+		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: false} );
 	}catch(e){
-		throw Err.cat(e, new Err('syntax error in [methods]'));
+		// TODO 提示具体的语法错误
+		throw Err.cat(e.message, new Err('syntax error in [methods]'));
 	}
 	let map = new Map();
 

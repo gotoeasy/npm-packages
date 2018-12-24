@@ -1,0 +1,108 @@
+// ---------------------------------------------------
+// 这是个内置的语法高亮组件，编译期被特殊照顾
+// 
+// 使用方式类似md
+//   ```
+//   var num = 1;
+//   ```
+//   
+//   ```js
+//   var num = 1;
+//   ```
+//   
+//   ```js max-height=300px
+//   var num = 1;
+//   ```
+// ---------------------------------------------------
+[api]
+optionkeys  = lang, width, height
+statekeys   = $code                 // 这个$code非常特殊，编译期硬编码，不能修改(m110-token.js)
+
+[view]
+<pre></pre>
+
+[options]
+{}
+
+[state]
+{}
+
+[methods]
+{ 
+    render: (state={}) => {
+        let el, $$el, vnode;
+
+        if ( this.isInitRender ){
+            rpose.extend(this.$state, state, this.$STATE_KEYS);
+            vnode = this.nodeTemplate(this.$state, this.$options, this.$actions);
+            el = rpose.createDom(vnode, this);
+            if ( el && el.nodeType == 1 ) {
+                $$(el).addClass(this.$COMPONENT_ID);
+            } 
+            this.isInitRender = false;
+            
+            setTimeout(()=>{
+                $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:${this.$options.height}">${this.$state.$code}</code>`);
+            });
+
+            return el;
+        }else{
+            $$(this.$COMPONENT_ID).attr('innerHTML', $code);
+        }
+    }
+}
+
+[css]
+.hljs {
+    min-height: 30px;
+    max-height: 500px;
+    display: block;
+    overflow-x: auto;
+    background: #272822;
+    border-radius: 0.3em;
+    font-family: Consolas, "Courier New", Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    line-height: 8.5px;
+    tab-size: 4;
+}
+
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-section, .hljs-link {
+    color: #eee;
+}
+
+.hljs, .hljs-subst {
+    color: #ddd;
+}
+
+.hljs-string {
+    color: darkkhaki;
+}
+.hljs-string, .hljs-title, .hljs-name, .hljs-type, .hljs-attribute, .hljs-symbol,
+.hljs-bullet, .hljs-addition, .hljs-variable, .hljs-template-tag, .hljs-template-variable {
+    color: #d88;
+}
+
+.hljs-comment, .hljs-quote, .hljs-deletion, .hljs-meta {
+    color: #777;
+}
+
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-title, .hljs-section,
+.hljs-doctag, .hljs-type, .hljs-name, .hljs-strong, .hljs-built_in {
+    color: #66d9ef;
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+
+
+.hljs > ol {
+    list-style: decimal-leading-zero;
+    margin: 10px 0px 10px 13px;
+    max-height: 400px;
+}
+.hljs > ol > li {
+    list-style: decimal-leading-zero;
+    border-left: 1px solid #ddd;
+    padding: 5px 5px 5px 10px;
+    margin: 0 !important;
+}		

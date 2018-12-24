@@ -12,6 +12,8 @@ module.exports = bus.on('源文件清单', function (fileSet){
 			// 初期检索源文件清单
 			let env = bus.at('编译环境');
 			let files = File.files(env.path.src_btf, '**.btf');
+			let buildinfiles = File.files(env.path.src_buildin, '**.btf');
+			files.unshift(...buildinfiles);
 			fileSet = new Set(files);
 //console.info(MODULE, 'init file list', fileSet);
 			return [...fileSet];

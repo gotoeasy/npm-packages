@@ -401,7 +401,7 @@ function TokenParser(doc){
 		let token, oPos={};
 		start = pos;
 		end = pos + len;
-		token = { type: options.TypeTagSelfClose, text: 'ui-highlight', pos: {start, end} };			// Token: 代码标签
+		token = { type: options.TypeTagSelfClose, text: '```', pos: {start, end} };			// Token: 代码标签
 		tokens.push(token);
 
 		// 【Token】 lang
@@ -419,7 +419,7 @@ function TokenParser(doc){
 		}
 
 		// 【Token】 height
-		match = rs[1].match(/\b\d+(\%?|px)/i);						// 高度（开始行中的数字，可选）
+		match = rs[1].match(/\b\d+(\%?|px)?/i);						// 高度（开始行中的数字，可选）
 		let height = match && match[0] ? match[0] : '';
 		if ( height ) {
 			start = pos + match.index;
@@ -429,6 +429,18 @@ function TokenParser(doc){
 			token = { type: options.TypeEqual, text: '=', pos: {start, end} };
 			tokens.push(token);
 			token = { type: options.TypeAttributeValue, text: height, pos: {start, end} };
+			tokens.push(token);
+		}
+
+		// 【Token】 ref
+		match = rs[1].match(/\bref\s?=\s?"(.*?)"/i);
+		let ref = match && match[0] ? match[0] : '';
+		if ( ref ) {
+			token = { type: options.TypeAttributeName, text: 'ref', pos: {start, end} };
+			tokens.push(token);
+			token = { type: options.TypeEqual, text: '=', pos: {start, end} };
+			tokens.push(token);
+			token = { type: options.TypeAttributeValue, text: ref, pos: {start, end} };
 			tokens.push(token);
 		}
 
