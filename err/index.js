@@ -33,15 +33,15 @@ class Err extends Error{
 		if ( opts.text || opts.file ) {
 			// 按指定行列或位置设定codeframe
 			this.codeframe = opts.line ? codeframe({file: opts.file, text: opts.text, line: opts.line, column: opts.column}) : codeframe({file: opts.file, text: opts.text, start: opts.start, end: opts.end});
-
-			this.codeframe && msgs.push(this.codeframe);
-			msgs.push(this.stack);
-			ex && msgs.push(ex.stack);
-			this.stack = msgs.join('\n');
 		}else{
 			// 按自身异常抛出位置设定codeframe
 			setCodeframe(this);
 		}
+
+		this.codeframe && msgs.push(this.codeframe);
+		msgs.push(this.stack);
+		ex && msgs.push(ex.stack);
+		this.stack = msgs.join('\n');
 	}
 
 	toString() {
@@ -51,6 +51,7 @@ class Err extends Error{
 }
 
 function setCodeframe(e){
+
 	if ( !(e instanceof Err) && e.codeframe === undefined ) {
 		Object.defineProperty(e, "codeframe", {value : null, writable : true} );
 		e.toString = function(){
@@ -64,16 +65,16 @@ function setCodeframe(e){
 			if ( /\:\d+\:\d+/.test(str) ) {
 				// 从堆栈信息中查找出错文件，堆栈信息格式有所不同需判断处理
 				e.codeframe == null && str.replace(/^\s*at\s?([\s\S]*?)\:(\d+)\:*(\d*)$/, function(match, file, line, column){				// 【    at file:line:col】
-					if ( File.exists(file) && line && column ) {
+					if ( File.exists(file) ) { // 格式满足也可能是不存在的内部模块文件，还要继续找
 						e.codeframe = codeframe({file, line, column});
-						e.stack = e.codeframe + '\n' + e.stack;
+						e.codeframe && (e.stack = e.codeframe + '\n' + e.stack);
 					}
 				});
 
 				e.codeframe == null && str.replace(/^\s*at\s?[\s\S]*?\(([\s\S]*?)\:(\d+)\:*(\d*)\)$/, function(match, file, line, column){	// 【    at *** (file:line:col)】
-					if ( File.exists(file) && line && column ) {
+					if ( File.exists(file) ) { // 格式满足也可能是不存在的内部模块文件，还要继续找
 						e.codeframe = codeframe({file, line, column});
-						e.stack = e.codeframe + '\n' + e.stack;
+						e.codeframe && (e.stack = e.codeframe + '\n' + e.stack);
 					}
 				});
 
@@ -82,7 +83,6 @@ function setCodeframe(e){
 				}
 			}
 		}
-		e.codeframe == null && (e.codeframe = ''); // 避免往后重复执行setCodeframe
 	}
 	return e;
 }
