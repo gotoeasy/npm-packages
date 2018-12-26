@@ -2,7 +2,7 @@
 @gotoeasy/err
 
 [version] // 版本号 （必填）
-0.0.5
+0.0.6
 
 
 
@@ -19,10 +19,10 @@ nyc = *
 opn = *
 
 [description] // 描述
-友好的错误信息
+一个用于node环境的Error子类，提供更丰富的构造参数接口，更友好的code-frame提示，消息拼接等功能，详见Sample截图
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, rpose, error
+gotoeasy, rpose, error, err
 
 [scripts] // 脚本命令
 test = nyc ava

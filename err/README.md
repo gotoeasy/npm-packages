@@ -1,5 +1,5 @@
 # `@gotoeasy/err`
-一个Error子类，提供更丰富的构造参数接口，更友好的code-frame提示，消息拼接等功能
+一个用于node环境的Error子类，提供更丰富的构造参数接口，更友好的code-frame提示，消息拼接等功能，详见Sample截图
 <br>
 <br>
 
