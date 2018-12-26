@@ -1,110 +1,140 @@
 const File = require('@gotoeasy/file');
 
 // ------------------------------------------
-// opts.fileContent
-// opts.offset
-// opts.tab
-// opts.linesAbove
-// opts.linesBelow
-// opts.maxCodeLength
+// opts.file			-	文件 （file/text二选一）
+// opts.text			-	文件内容 （file/text二选一）
+// 
+// opts.start			-	开始位置（1~n），按位置时必须
+// opts.end				-	结束位置（1~n） （可选，默认等于start）
+//
+// opts.line			-	焦点行（1~n），按行列时必须
+// opts.column			-	焦点列（1~n），按行列时必须
+//
+// opts.startLine		-	焦点开始行（1~n），按行列范围时必须
+// opts.startColumn		-	焦点开始行的开始列（1~n），按行列范围时必须
+// opts.endLine			-	焦点结束行（1~n），按行列范围时必须
+// opts.endColumn		-	焦点结束行的结束列（1~n），按行列范围时必须
+//
+// opts.tab				-	默认4个半角空格
+// opts.linesAbove		-	上方显示代码的行数
+// opts.linesBelow		-	下方显示代码的行数
+// opts.maxLength		-	单行显示最大长度，超出部分省略号显示
 // ------------------------------------------
+// API
+// const codeframe = require('@gotoeasy/code-frame');
+// let result;
+// result = codeframe({text: '12345\n6789', start:2});
+// result = codeframe({text: '12345\n6789', start:2, end: 4});
+// result = codeframe({file: 'd:/file.txt', start:2});
+// result = codeframe({file: 'd:/file.txt', start:2, end: 4});
+// result = codeframe({text: '12345\n6789', line:2, column:3});
+// result = codeframe({file: 'd:/file.txt', line:2, column:3});
+// result = codeframe({text: '12345\n6789', startLine:1, startColumn:3, endLine:2, endColumn:4, tab:'    '});
+// result = codeframe({file: 'd:/file.txt', startLine:1, startColumn:3, endLine:2, endColumn:4, tab:'  '});
+// ------------------------------------------
+const defaultOptions = {tab:'    ', linesAbove:3, linesBelow:3, maxLength:120};
 
-function getCodefrmaeByTextPos(text, posFrom, posTo, opts={}){
-	try{
-		posFrom = posFrom - 0;
-		posTo && (posTo = posTo - 0);
-	}catch(e){
+function getCodefrmaeByTextPos(opts){
+
+	// 检查及适当修复参数
+	opts.start = parseInt(opts.start);
+	opts.end = (opts.end == null ? opts.start : parseInt(opts.end));
+	if ( isNaN(opts.start) || isNaN(opts.end) ) {
+//		console.debug('invalid arguments [01] - opts.start / opts.end');
 		return [];
 	}
 
-	// 检查及适当修复参数
-	if ( typeof text !== 'string' || posFrom < 0 || posFrom >= text.length ) return [];
-	(!posTo || posTo<posFrom) && (posTo = posFrom);
-	posTo >= text.length && (posTo = text.length-1);
+	if ( typeof opts.text !== 'string' && typeof opts.file !== 'string' ) {
+//		console.debug('invalid arguments [02] - opts.text / opts.file');
+		return [];
+	}
+	let text = getText(opts);
+
+	if ( opts.start < 1 || opts.start > text.length ){
+//		console.debug('invalid arguments [03] - opts.start');
+		return [];
+	}
+
+	opts.end < opts.start && (opts.end = opts.start);
+	opts.end > text.length && (opts.end = text.length);
 
 	// 计算开始行列
-	let tmpLines,lines;
-	if ( opts.fileContent && opts.offset ) {
-		tmpLines = opts.fileContent.substring(0, posFrom + opts.offset).split(/\n/);
-		lines = opts.fileContent.split(/\n/);
-	}else{
-		tmpLines = text.substring(0, posFrom).split(/\n/);
-		lines = text.split(/\n/);
-	}
-	let lineFrom = tmpLines.length;
-	let colFrom = tmpLines[tmpLines.length-1].length;
+	let tmpLines = text.substring(0, opts.start).split(/\r?\n/);
+	let lines = text.split(/\r?\n/);
+	opts.startLine = tmpLines.length;
+	opts.startColumn = tmpLines[tmpLines.length-1].length;
 
 	// 计算结束行列
-	if ( opts.fileContent && opts.offset ) {
-		tmpLines = opts.fileContent.substring(0, posTo + opts.offset).split(/\n/);
-		lines = opts.fileContent.split(/\n/);
-	}else{
-		tmpLines = text.substring(0, posTo).split(/\n/);
-		lines = text.split(/\n/);
-	}
-	let lineTo = tmpLines.length;
-	let colTo = tmpLines[tmpLines.length-1].length;
+	tmpLines = text.substring(0, opts.end).split(/\r?\n/);
+	lines = text.split(/\r?\n/);
+	opts.endLine = tmpLines.length;
+	opts.endColumn = tmpLines[tmpLines.length-1].length;
 
-	// 选项
-	let options = Object.assign({tab:'    ', linesAbove:3, linesBelow:3, maxCodeLength:200}, opts);
-
-	return getCodefrmae(lines, lineFrom, colFrom, lineTo, colTo, options);
+	return getCodefrmae(lines, opts);
 }
 
-function getCodefrmaeByFileLineCloumn(file, line, column, opts={}){
+function getCodefrmaeByFileLineCloumn(opts){
 
-	try{
-		line = line - 0;
-		column = column - 0;
-	}catch(e){
+	// 检查及适当修复参数
+	opts.line = parseInt(opts.line);
+	opts.column = parseInt(opts.column);
+	if ( isNaN(opts.line) || isNaN(opts.column) || opts.line < 1 || opts.column < 1 ) {
+//		console.debug('invalid arguments [04] - opts.line / opts.column');
 		return [];
 	}
 
-	// 检查及适当修复参数
-	if ( line < 1 || !File.exists(file) ) return [];
-	let text = File.read(file);
-	let lines = text.split(/\n/);
-	if ( line > lines.length )  return [];
-	let sLine = lines[line-1];
+	if ( typeof opts.text !== 'string' && typeof opts.file !== 'string' ) {
+//		console.debug('invalid arguments [05] - opts.text / opts.file');
+		return [];
+	}
 
-	column < 0 && (column = 0)
-	column >= sLine.length && (column = sLine.length-1)
+	let text = getText(opts);
+	let lines = text.split(/\r?\n/);
+	if ( opts.line > lines.length ){
+//		console.debug('invalid arguments [06] - opts.line');
+		return [];
+	}
 
-	let options = Object.assign({tab:'    ', linesAbove:3, linesBelow:3, maxCodeLength:200}, opts);
-	return getCodefrmae(lines, line, column, line, sLine.length-1, options);
+	let sLine = lines[opts.line-1];
+	opts.column > sLine.length && (opts.column = sLine.length)
+
+	opts.startLine = opts.line;
+	opts.startColumn = opts.column;
+	opts.endLine = opts.line;
+	opts.endColumn = sLine.length;
+	return getCodefrmae(lines, opts);
 }
 
-function getCodefrmae(lines, lineFrom, colFrom, lineTo, colTo, opts){
+function getCodefrmae(lines, opts){
 
 	let rs = [];
-	let numLen = ((lineTo + opts.linesBelow) + '').length;
+	let numLen = ((opts.endLine + opts.linesBelow) + '').length;
+	pushAboveCodefrmae(rs, lines, opts.startLine, numLen, opts); // 上方关联代码
 
-	pushAboveCodefrmae(rs, lines, lineFrom, numLen, opts); // 上方关联代码
-
-	if ( lineFrom === lineTo ) {
-		colFrom === colTo && (colTo = opts.maxCodeLength);
-		rs.push( getCodeLeft(lineFrom, numLen, true) + getCodeRight(lines[lineFrom-1], opts) ); // 目标代码
-		rs.push( getFocusLeft(numLen) + getFocusRight(lines[lineFrom-1], colFrom, colTo, opts) ); // 下标提示行^^^
+	if ( opts.startLine === opts.endLine ) {
+		opts.startColumn === opts.endColumn && (opts.endColumn = 99999);
+		rs.push( getCodeLeft(opts.startLine, numLen, true) + getCodeRight(lines[opts.startLine-1], opts) ); // 目标代码
+		rs.push( getFocusLeft(numLen) + getFocusRight(lines[opts.startLine-1], opts.startColumn, opts.endColumn, opts) ); // 下标提示行^^^
 	}else{
-		for ( let i=lineFrom-1,from,to; i<lineTo; i++) {
+		for ( let i=opts.startLine-1,from,to; i<opts.endLine; i++) {
 			rs.push( getCodeLeft(i+1, numLen, true) + getCodeRight(lines[i], opts) ); // 目标代码
 
-			if ( i === (lineFrom - 1) ) {
-				from = colFrom;
+			if ( i === (opts.startLine - 1) ) {
+				from = opts.startColumn;
 				to = 999;
-			}else if ( i < (lineTo - 1) ){
-				from = 0;
+			}else if ( i < (opts.endLine - 1) ){
+				from = 1;
 				to = 999;
 			}else{
-				from = 0;
-				to = (colTo === 0 ? 1 : colTo);
+				from = 1;
+				to = opts.endColumn;
 			}
 			
-			rs.push( getFocusLeft(numLen) + getFocusRight(lines[i], from, to, opts) );
+			lines[i].trim() && rs.push( getFocusLeft(numLen) + getFocusRight(lines[i], from, to, opts) ); // 下标提示行^^^ (空白行的时候省略提示行)
 		}
 	}
 
-	pushBelowCodefrmae(rs, lines, lineTo, numLen, opts); // 下方关联代码
+	pushBelowCodefrmae(rs, lines, opts.endLine, numLen, opts); // 下方关联代码
 
 	return rs;
 }
@@ -127,17 +157,13 @@ function pushBelowCodefrmae(rs, lines, line, numLen, opts){
 
 function getCodeRight(code, opts){
 	let rs = code.replace(/\t/g, opts.tab);
-	if ( rs.length > opts.maxCodeLength ) {
-		rs = rs.substring(0, opts.maxCodeLength - 5) + ' ... ';
-	}
 	return rs;
 }
-function getFocusRight(code, from, to, opts){
-	let start = code.substring(0, from).replace(/\t/g, opts.tab).length;
-	let end = code.substring(0, to).replace(/\t/g, opts.tab).length;
-	end > opts.maxCodeLength && (end = opts.maxCodeLength-1);
-	// TODO 全角长度换算
-	return ' '.repeat(start) + '^'.repeat(end-start);
+function getFocusRight(code, fromPos, toPos, opts){
+	let startColumn = code.substring(0, fromPos).replace(/\t/g, opts.tab).length;
+	let endColumn = code.substring(0, toPos).replace(/\t/g, opts.tab).length;
+	// TODO 有必要全角长度换算?
+	return ' '.repeat(startColumn-1) + '^'.repeat(endColumn-startColumn+1);
 }
 function getCodeLeft(lineNo, numLen, isFocus){
 	return (isFocus ? ' > ' : '   ') + lpad(lineNo, numLen) + ' | ';
@@ -149,12 +175,77 @@ function lpad(lineNo, numLen){
 	let tmp = ' '.repeat(numLen) + lineNo;
 	return tmp.substring(tmp.length - numLen);
 }
+function getText(opts){
+	return typeof opts.text === 'string' ? opts.text : (File.exists(opts.file) ? File.read(opts.file) : '');
+}
 
+// getCodefrmaeByTextPos(opts)
+// getCodefrmaeByFileLineCloumn(opts=)
+// getCodefrmae(lines, opts)
+module.exports = function (options){
+	if ( !options || (!options.file && !options.text) || (!options.start && !options.line && !options.startLine) ){
+//		console.debug('invalid arguments [07] - opts');
+		return '';
+	}
 
-module.exports = function (...args){
-	if ( args.length < 2 ) return '';
+	let opts = Object.assign({}, defaultOptions, options);
 
-	let ary = File.exists(args[0]) ? getCodefrmaeByFileLineCloumn(...args) : getCodefrmaeByTextPos(...args);
-	// TODO 去过长的空白
+	let ary;
+	if ( opts.line ) {
+		// 按行列
+		ary = getCodefrmaeByFileLineCloumn(opts);
+	}else if ( opts.start ) {
+		// 按位置
+		ary = getCodefrmaeByTextPos(opts);
+	}else{
+		// 按行列范围
+		if ( typeof opts.text !== 'string' && typeof opts.file !== 'string' ) {
+//			console.debug('invalid arguments [08] - opts.text / opts.file');
+			return '';
+		}
+
+		let text = getText(opts);
+		let lines = text.split(/\r?\n/);
+
+		opts.startLine = parseInt(opts.startLine);
+		opts.startColumn = parseInt(opts.startColumn);
+		opts.endLine = parseInt(opts.endLine);
+		opts.endColumn = parseInt(opts.endColumn);
+		if ( isNaN(opts.startLine) || isNaN(opts.startColumn) || isNaN(opts.endLine) || isNaN(opts.endColumn)
+			|| opts.startLine < 1 || opts.startColumn < 1 || opts.endLine < 1 || opts.endColumn < 1
+			|| opts.endLine < opts.startLine
+			|| opts.startLine > lines.length || opts.startColumn > lines[opts.startLine-1].length || opts.endLine > lines.length || opts.endColumn > lines[opts.endLine-1].length
+		) {
+//			console.debug('invalid arguments [09] - opts.startLine / opts.startColumn / opts.endLine / opts.endColumn');
+			return '';
+		}
+
+		ary = getCodefrmae(lines, opts);
+	}
+
+	// 整理
+	// 代码左边整体缩进过长时，统一去除整理
+	let min = 999;
+	for ( let i=0,rs; i<ary.length; i++ ) {
+		rs = /\s{1,1}\|\s+/.exec(ary[i]);
+		rs && (rs[0].length < min) && (min = rs[0].length);
+	}
+	if ( min > 6 ) {
+		for ( let i=0,rs; i<ary.length; i++ ) {
+			ary[i] = ary[i].replace(/\s{1,1}\|\s+/, function(match){
+				return ' |    ' + match.substring(min);
+			});
+		}
+	}
+
+	// 整体过长时，统一去除加省略号
+	for ( let i=0,rs; i<ary.length; i++ ) {
+		if ( ary[i].length > opts.maxLength ) {
+			ary[i] = ary[i].substring(0, opts.maxLength - 4) + ' ...'; // 代码行加省略号
+			i++;
+			ary[i] = ary[i].substring(0, opts.maxLength - 4);		   // 焦点行就算了吧
+		}
+	}
+
 	return ary.join('\n');
 }

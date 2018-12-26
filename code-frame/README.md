@@ -13,22 +13,41 @@ code-frame
 npm i @gotoeasy/code-frame
 ```
 
-## API
+## Sample 1
 ```js
 const codeframe = require('@gotoeasy/code-frame');
 
-let result;
-// 传入文本、位置
-result = codeframe(text, index);
+let file, text, start, end, result;
 
-// 传入文本、开始位置、结束位置
-result = codeframe(text, startIndex, endIndex);
+text = `123456781
+123456782
+123456783
+123456784
+123456785
+123456786
+123456787
+123456788
+123456789
+123456780
+123456781
+123456782
+123456783
+`;
 
-// 传入文件、行、列
-result = codeframe(file, line, column);
-
-
+start = 12;
+result = codeframe({text, start});
+console.log(result);
 ```
+<br>
+
+## Sample 2
+```js
+start = 12;
+end = 15;
+result = codeframe({text, start, end});
+console.log(result);
+```
+
 <br>
 <br>
 

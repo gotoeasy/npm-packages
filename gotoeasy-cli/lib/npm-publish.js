@@ -37,6 +37,9 @@ function publish(opts){
 
 	// 删除空属性
 	Object.keys(oPackage).forEach(k => util.isEmpty(oPackage[k]) && delete oPackage[k] );
+	oPackage.repository && !oPackage.repository.type && !oPackage.repository.url && delete oPackage.repository;
+	oPackage.bugs && !oPackage.bugs.url && delete oPackage.bugs;
+	oPackage.author && !oPackage.author.name && !oPackage.author.email && delete oPackage.author;
 
 	File.write(filePackageJson, JSON.stringify(oPackage, null, 2))
 	console.debug('save file:', filePackageJson);
