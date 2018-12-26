@@ -38,6 +38,7 @@ start = 12;
 result = codeframe({text, start});
 console.log(result);
 ```
+![Sample1](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img1.png)
 <br>
 
 ## Sample 2
@@ -47,8 +48,100 @@ end = 15;
 result = codeframe({text, start, end});
 console.log(result);
 ```
-
+![Sample2](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img2.png)
 <br>
+
+## Sample 3
+```js
+start = 12;
+end = 45;
+result = codeframe({text, start, end});
+console.log(result);
+```
+![Sample3](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img3.png)
+<br>
+
+## Sample 4
+```js
+file = './testdata.txt';
+start = 12;
+end = 45;
+result = codeframe({file, start, end});
+console.log(result);
+```
+![Sample4](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img3.png)
+<br>
+
+## Sample 5
+```js
+line = 2;
+column = 2;
+result = codeframe({text, line, column});
+console.log(result);
+```
+![Sample5](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img1.png)
+<br>
+
+## Sample 6
+```js
+file = './testdata.txt';
+line = 2;
+column = 2;
+result = codeframe({file, line, column});
+console.log(result);
+```
+![Sample6](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img1.png)
+<br>
+
+## Sample 7
+```js
+startLine = 2;
+startColumn = 2;
+endLine = 5;
+endColumn = 5;
+result = codeframe({text, startLine, startColumn, endLine, endColumn});
+console.log(result);
+```
+![Sample7](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img3.png)
+<br>
+
+## Sample 8
+```js
+file = './testdata.txt';
+startLine = 2;
+startColumn = 2;
+endLine = 5;
+endColumn = 5;
+result = codeframe({file, startLine, startColumn, endLine, endColumn});
+console.log(result);
+```
+![Sample8](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img3.png)
+<br>
+
+## Sample 9
+```js
+text = '111111111122222222223333333333444444444455555555556666666666';
+start = 31;
+end   = 33;
+maxLength = 50;      // 调整每行最大显示长度，默认maxLength=120
+result = codeframe({text, start, end, maxLength});
+console.log(result); // 超出部分省略号表示
+```
+![Sample9](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img9.png)
+<br>
+
+## Sample 10
+```js
+text = '                              444444444455555555556666666666';
+start = 31;
+end   = 33;
+maxLength = 50;
+result = codeframe({text, start, end, maxLength});
+console.log(result); // 左缩进空白将适当去除
+```
+![Sample10](https://github.com/gotoeasy/npm-packages/blob/master/code-frame/img/img10.png)
+<br>
+
 <br>
 
 ## `Links`
