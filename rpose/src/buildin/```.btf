@@ -15,36 +15,26 @@
 //   ```
 // ---------------------------------------------------
 [api]
-optionkeys  = lang, width, height
+optionkeys  = lang, height
 statekeys   = $code                 // 这个$code非常特殊，编译期硬编码，不能修改(m110-token.js)
 
 [view]
 <pre></pre>
 
-[options]
-{}
-
-[state]
-{}
-
 [methods]
 { 
     render: (state={}) => {
-        let el, $$el, vnode;
+        let el, vnode;
 
         if ( this.isInitRender ){
             rpose.extend(this.$state, state, this.$STATE_KEYS);
             vnode = this.nodeTemplate(this.$state, this.$options, this.$actions);
-            el = rpose.createDom(vnode, this);
+            el = rpose.createDom(vnode, this); 
             if ( el && el.nodeType == 1 ) {
                 $$(el).addClass(this.$COMPONENT_ID);
+                $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:${this.$options.height}">${this.$state.$code}</code>`);
             } 
             this.isInitRender = false;
-            
-            setTimeout(()=>{
-                $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:${this.$options.height}">${this.$state.$code}</code>`);
-            });
-
             return el;
         }else{
             $$(this.$COMPONENT_ID).attr('innerHTML', $code);

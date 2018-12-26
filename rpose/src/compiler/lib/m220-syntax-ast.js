@@ -76,8 +76,8 @@ function AstParser(tokens, doc){
 
 					let text = File.read(file);
 					let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
-					let offset = rs.index + rs[0].length + 1;
-					let start = offset + curToken.pos.start;
+					let offset = rs.index + rs[0].length;
+					let start = offset + curToken.pos.start+1;
 					let end = offset + token.pos.end;
 					let msg = 'close tag unmatch: ' + node.tag + ' / ' + token.text;
 					throw Err.cat(msg, 'file=' + file, new Err( {text, start, end} )); // 标签没有闭合
@@ -89,8 +89,8 @@ function AstParser(tokens, doc){
 
 				let text = File.read(file);
 				let rs = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
-				let offset = rs.index + rs[0].length + 1;
-				let start = offset + curToken.pos.start;
+				let offset = rs.index + rs[0].length;
+				let start = offset + curToken.pos.start+1;
 				let end = offset + token.pos.end;
 				let msg = 'tag not close: ' + node.tag;
 				throw Err.cat(msg, 'file=' + file, new Err( {text, start, end} )); // 标签没有闭合

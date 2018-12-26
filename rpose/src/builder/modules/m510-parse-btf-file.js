@@ -18,7 +18,24 @@ module.exports = bus.on('解析源文件', function(){
 				return;
 			}
 			let btf = new Btf(text, true);
-			editBtfDocument(btf.getDocument(), btfFile);
+
+			let doc = btf.getDocument();
+			doc.file = btfFile;
+
+			let rs = /^\[view\].*\r?\n?|\n\[view\].*\r?\n?/i.exec(text);
+			doc.posView = rs ? (rs.index + rs[0].length) : 0;
+			rs = /^\[actions\].*\r?\n?|\n\[actions\].*\r?\n?/i.exec(text);
+			doc.posActions = rs ? (rs.index + rs[0].length) : 0;
+			rs = /^\[methods\].*\r?\n?|\n\[methods\].*\r?\n?/i.exec(text);
+			doc.posMethods = rs ? (rs.index + rs[0].length) : 0;
+			rs = /^\[css\].*\r?\n?|\n\[css\].*\r?\n?/i.exec(text);
+			doc.posCss = rs ? (rs.index + rs[0].length) : 0;
+			rs = /^\[less\].*\r?\n?|\n\[less\].*\r?\n?/i.exec(text);
+			doc.posLess = rs ? (rs.index + rs[0].length) : 0;
+			rs = /^\[scss\].*\r?\n?|\n\[scss\].*\r?\n?/i.exec(text);
+			doc.posSass = rs ? (rs.index + rs[0].length) : 0;
+
+			editBtfDocument(doc, btfFile, text);
 
 			resolve( btf );
 		}catch(e){
@@ -34,7 +51,7 @@ module.exports = bus.on('解析源文件', function(){
 }());
 
 
-function editBtfDocument(doc, file){
+function editBtfDocument(doc, file, fileContent){
 
 	// 注意块名为小写，编辑后的数据对象将作为模板数据对象直接传给代码模板
 	doc.view			= (doc.getText('view') || '');
@@ -47,13 +64,10 @@ function editBtfDocument(doc, file){
 	doc.scss			= (doc.getText('scss') || '').trim();
 	doc.mount			= (doc.getText('mount') || '').trim();
 
-	let oActions		= generateActions2(doc.actions);
-	let oMethods		= generateMethods(doc.methods);
+	let oActions		= generateActions2(doc, fileContent);
+	let oMethods		= generateMethods(doc, fileContent);
 	doc.actions			= oActions.src;
 	doc.methods			= oMethods.src;
-
-	// 代码高亮块，支持md写法，作特殊处理
-	//doc.view = bus.at('转换VIEW中代码块', doc.view); // 标签完善及代码转义
 
 	// API块特殊处理
 	let oApi			= getApiObject( doc.getMap('api') );
@@ -70,7 +84,6 @@ function editBtfDocument(doc, file){
 	doc.singleton		= toBoolean(oApi.singleton)						// 单例组件
 
 	doc.$componentName	= bus.at('组件类名', doc.tag, doc.rposepkg);		// 组件类名
-	doc.file			= file;
 	doc.tagpkg			= bus.at('标签全名', doc.tag, doc.rposepkg);
 
 	return doc;
@@ -96,22 +109,6 @@ function parseKeys(str){
 	return [...new Set(keys)];
 }
 
-
-function getObjectKeys(jsonStr){
-	if ( !jsonStr.trim() ) {
-		return null;
-	}
-
-console.debug(MODULE, 'let x =', jsonStr)
-
-    let ast = acorn.parse('let x = ' + jsonStr);
-	let props = ast.body[0].declarations[0].init.properties;
-	let keys = [];
-	props.forEach(node => keys.push(node.key.name || node.key.value));
-	return keys;
-}
-
-
 // 直接运算为false则返回false，字符串（不区分大小写）‘0’、‘f’、‘false’、‘n’、‘no’ 都为false，其他为true
 function toBoolean(arg){
 	if ( !arg ) return false;
@@ -130,20 +127,21 @@ function hasHighlightCode(view){
 }
 
 
-function generateActions2(actions){
-	if ( actions.startsWith('{') ) {
-		return generateActions(actions);
+function generateActions2(doc, text){
+	if ( doc.actions.startsWith('{') ) {
+		return generateActions(doc, text);
 	}
 
-	let code = actions;
+	let code = doc.actions;
 	let ast;
-
 	try{
 		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: false} );
 	}catch(e){
-		// TODO 提示具体的语法错误
-		throw Err.cat(e.message, new Err('syntax error in [actions]'));
+		// 通常是代码有语法错误
+		let start = doc.posActions + e.pos + 1;
+		throw new Err('syntax error in [actions] - ' + e.message, doc.file, {text, start});
 	}
+
 	let map = new Map();
 
 	ast.body.forEach(node => {
@@ -184,18 +182,19 @@ function generateActions2(actions){
 	return rs;
 }
 
-function generateActions(actions){
-	let code = ` this.$actions = ${actions}`;
+function generateActions(doc, text){
+	let code = `this.$actions     = ${doc.actions}`;
 	let ast;
 
 	try{
 		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: false} );
 	}catch(e){
-		// TODO 提示具体的语法错误
-		throw Err.cat(e.message, new Err('syntax error in [actions]'));
+		// 通常是代码有语法错误
+		let start = doc.posActions + e.pos - 20;
+		throw new Err('syntax error in [actions] - ' + e.message, doc.file, {text, start});
 	}
-	let names = [];
 
+	let names = [];
 	let properties = ast.body[0].expression.right.properties;
 	properties && properties.forEach(node => {
 		if ( node.value.type == 'ArrowFunctionExpression' ) {
@@ -218,16 +217,17 @@ function generateActions(actions){
 }
 
 // 把对象形式汇总的方法转换成组件对象的一个个方法，同时都直接改成箭头函数（即使function也不确认this，让this指向组件对象）
-function generateMethods(methods){
-	let code = ` oFn = ${methods}`;
+function generateMethods(doc, text){
+	let code = `oFn               = ${doc.methods}`;
 	let ast;
-
 	try{
 		ast = acorn.parse(code, {ecmaVersion: 10, sourceType: 'module', locations: false} );
 	}catch(e){
-		// TODO 提示具体的语法错误
-		throw Err.cat(e.message, new Err('syntax error in [methods]'));
+		// 通常是代码有语法错误
+		let start = doc.posMethods + e.pos - 20;
+		throw new Err('syntax error in [methods]', doc.file, {text, start}, e);
 	}
+
 	let map = new Map();
 
 	let properties = ast.body[0].expression.right.properties;

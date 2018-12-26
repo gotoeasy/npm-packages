@@ -134,6 +134,28 @@ try{
 ![Sample5](https://github.com/gotoeasy/npm-packages/blob/master/err/img/img5.png)
 <br>
 
+## Sample 6
+```js
+// z.js
+const codeframe = require('@gotoeasy/err');
+
+function runCompute(){
+    try{
+        throw new Error('test');
+    }catch(e){
+        throw new Err('my message1', 'file=./test.js', e, {file:'./test.js', line:74, column:51});
+    }
+}
+
+try{
+    runCompute();
+}catch(e){
+    console.error(e.toString());
+}
+```
+![Sample6](https://github.com/gotoeasy/npm-packages/blob/master/err/img/img6.png)
+<br>
+
 
 <br>
 

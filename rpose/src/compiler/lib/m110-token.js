@@ -126,44 +126,6 @@ function TokenParser(doc){
 
 			reader.skip(1);	// 跳过【>】
 			oPos.end = reader.getPos();
-
-
-			// 特殊对待内置的语法高亮组件
-			if ( /^ui-highlight$/ig.test(tokenTagNm.text) && tokenTagNm.type == options.TypeTagOpen ) {
-				let start = reader.getPos();
-				let str = src.substring(start);
-				let rs = /^([\s\S]*?)<\/(ui-highlight)>/i.exec(str);
-				if ( !rs ) {
-					let text = File.read(file);
-					let result = /^\[view\][\s\S]*?\n|\n\[view\][\s\S]*?\n/i.exec(text);
-					let offset = result.index + result[0].length + 1;
-					let start = offset + tokenTagNm.pos.start;
-					let end = offset + tokenTagNm.pos.end;
-					throw Err.cat('missing close tag of ui-highlight', 'file=' + file, new Err( {text, start, end} )); // 标签结束符漏，<\ui-highlight>
-				}
-
-				let end = start + rs[1].length;
-				let $code = rs[1];
-				// 大括号会被当做表达式字符解析，需要转义掉
-				$code = highlight($code);
-				$code = $code.replace(/\{/g, '\\{').replace(/\}/g, '\\}')
-
-				token = { type: options.TypeAttributeName, text: '$code', pos: {start, end} };	// Token: 代码属性
-				tokens.push(token);
-				token = { type: options.TypeEqual, text: '=', pos: {start, end} };
-				tokens.push(token);
-				token = { type: options.TypeAttributeValue, text: $code, pos: {start, end} };
-				tokens.push(token);
-				
-				start = end;
-				end = reader.getPos() + rs[0].length;
-				token = { type: options.TypeTagClose, text: rs[2], pos: {start, end} };	// Token: 闭合标签
-				tokens.push(token);
-
-				reader.skip(rs[0].length);	// 跳到【</ui-highlight>】结束处
-			}
-
-
 			return 1;
 
 		}else{
@@ -397,7 +359,7 @@ function TokenParser(doc){
 		let rs = /(^```[\s\S]*?\r?\n)([\s\S]*?)\r?\n```[\s\S]*?\r?(\n|$)/.exec(str);
 		let len = rs[0].length;
 
-		// 【Token】 <ui-highlight>
+		// 【Token】 <```>
 		let token, oPos={};
 		start = pos;
 		end = pos + len;
@@ -446,8 +408,8 @@ function TokenParser(doc){
 
 		// 【Token】 $code
 		let $code = rs[2].replace(/\u0000\u0001/g, '\\{').replace(/\ufffe\uffff/g, '\\}');	// 转义，确保值为原输入
-		$code = $code.replace(/\n\\```/g, '\n```');					// \n\``` => ```
-		$code.startsWith('\\```') && ($code = $code.substring(1));	// ^\``` => ```
+		$code = $code.replace(/\n\\+```/g, match => '\n' + match.substring(2));				// 删除一个转义斜杠	 \n\``` => \n``` ，  \n\\``` => \n\```
+		/^\\+```/.test($code) && ($code = $code.substring(1));								// 删除一个转义斜杠	 \``` => ``` ，  \\``` => \```
 
 		// 属性值中的大括号会被当做表达式字符解析，需要转义掉
 		$code = highlight($code);
