@@ -6,8 +6,14 @@
     "@gotoeasy/file": "*",
     "@gotoeasy/code-frame": "*"
   },
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*",
+    "opn": "*"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc ava",
+    "coverage": "nyc ava & nyc report --reporter=html & node coverage"
   },
   "description": "友好的错误信息",
   "keywords": [

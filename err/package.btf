@@ -13,6 +13,11 @@ index.js
 @gotoeasy/file = *
 @gotoeasy/code-frame = *
 
+[devDependencies] // 开发依赖库
+ava = *
+nyc = *
+opn = *
+
 [description] // 描述
 友好的错误信息
 
@@ -20,7 +25,8 @@ index.js
 gotoeasy, rpose, error
 
 [scripts] // 脚本命令
-test = echo "Error: no test specified" && exit 1
+test = nyc ava
+coverage = nyc ava & nyc report --reporter=html & node coverage
 
 [repository] // 仓库
 type= git

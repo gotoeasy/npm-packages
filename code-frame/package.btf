@@ -2,7 +2,7 @@
 @gotoeasy/code-frame
 
 [version] // 版本号 （必填）
-0.0.2
+0.0.3
 
 
 [main] // 入口文件
