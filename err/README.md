@@ -75,7 +75,6 @@ const codeframe = require('@gotoeasy/err');
 
 function runCompute(){
     try{
-        let div = require('./test-div');
         return div(1, 0);
     }catch(e){
         throw new Err('my error message', e);
@@ -98,7 +97,6 @@ const codeframe = require('@gotoeasy/err');
 
 function runCompute(){
     try{
-        let div = require('./test-div');
         return div(1, 0);
     }catch(e){
         throw Err.cat('my message 11111', 'file=z.js', e, new Err('err message'));
@@ -121,7 +119,6 @@ const codeframe = require('@gotoeasy/err');
 
 function runCompute(){
     try{
-        let div = require('./test-div');
         return div.exec(1, 0);
     }catch(e){
         throw Err.cat('my error message', e);
