@@ -21,7 +21,8 @@
 * `@gotoeasy/is-ignore`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/is-ignore.svg)](https://www.npmjs.com/package/@gotoeasy/is-ignore) https://github.com/gotoeasy/npm-packages/blob/master/is-ignore
 * `@gotoeasy/npm`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/npm.svg)](https://www.npmjs.com/package/@gotoeasy/npm) https://github.com/gotoeasy/npm-packages/blob/master/npm
 * `@gotoeasy/os`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/os.svg)](https://www.npmjs.com/package/@gotoeasy/os) https://github.com/gotoeasy/npm-packages/blob/master/os
-* `@gotoeasy/postcss-rename-classname`: [![NPM version](https://img.shields.io/npm/v/postcss-rename-classname.svg)](https://www.npmjs.com/package/postcss-rename-classname) https://github.com/gotoeasy/npm-packages/blob/master/postcss-rename-classname
+* `postcss-rename-classname`: [![NPM version](https://img.shields.io/npm/v/postcss-rename-classname.svg)](https://www.npmjs.com/package/postcss-rename-classname) https://github.com/gotoeasy/npm-packages/blob/master/postcss-rename-classname
+* `@gotoeasy/p-task`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/p-task.svg)](https://www.npmjs.com/package/@gotoeasy/p-task) https://github.com/gotoeasy/npm-packages/blob/master/p-task
 * `@gotoeasy/rpose`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/rpose.svg)](https://www.npmjs.com/package/@gotoeasy/rpose) https://github.com/gotoeasy/npm-packages/blob/master/rpose
 * `@gotoeasy/rpose-cli`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/rpose-cli.svg)](https://www.npmjs.com/package/@gotoeasy/rpose-cli) https://github.com/gotoeasy/npm-packages/blob/master/rpose-cli
 * `@gotoeasy/util`: [![NPM version](https://img.shields.io/npm/v/@gotoeasy/util.svg)](https://www.npmjs.com/package/@gotoeasy/util) https://github.com/gotoeasy/npm-packages/blob/master/util

@@ -53,8 +53,8 @@ let ptask = new PTask((resolve, reject, isBroken) => function(name){
 
 // 1 'execute ...' 'param'
 // p1: 1
-// p2: 2
-// p3: 3
+// p2: 1
+// p3: 1
 
 ```
 <br>

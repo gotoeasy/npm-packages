@@ -1,18 +1,24 @@
 {
   "name": "@gotoeasy/p-task",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
     "string-hash": "*"
   },
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*",
+    "opn": "*"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc ava",
+    "coverage": "nyc ava & nyc report --reporter=html & node coverage"
   },
   "description": "promise task",
   "keywords": [
     "gotoeasy",
+    "rpose",
     "p-task",
-    "promise task",
     "task"
   ],
   "repository": {
