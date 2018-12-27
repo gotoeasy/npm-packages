@@ -130,6 +130,7 @@ function diffRenderChildern(component, parent, parentVnode2){
 				ary1.splice(j, 0, ary1.splice(ary1.indexOf(wv2.wv1), 1)[0] );	// 修改数组：移动idx元素到j前面
 				j++;
 
+// TODO FixMe
 				// 真实DOM移动
 				parent.insertBefore(wv2.wv1.el, wv1.el);						// 原节点不需要先删除 // parent.removeChild(wv2.wv1.el);
 
@@ -251,7 +252,7 @@ function getDiffAttrs(vnode1, vnode2){
 					has = 1;
 				}
 			}else if ( k == $SLOT ) {
-				// 虚拟子节点,忽略比较
+				// TODO 虚拟子节点,忽略比较 ????
 			}else if ( k == 'style' ) {
 				let oDiff = getDiffStyle(attr1[k], attr2[k]);
 				if ( oDiff ) {

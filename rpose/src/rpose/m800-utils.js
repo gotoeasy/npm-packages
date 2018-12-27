@@ -144,8 +144,8 @@ function classToPlantObject(str){
 }
 
 function _copyObjectValue(obj) {
-	if ( !obj ) {
-		return obj; // undefined、null、false、‘’、0
+	if ( !obj || obj.$COMPONENT_ID ) {
+		return obj; // undefined、null、false、‘’、0、组件对象
 	}
 
 	if ( isPlainObject(obj) ) {

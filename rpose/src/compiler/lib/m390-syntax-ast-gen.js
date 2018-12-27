@@ -11,7 +11,7 @@ const util = require('./m900-util');
 
 const JS_VARS = options.NameFnEscapeHtml.split('.')[0] + 'require,window,assignOptions,rpose,$SLOT,Object,Map,Set,WeakMap,WeakSet,Date,Math,Array,String,Number,JSON,Error,Function,arguments,Boolean,Promise,Proxy,Reflect,RegExp,alert,console,window,document'.split(',');
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
-const FN_TMPL_DEF = `function nodeTemplate($state, $options, $actions){`; // 模板方法开始行
+const FN_TMPL_DEF = `function nodeTemplate($state, $options, $actions, $this){`; // 模板方法开始行
 
 
 // ------------ Ast代码编译器 ------------
@@ -219,6 +219,9 @@ function attrsStringify(node, doc){
 	let objs = [];
 	let cls = {};
 	let staticAttrs = true;
+
+    // 含ref属性时，自动添加$context属性，避免组件对象上下文混乱，深度slot内的标签含ref属性时特需
+    attrs.ref && (attrs.$context = '{=$this}');
 
 	for ( let k in attrs ) {
 		if ( (k.startsWith(options.ExpressionStart) && k.endsWith(options.ExpressionEnd)) || (k.startsWith(options.ExpressionUnescapeStart) && k.endsWith(options.ExpressionUnescapeEnd)) ) {

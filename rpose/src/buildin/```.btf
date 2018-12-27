@@ -15,8 +15,7 @@
 //   ```
 // ---------------------------------------------------
 [api]
-optionkeys  = lang, height
-statekeys   = $code                 // 这个$code非常特殊，编译期硬编码，不能修改(m110-token.js)
+optionkeys  = lang, height, $code    // $code非常特殊，编译期硬编码，不能修改(m110-token.js)
 
 [view]
 <pre></pre>
@@ -24,20 +23,17 @@ statekeys   = $code                 // 这个$code非常特殊，编译期硬编
 [methods]
 { 
     render: (state={}) => {
-        let el, vnode;
-
+        // 代码高亮组件仅支持一次性渲染
         if ( this.isInitRender ){
             rpose.extend(this.$state, state, this.$STATE_KEYS);
-            vnode = this.nodeTemplate(this.$state, this.$options, this.$actions);
-            el = rpose.createDom(vnode, this); 
+            let vnode = this.nodeTemplate(this.$state, this.$options, this.$actions);
+            let el = rpose.createDom(vnode, this); 
             if ( el && el.nodeType == 1 ) {
                 $$(el).addClass(this.$COMPONENT_ID);
-                $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:${this.$options.height}">${this.$state.$code}</code>`);
+                $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:${this.$options.height}">${this.$options.$code}</code>`);
             } 
             this.isInitRender = false;
             return el;
-        }else{
-            $$(this.$COMPONENT_ID).attr('innerHTML', $code);
         }
     }
 }

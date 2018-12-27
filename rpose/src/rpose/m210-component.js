@@ -18,7 +18,7 @@ function getComponent(name){
 function newComponentProxy(componentKey, opt){
 	let Component = mapTagComponent[componentKey];
 	if ( !Component ) {
-		throw new Err('component not found: ' + componentKey);	// 找不到指定标签的组件
+		throw new Error('component not found: ' + componentKey);	// 找不到指定标签的组件
 	}
 
 	let comp;
@@ -71,23 +71,25 @@ function createDom(vnode, $thisContext) {
 	let el, $$el;
 	if (vnode.t) {
 		if (vnode.m) { // HTML标准标准定义的标签以外，都按组件看待。推荐自定义标签名用半角减号连接，如my-tag
+
 			// 子组件渲染
 			let comp = new createComponentByVnode(vnode); // 属性作为配置选项直接全部传入(子虚拟节点也按属性$SLOT传入)
-			comp.parent = $thisContext; // 保存父组件引用
 			vnode.o = comp; // 虚拟节点挂上组件实例
+
+			el = comp.render(); // 渲染为DOM，初始配置已通过选项传入
 
 			// 组件有ref属性时，建立关联关系 【refs:{ c:{组件}， e:{节点} }】
 			let refs, cls;
 			if ( vnode.a && vnode.a.ref ) {
-
-				// 默认上下文是当前组件，但slot的话需要由原组件管理 // TODO 原组件不一定是父组件，怎解？
-				refs = ($thisContext.parent.$refs = $thisContext.parent.$refs || {});
-
+                // 默认上下文是当前组件，但slot的话需要由原组件对象管理，slot的原组件对象在虚拟节点属性中
+                let $context = vnode.a.$context || $thisContext;
+				refs = ($context.$refs = $context.$refs || {});
 				let ref = refs.c = refs.c || {};
 				cls = ref[vnode.a.ref] = ref[vnode.a.ref] || uid('_ref_'); // 类名
+
+                // TODO 挂载前也能取。。。
 			}
 
-			el = comp.render(); // 渲染为DOM，初始配置已通过选项传入
 			if ( el ) {
 				$$el = $$(el);
 				$$el.addClass(comp.$COMPONENT_ID); // 使用组件对象ID插入到组件根节点class上建立关联
@@ -115,11 +117,13 @@ function createDom(vnode, $thisContext) {
 				for (let k in vnode.a) {
 					if ( k == 'ref' ) {
 						// 对ref属性做特殊处理：添加相应类名便于查找
-						//let refs = vnode.a.slot ? ($thisContext.parent.$refs = $thisContext.parent.$refs || {}) : ($thisContext.$refs = $thisContext.$refs || {});
-						let refs = $thisContext.$refs = $thisContext.$refs || {};
+                        let $context = vnode.a.$context || $thisContext;
+						let refs = $context.$refs = $context.$refs || {};
 						let ref = refs.e = refs.e || {};
 						let cls = ref[vnode.a[k]] = ref[vnode.a[k]] || uid('_ref_'); // 类名
 						$$el.addClass(vnode.r = cls);	// r=cls，查找时，通过引用名查得cls，由cls查得DOM
+
+                        // TODO 挂载前也能取。。。
 					}
 					$$el.attr(k, vnode.a[k]);
 				}
@@ -140,20 +144,14 @@ function createDom(vnode, $thisContext) {
 
 			// 创建子组件
 			if (vnode.c) {
-				for ( let i=0,len=vnode.c.length,vn,dom; i<len; i++) {
-					vn = vnode.c[i];
-					if ( vn ) {
-						if ( vn.a && vn.a.slot ) {
-							// TODO
-							dom = createDom(vn, $thisContext.parent);
-							dom && el.appendChild(dom);
-						}else{
-							dom = createDom(vn, $thisContext); // 可能undefined。。。。。。<script>或<link>
-							dom && el.appendChild(dom);
-						}
-					}
-				}
+                for ( let i=0,vn,dom; vn=vnode.c[i++]; ) {
+                    dom = createDom(vn, $thisContext); // 可能undefined。。。。。。<script>或<link>
+                    dom && el.appendChild(dom);
+                }
 			}
+
+            // TODO 含slot属性模板标签的特殊考虑
+
 		}
 	} else {
 		el = document.createTextNode(vnode.s);
