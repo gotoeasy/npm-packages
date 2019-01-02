@@ -8,10 +8,10 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('汇总页面关联JS代码', function(){
 
-	return async function(btfFile, allrequires){
+	return async function(srcFile, allrequires){
 		try{
 			// 组装代码
-			let src = await pageJs(allrequires, btfFile);
+			let src = await pageJs(allrequires, srcFile);
 
 			// 默认美化，release时则压缩
 			let env = bus.at('编译环境');
@@ -19,7 +19,7 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 
 			return src;
 		}catch(e){
-			throw Err.cat(MODULE + 'gen page js failed', btfFile, e)
+			throw Err.cat(MODULE + 'gen page js failed', srcFile, e)
 		}
 	};
 
@@ -27,7 +27,7 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 
 
 // 页面代码组装
-async function pageJs(allrequires, btfFile){
+async function pageJs(allrequires, srcFile){
 
 	let srcRpose = await bus.at('编译RPOSE');
 	let srcStmt = getSrcRegisterComponents(allrequires);
@@ -47,7 +47,7 @@ async function pageJs(allrequires, btfFile){
 		`;
 
 	let env  = bus.at('编译环境');
-	let tag  = bus.at('默认标签名', btfFile);
+	let tag  = bus.at('默认标签名', srcFile);
 	if ( env.release ) {
 		try{
 			console.time(MODULE + 'babel      ' + tag)

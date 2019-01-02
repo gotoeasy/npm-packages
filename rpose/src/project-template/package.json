@@ -1,6 +1,6 @@
 {
-  "dependencies": {
-    "@gotoeasy/btf": "*",
-    "@gotoeasy/file": "*"
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*"
   }
 }

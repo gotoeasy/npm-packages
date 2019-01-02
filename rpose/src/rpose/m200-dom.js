@@ -258,14 +258,9 @@ function Dom(queryResult){
 
 // DOM事件
 function addDomEventListener(el, name, fn){
-	if ( window.WeakMap ) {
-		// 支持WeakMap的话使用WeakMap做冒泡事件代理
-		// TODO 特殊处理不支持冒泡的事件
-		domEventListener(el, name, fn);
-		addDocumentEventListener(name);
-	}else{
-		el.addEventListener ? el.addEventListener(name, fn, false) : el.attachEvent ? el.attachEvent("on" + name, fn) : el["on" + name] = fn;
-	}
+    domEventListener(el, name, fn);
+    addDocumentEventListener(name);
+	// el.addEventListener ? el.addEventListener(name, fn, false) : el.attachEvent ? el.attachEvent("on" + name, fn) : el["on" + name] = fn;
 }
 function domEventListener(el, name, fn){
 	let map = domEventListener.m = domEventListener.m || new WeakMap(); // el: {name: Set(...fn) }

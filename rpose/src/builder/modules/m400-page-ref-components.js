@@ -7,10 +7,10 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('查找页面依赖组件', function(){
 
-	let ptask = new PTask((resolve, reject, isBroken) => async function(btfFile){
+	let ptask = new PTask((resolve, reject, isBroken) => async function(srcFile){
 		try{
 			let oSetAllRequires = new Set(), oStatus = {};
-			let btf = await bus.at('编译源文件', btfFile);
+			let btf = await bus.at('编译源文件', srcFile);
 			let requires = btf.getDocument().requires;
 			for ( let i=0,tagpkg; tagpkg=requires[i++]; ) {
 				await addRefComponent(tagpkg, oSetAllRequires, oStatus);
@@ -19,10 +19,10 @@ module.exports = bus.on('查找页面依赖组件', function(){
 			// 排序确保每次输出保持一致
 			let allrequires = [...oSetAllRequires];
 			allrequires.sort();
-			let tag = bus.at('默认标签名', btfFile);
+			let tag = bus.at('默认标签名', srcFile);
 			!allrequires.includes(tag) && allrequires.push( tag ); // 最后加入本页面标签
 			
-			console.debug(MODULE, btfFile, '\n    allrequires', allrequires);
+			console.debug(MODULE, srcFile, '\n    allrequires', allrequires);
 
 	
 			// 等待关联组件全部编译完成
@@ -36,9 +36,9 @@ module.exports = bus.on('查找页面依赖组件', function(){
 		}
 	});
 
-	return function(btfFile, restart=false){
-		restart && bus.at('编译源文件', btfFile, true).catch();
-		return restart ? ptask.restart(btfFile) : ptask.start(btfFile);
+	return function(srcFile, restart=false){
+		restart && bus.at('编译源文件', srcFile, true).catch();
+		return restart ? ptask.restart(srcFile) : ptask.start(srcFile);
 	};
 
 }());

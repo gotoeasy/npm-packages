@@ -5,19 +5,19 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('源文件删除时再编译', function(){
 
-	return async function(btfFile){
+	return async function(srcFile){
 		let env = bus.at('编译环境');
 console.time('build')
 
 		try{
-			let btf = await bus.at('解析源文件', btfFile);		// 缓存的原解析结果
+			let btf = await bus.at('解析源文件', srcFile);		// 缓存的原解析结果
 			let tagpkg = btf.getText('tagpkg');					// 原标签全名
 
-			let files = bus.at('源文件清单', btfFile, false);	// 源文件清单中删除该文件
-			bus.at('异步读文件', btfFile, true);					// 重读文件（删缓存）
+			let files = bus.at('源文件清单', srcFile, false);	// 源文件清单中删除该文件
+			bus.at('异步读文件', srcFile, true);					// 重读文件（删缓存）
 		
-			if ( bus.at('是否页面源文件', btfFile) ) {
-				bus.at('删除已生成的页面代码文件', btfFile);
+			if ( bus.at('是否页面源文件', srcFile) ) {
+				bus.at('删除已生成的页面代码文件', srcFile);
 			}
 
 			// ----------------------------------------------------
@@ -53,7 +53,7 @@ console.time('build')
 
 			await Promise.all(writePages);
 		}catch(e){
-			throw Err.cat(MODULE + 'build failed on file remove', btfFile, e);
+			throw Err.cat(MODULE + 'build failed on file remove', srcFile, e);
 		}
 console.timeEnd('build')
 

@@ -26,7 +26,7 @@ optionkeys  = lang, height, $code    // $code非常特殊，编译期硬编码�
         // 代码高亮组件仅支持一次性渲染
         if ( this.isInitRender ){
             rpose.extend(this.$state, state, this.$STATE_KEYS);
-            let vnode = this.nodeTemplate(this.$state, this.$options, this.$actions);
+            let vnode = this.nodeTemplate(this.$state, this.$options, this.$actions, this);
             let el = rpose.createDom(vnode, this); 
             if ( el && el.nodeType == 1 ) {
                 $$(el).addClass(this.$COMPONENT_ID);
@@ -44,7 +44,7 @@ optionkeys  = lang, height, $code    // $code非常特殊，编译期硬编码�
     max-height: 500px;
     display: block;
     overflow-x: auto;
-    background: #272822;
+    background: #394144;
     border-radius: 0.3em;
     font-family: Consolas, "Courier New", Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     line-height: 8.5px;

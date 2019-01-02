@@ -10,11 +10,11 @@ module.exports = bus.on('删除已生成的页面代码文件', function(){
 
 	
 
-	return function(btfFile, err){
+	return function(srcFile, err){
 
-		let jsFile = bus.at('页面目标JS文件名', btfFile);
-		let cssFile = bus.at('页面目标CSS文件名', btfFile);
-		let htmlFile = bus.at('页面目标HTML文件名', btfFile);
+		let jsFile = bus.at('页面目标JS文件名', srcFile);
+		let cssFile = bus.at('页面目标CSS文件名', srcFile);
+		let htmlFile = bus.at('页面目标HTML文件名', srcFile);
 
 		File.remove(jsFile);
 		File.remove(cssFile);
@@ -33,5 +33,7 @@ module.exports = bus.on('删除已生成的页面代码文件', function(){
 
 // 在watch模式下，编译失败或删除页面文件时，生成的html文件不删除，便于浏览器同步提示信息
 function syncHtml(e){
-	return `<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>Page build failed or src file removed<p><pre>${e.stack.replace(/\[\d{1,2}m/g, '')}</pre></body>`;
+	return `<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>Page build failed or src file removed<p/>
+        <pre style="background:#333;color:#ddd;padding:10px;">${e.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+    </body>`;
 }

@@ -40,27 +40,24 @@ module.exports = bus.on('编译环境', function(result){
 			result.path.root = root;
 
 			result.path.src = getConfPath(root, mapPathDefault, mapPath, 'src');
-			result.path.src_btf = getConfPath(root, mapPathDefault, mapPath, 'src_btf');
 			result.path.src_components = getConfPath(root, mapPathDefault, mapPath, 'src_components');
-			result.path.src_pages = getConfPath(root, mapPathDefault, mapPath, 'src_pages');
-			result.path.src_resources = getConfPath(root, mapPathDefault, mapPath, 'src_resources');
 
 			result.path.src_buildin = path.resolve(__dirname, '../../buildin').replace(/\\/g, '/');
 
 			result.path.build = getConfPath(root, mapPathDefault, mapPath, 'build');
-			result.path.build_temp = getConfPath(root, mapPathDefault, mapPath, 'build_temp');
-			result.path.build_dist = getConfPath(root, mapPathDefault, mapPath, 'build_dist');
+			result.path.build_temp = result.path.build + '/temp';
+			result.path.build_dist = result.path.build + '/dist';
 
 			result.theme = ((btf.getText('theme') == null || !btf.getText('theme').trim()) ? '@gotoeasy/theme' : btf.getText('theme').trim());
 
-			// common.css、less、sass入口文件
+/*			// common.css、less、sass入口文件
 			result.file.common_css = root + '/' + (mapCommon.get('common_css') || '').split('/').filter(v => !!v).join('/');
 			result.file.common_less = root + '/' + (mapCommon.get('common_less') || '').split('/').filter(v => !!v).join('/');
 			result.file.common_sass = root + '/' + (mapCommon.get('common_sass') || '').split('/').filter(v => !!v).join('/');
 			//!File.existsFile(result.file.common_css) && (result.file.common_css = null);
 			!File.existsFile(result.file.common_less) && (result.file.common_less = null);
 			!File.existsFile(result.file.common_sass) && (result.file.common_sass = null);
-
+*/
 			// 继续浅复制配置
 			Object.assign(result, opts);
 
@@ -82,7 +79,8 @@ function getConfPath(root, mapDefault, map, key){
 	// TODO 检查配置目录的合法性
 	if ( !map.get(key) || map.get(key) == '/' ) {
 		console.debug('use default path setting:', key);
-		return root + '/' + mapDefault.get(key).split('/').filter(v => !!v).join('/');
+        let defaultSetting = mapDefault.get(key) == null ? '' : mapDefault.get(key);
+		return root + '/' + defaultSetting.split('/').filter(v => !!v).join('/');
 	}
 	return root + '/' + map.get(key).split('/').filter(v => !!v).join('/');
 }

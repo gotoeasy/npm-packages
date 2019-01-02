@@ -13,7 +13,7 @@ module.exports = bus.on('编译组件', function(fnTmpl){
 			if ( !fnTmpl ) {
 				fnTmpl = await bus.at('编译模板JS');
 			}
-			if ( file.endsWith('.btf') ) {
+			if ( file.endsWith('.rpose') ) {
 				let btf = await bus.at('编译源文件', file, restart);
 				let doc = btf.getDocument();
 				doc.js = fnTmpl(doc);

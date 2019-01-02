@@ -8,9 +8,9 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 bus.on('是否页面源文件', function(){
 
 	// 判断是否页面源文件
-	return function(btfFile){
+	return function(srcFile){
 		let env = bus.at('编译环境');
-		return !btfFile.startsWith(env.path.src_components) && !btfFile.startsWith(env.path.src_buildin); // 非组件目录就按页面看待
+		return !srcFile.startsWith(env.path.src_components) && !srcFile.startsWith(env.path.src_buildin); // 非组件目录就按页面看待
 	}
 
 }());
@@ -21,51 +21,51 @@ bus.on('是否页面源文件', function(){
 
 bus.on('组件目标JS文件名', function(){
 
-	return function(btfFile){
+	return function(srcFile){
 		let env = bus.at('编译环境');
-		if ( btfFile.startsWith(env.path.src_buildin) ) {
-			return btfFile.substring(0, btfFile.length-4) + '.js';  // buildin
+		if ( srcFile.startsWith(env.path.src_buildin) ) {
+			return srcFile.substring(0, srcFile.length-6) + '.js';  // buildin
 		}
-		return env.path.build_temp + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.js'; 
+		return env.path.build_temp + srcFile.substring(env.path.src.length, srcFile.length-6) + '.js'; 
 	};
 
 }());
 
 bus.on('组件目标CSS文件名', function(){
 
-	return function(btfFile){
+	return function(srcFile){
 		let env = bus.at('编译环境');
-		if ( btfFile.startsWith(env.path.src_buildin) ) {
-			return btfFile.substring(0, btfFile.length-4) + '.css';  // buildin
+		if ( srcFile.startsWith(env.path.src_buildin) ) {
+			return srcFile.substring(0, srcFile.length-6) + '.css';  // buildin
 		}
-		return env.path.build_temp + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.css'; 
+		return env.path.build_temp + srcFile.substring(env.path.src.length, srcFile.length-6) + '.css'; 
 	};
 
 }());
 
 bus.on('页面目标JS文件名', function(){
 
-	return function(btfFile){
+	return function(srcFile){
 		let env = bus.at('编译环境');
-		return env.path.build_dist + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.js'; 
+		return env.path.build_dist + srcFile.substring(env.path.src.length, srcFile.length-6) + '.js'; 
 	};
 
 }());
 
 bus.on('页面目标CSS文件名', function(){
 
-	return function(btfFile){
+	return function(srcFile){
 		let env = bus.at('编译环境');
-		return env.path.build_dist + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.css'; 
+		return env.path.build_dist + srcFile.substring(env.path.src.length, srcFile.length-6) + '.css'; 
 	};
 
 }());
 
 bus.on('页面目标HTML文件名', function(){
 
-	return function(btfFile){
+	return function(srcFile){
 		let env = bus.at('编译环境');
-		return env.path.build_dist + btfFile.substring(env.path.src_btf.length, btfFile.length-4) + '.html'; 
+		return env.path.build_dist + srcFile.substring(env.path.src.length, srcFile.length-6) + '.html'; 
 	};
 
 }());
@@ -73,12 +73,12 @@ bus.on('页面目标HTML文件名', function(){
 
 bus.on('默认标签名', function(){
 
-	return btfFile => {
+	return srcFile => {
 		let env = bus.at('编译环境');
-		if ( btfFile.startsWith(env.path.src_buildin) ) {
-			return require('path').parse(btfFile).name;  // buildin 返回文件名（不含路径及扩展名）
+		if ( srcFile.startsWith(env.path.src_buildin) ) {
+			return require('path').parse(srcFile).name;  // buildin 返回文件名（不含路径及扩展名）
 		}
-		let tag = btfFile.substring(btfFile.lastIndexOf('/')+1).split('.')[0].toLowerCase();
+		let tag = srcFile.substring(srcFile.lastIndexOf('/')+1).split('.')[0].toLowerCase();
 		tag = tag.replace(/\s+/g, '');
 		return tag;
 	}
@@ -89,7 +89,7 @@ bus.on('标签源文件', function(){
 
 	return tag => {
 		let files = bus.at('源文件清单');
-		let name = '/' + tag + '.btf';
+		let name = '/' + tag + '.rpose';
 		for ( let i=0,file; file=files[i++]; ) {
 			if ( file.endsWith(name) ) {
 				return file;

@@ -24,11 +24,9 @@ module.exports = bus.on('编译源文件', function(){
 
 	return async function (file, restart=false) {
 		try{
-			if ( file.endsWith('.btf') ) {
+			if ( file.endsWith('.rpose') ) {
 				bus.at('解析源文件', file, restart);
 				return restart ? ptask.restart(file) : ptask.start(file);
-				//await parseBtfDocument(btf.getDocument(), file);
-				//return btf;
 			}
 			if ( file.indexOf(':') < 0 ) {
 				let srcFile = bus.at('标签源文件', file);
@@ -37,14 +35,12 @@ module.exports = bus.on('编译源文件', function(){
 				}
 				bus.at('解析源文件', file, restart);
 				return restart ? ptask.restart(srcFile) : ptask.start(srcFile);
-				//await parseBtfDocument(btf.getDocument(), file);
-				//return btf;
 			}
 
 			// TODO npm pkg
 			throw new Err('TODO npm pkg');
 		}catch(e){
-			throw Err.cat(MODULE + 'compile btf failed', e);
+			throw Err.cat(MODULE + 'src compile failed', e);
 		}
 	};
 
@@ -61,14 +57,14 @@ async function parseBtfDocument(doc, file){
 		// CSS预处理-LESS
 		doc.less && (doc.css += '\n' + await bus.at('编译LESS', theme.themeLess + doc.less, file));
 	}catch(e){
-		throw Err.cat(MODULE + 'compile less failed', e);
+		throw Err.cat(MODULE + 'less compile failed', e);
 	}
 
 	try{
 		// CSS预处理-SCSS
 		doc.scss && (doc.css += '\n' + await bus.at('编译SCSS', theme.themeSass + doc.scss, file));
 	}catch(e){
-		throw Err.cat(MODULE + 'compile sass failed', e);
+		throw Err.cat(MODULE + 'sass compile failed', e);
 	}
 
 	// CSS后处理

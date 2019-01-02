@@ -4,19 +4,22 @@ const PTask = require('@gotoeasy/p-task');
 
 module.exports = bus.on('生成页面HTML代码', function(){
 
-	let ptask = new PTask(resolve => function(btfFile){
+	let ptask = new PTask(resolve => function(srcFile){
 
-		let fileName = btfFile.substring(btfFile.lastIndexOf('/') + 1, btfFile.length - 4); // btf/pages/abc-def.btf => acd-def
+        let date = new Date();
+        let ver = '?ver=' + date.getFullYear() + '' + (date.getMonth()+1) + '' + date.getDate();
+		let fileName = srcFile.substring(srcFile.lastIndexOf('/') + 1, srcFile.length - 6); // pages/abc-def.rpose => acd-def
 		resolve( `
 
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="max-age=18000"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./${fileName}.js" defer></script>
-<link href="./${fileName}.css" rel="stylesheet">
+<script src="./${fileName}.js${ver}" defer></script>
+<link href="./${fileName}.css${ver}" rel="stylesheet">
 </head>
 <body></body>
 </html>
@@ -26,6 +29,6 @@ module.exports = bus.on('生成页面HTML代码', function(){
 	});
 
 
-	return (btfFile) => ptask.start(btfFile);
+	return (srcFile) => ptask.start(srcFile);
 
 }());

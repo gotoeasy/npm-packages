@@ -1,18 +1,7 @@
 [path]
 src                 : src
-src_btf             : src/btf
-src_components      : src/btf/components
-src_pages           : src/btf/pages
-src_resources       : src/resources
-
+src_components      : src/components
 build               : build
-build_temp          : build/temp
-build_dist          : build/dist
-
-[common]
-common_css          : src/common/css/common.css
-index_less          : src/common/less/index.less
-index_sass          : src/common/less/index.scss
 
 [theme] // 样式风格包
 @gotoeasy/theme

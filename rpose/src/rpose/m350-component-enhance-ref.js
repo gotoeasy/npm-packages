@@ -10,8 +10,21 @@ function enhanceRef(component) {
      */
 	Object.defineProperty(component, "getRefElements", {
 		get : ()=> function(name){
-			let cls = this.$refs.e[name]; // 引用名对应一个动态初始化的类名
+			let cls = this.$refs && this.$refs.e ? this.$refs.e[name] : ''; // 引用名对应一个动态初始化的类名
 			return cls ? [...new Set(document.querySelectorAll('.' + cls))] : [];
+		}
+	});
+
+    /**
+     * 在组件范围内，按引用名查找匹配的第一个DOM节点
+	 * 
+	 * @name 引用名
+	 * @return DOM节点（找不到时null）
+     */
+	Object.defineProperty(component, "getRefElement", {
+		get : ()=> function(name){
+			let els = this.getRefElements(name);
+            return els.length ? els[0] : null;
 		}
 	});
 
@@ -23,7 +36,7 @@ function enhanceRef(component) {
      */
 	Object.defineProperty(component, "getRefComponents", {
 		get : ()=> function(name){
-			let cls = this.$refs.c[name]; // 引用名对应一个组件对象ID，该ID已在相应节点的class中
+			let cls = this.$refs && this.$refs.c ? this.$refs.c[name] : ''; // 引用名对应一个组件对象ID，该ID已在相应节点的class中
 			if ( !cls ) {
 				return [];
 			}
@@ -48,6 +61,19 @@ function enhanceRef(component) {
 			});
 
 			return rs;
+		}
+	});
+
+    /**
+     * 在组件范围内，按引用名查找匹配的第一个组件对象
+	 * 
+	 * @name 引用名
+	 * @return 组件对象（找不到时null）
+     */
+	Object.defineProperty(component, "getRefComponent", {
+		get : ()=> function(name){
+			let objs = this.getRefComponents(name);
+            return objs.length ? objs[0] : null;
 		}
 	});
 

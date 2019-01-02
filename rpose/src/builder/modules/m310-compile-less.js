@@ -8,10 +8,10 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('编译LESS', function(lessIndexText){
 
-	let ptask = new PTask((resolve, reject, isBroken) => async function(less, btfFile){
+	let ptask = new PTask((resolve, reject, isBroken) => async function(less, srcFile){
 		try{
 			const env = bus.at('编译环境');
-			let file = btfFile.substring(env.path.src_btf.length + 1);
+			let file = srcFile.substring(env.path.src.length + 1);
 			if ( lessIndexText === undefined ) {
 				lessIndexText = File.exists(env.file.common_less) ? File.read(env.file.common_less) : '';
 			}
@@ -21,14 +21,14 @@ module.exports = bus.on('编译LESS', function(lessIndexText){
 			resolve( rs.css );
 		}catch(e){
 			// TODO 友好的出错信息提示
-			reject( Err.cat(MODULE + 'compile less failed', e.message, btfFile, e.extract, e) );
+			reject( Err.cat(MODULE + 'compile less failed', e.message, srcFile, e.extract, e) );
 		}
 	});
 
 
-	// btfFile用于出错信息提示
-	return function (less, btfFile, restart=false) {
-		return restart ? ptask.restart(less, btfFile) : ptask.start(less, btfFile)
+	// srcFile用于出错信息提示
+	return function (less, srcFile, restart=false) {
+		return restart ? ptask.restart(less, srcFile) : ptask.start(less, srcFile)
 	};
 
 }());

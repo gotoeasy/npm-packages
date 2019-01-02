@@ -7,8 +7,8 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('编译SCSS', function(scssIndexText){
 
-	// btfFile仅用于出错信息提示
-	return async function(scss, btfFile){
+	// srcFile仅用于出错信息提示
+	return async function(scss, srcFile){
 		try{
 			if ( !scss.trim() ) {
 				return '';
@@ -20,10 +20,10 @@ module.exports = bus.on('编译SCSS', function(scssIndexText){
 			}
 			
 			// TODO 友好的出错信息提示
-			let rs = csjs.scssToCss(scssIndexText + scss, btfFile);
+			let rs = csjs.scssToCss(scssIndexText + scss, srcFile);
 			return rs.css;
 		}catch(e){
-			throw Err.cat(MODULE + 'compile scss failed', btfFile, e);
+			throw Err.cat(MODULE + 'compile scss failed', srcFile, e);
 		}
 	};
 

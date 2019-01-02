@@ -8,18 +8,18 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 // 组件CSS单独编译主要为了解决url更新和资源复制目的
 module.exports = bus.on('编译组件CSS', function(){
 
-	return async function(css, btfFile){
+	return async function(css, srcFile){
 		
 		// ------------ 修改样式类名 ------------
-		let rename = name => renameCssClassName(btfFile, name);
+		let rename = name => renameCssClassName(srcFile, name);
 		// -------------------------------------
 
 		try{
 			let env = bus.at('编译环境');
-//console.info(MODULE,'-----------compile component css----------', bus.at('默认标签名', btfFile))
+//console.info(MODULE,'-----------compile component css----------', bus.at('默认标签名', srcFile))
 			// 组件源文件位置作为来源
-			let from = btfFile.substring(0, btfFile.length-4) + '.css';
-			let to = env.path.build_temp + '/' + bus.at('默认标签名', btfFile) + '.css';		// 假定组件都编译到%build_temp%目录
+			let from = srcFile.substring(0, srcFile.length-6) + '.css';
+			let to = env.path.build_temp + '/' + bus.at('默认标签名', srcFile) + '.css';		// 假定组件都编译到%build_temp%目录
 			let assetsPath = File.relative(to, env.path.build_dist + '/images');			// 图片统一复制到%build_dist%/images，按生成的css文件存放目录决定url相对路径
 
 			let opt = {from, to, assetsPath, rename};
@@ -29,18 +29,18 @@ module.exports = bus.on('编译组件CSS', function(){
 			!env.release && await File.writePromise(to, await csjs.formatCss(rs.css));
 			return rs;
 		}catch(e){
-			throw Err.cat(MODULE + 'compile component css failed', btfFile, e);
+			throw Err.cat(MODULE + 'compile component css failed', srcFile, e);
 		}
 	};
 
 }());
 
-function renameCssClassName(btfFile, cls){
+function renameCssClassName(srcFile, cls){
 	if ( cls == 'hljs' || cls.startsWith('hljs-') ) {
 		return cls; // 语法高亮的.hljs/.hljs-xxx默认支持，不做修改 // TODO，转为配置实现？
 	}
 	let aryHash = [];
-	aryHash.push(bus.at('默认标签名', btfFile));
+	aryHash.push(bus.at('默认标签名', srcFile));
 	aryHash.push(cls);
 	return hash(aryHash.join('\n'));
 }

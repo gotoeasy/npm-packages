@@ -26,19 +26,19 @@ console.timeEnd('load');
 console.timeEnd('build');
 
 		// 监视文件变化
-		let ready, watcher = chokidar.watch(env.path.src_btf);
+		let ready, watcher = chokidar.watch(env.path.src);
 		watcher.on('add', async file => {
-			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.btf') ) {
+			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') ) {
 				!buildAllOk && (buildAllOk = await buildAllPages());
 				notifyAdd(file);
 			}
 		}).on('change', async file => {
-			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.btf') ) {
+			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') ) {
 				!buildAllOk && (buildAllOk = await buildAllPages());
 				notifyChange(file);
 			}
 		}).on('unlink', file => {
-			ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.btf') && notifyRemove(file);
+			ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') && notifyRemove(file);
 		}).on('ready', () => {
 			ready = true;
 		});

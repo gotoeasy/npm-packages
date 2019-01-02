@@ -8,14 +8,14 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('汇总页面关联CSS代码', function(){
 
-	return async function(btfFile, allrequires){
+	return async function(srcFile, allrequires){
 
 		try{
 			// 组装代码返回
 			let src = await pageCss(allrequires);
-			return await bus.at('编译页面CSS', src, btfFile);
+			return await bus.at('编译页面CSS', src, srcFile);
 		}catch(e){
-			throw Err.cat(MODULE + 'gen page css failed', btfFile, allrequires, e)
+			throw Err.cat(MODULE + 'gen page css failed', srcFile, allrequires, e)
 		}
 
 	};

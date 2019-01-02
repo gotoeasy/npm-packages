@@ -28,6 +28,8 @@ function newComponentProxy(componentKey, opt){
 		comp = enhance(Component, opt);
 	}
 
+    isFunction(comp.init) && comp.init();
+
 	return comp; // 返回增强的组件对象
 }
 
@@ -145,7 +147,7 @@ function createDom(vnode, $thisContext) {
 			// 创建子组件
 			if (vnode.c) {
                 for ( let i=0,vn,dom; vn=vnode.c[i++]; ) {
-                    dom = createDom(vn, $thisContext); // 可能undefined。。。。。。<script>或<link>
+                    dom = createDom(vn, $thisContext);  // 可能undefined。。。。。。<script>或<link>
                     dom && el.appendChild(dom);
                 }
 			}

@@ -9,18 +9,18 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('解析源文件', function(){
 
-	let ptask = new PTask((resolve, reject, isBroken) => async function(btfFile){
+	let ptask = new PTask((resolve, reject, isBroken) => async function(srcFile){
 
 		try{
-			let text = await bus.at('异步读文件', btfFile);
+			let text = await bus.at('异步读文件', srcFile);
 			if ( text === undefined ) {
-				reject(MODULE + 'file not found: ' + btfFile);
+				reject(MODULE + 'file not found: ' + srcFile);
 				return;
 			}
 			let btf = new Btf(text, true);
 
 			let doc = btf.getDocument();
-			doc.file = btfFile;
+			doc.file = srcFile;
 
 			let rs = /^\[view\].*\r?\n?|\n\[view\].*\r?\n?/i.exec(text);
 			doc.posView = rs ? (rs.index + rs[0].length) : 0;
@@ -35,17 +35,17 @@ module.exports = bus.on('解析源文件', function(){
 			rs = /^\[scss\].*\r?\n?|\n\[scss\].*\r?\n?/i.exec(text);
 			doc.posSass = rs ? (rs.index + rs[0].length) : 0;
 
-			editBtfDocument(doc, btfFile, text);
+			editBtfDocument(doc, srcFile, text);
 
 			resolve( btf );
 		}catch(e){
-			reject(Err.cat(MODULE + 'parse btf failed', btfFile, e));
+			reject(Err.cat(MODULE + 'parse btf failed', srcFile, e));
 		}
 	});
 
 
-	return function (btfFile, restart=false) {
-		return restart ? ptask.restart(btfFile) : ptask.start(btfFile)
+	return function (srcFile, restart=false) {
+		return restart ? ptask.restart(srcFile) : ptask.start(srcFile)
 	};
 
 }());

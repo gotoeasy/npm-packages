@@ -8,21 +8,21 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('异步读文件', function(map=new Map){
 
-	return function (btfFile, restart=false) {
-		if ( !restart && map.has(btfFile) ) {
-			return map.get(btfFile);
+	return function (srcFile, restart=false) {
+		if ( !restart && map.has(srcFile) ) {
+			return map.get(srcFile);
 		}
 
-		if ( !File.exists(btfFile) ) {
-			map.delete(btfFile);
+		if ( !File.exists(srcFile) ) {
+			map.delete(srcFile);
 			return undefined;                      // 文件不存在时返回undefined！！！
 		}
 
-		let pTxt = File.readPromise(btfFile);
-		map.set(btfFile, pTxt);
+		let pTxt = File.readPromise(srcFile);
+		map.set(srcFile, pTxt);
 		
 		let env = bus.at('编译环境');
-		env.mode == 'watch' && setTimeout(x=>map.delete(btfFile), 3 * 60 * 1000 ); // 缓存3分钟
+		env.mode == 'watch' && setTimeout(x=>map.delete(srcFile), 3 * 60 * 1000 ); // 缓存3分钟
 		
 		return pTxt;
 	};

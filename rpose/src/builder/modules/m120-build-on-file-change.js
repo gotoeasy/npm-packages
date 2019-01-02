@@ -5,22 +5,22 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('重新编译被更新源文件', function(){
 
-	return async function(btfFile){
+	return async function(srcFile){
 		let env = bus.at('编译环境');
 
 console.time('build')
 
-		let files = bus.at('源文件清单', btfFile);
-		let isPage = bus.at('是否页面源文件', btfFile);
+		let files = bus.at('源文件清单', srcFile);
+		let isPage = bus.at('是否页面源文件', srcFile);
 		
-		let cplErr, btf, tag = bus.at('默认标签名', btfFile);
+		let cplErr, btf, tag = bus.at('默认标签名', srcFile);
 
 		// 先同步编译，方便查找编译错误
 		try{
-			//btf = await bus.at('编译组件', btfFile, true);			// 重新解析编译
-			bus.at('编译组件', btfFile, true);			// 重新解析编译
+			//btf = await bus.at('编译组件', srcFile, true);			// 重新解析编译
+			bus.at('编译组件', srcFile, true);			// 重新解析编译
 		}catch(e){
-			//cplErr = Err.cat(MODULE + 'compile failed on file change', btfFile, e);
+			//cplErr = Err.cat(MODULE + 'compile failed on file change', srcFile, e);
 		}
 
 		// ----------------------------------------------------
@@ -28,11 +28,11 @@ console.time('build')
 		// ----------------------------------------------------
 		try{
 			if ( isPage ) {
-				await bus.at('输出页面代码文件', btfFile);
+				await bus.at('输出页面代码文件', srcFile);
 			}
 		}catch(e){
-			let err = Err.cat(MODULE + 'build page failed on change', btfFile, e, cplErr);
-			bus.at('删除已生成的页面代码文件', btfFile, err);
+			let err = Err.cat(MODULE + 'build page failed on change', srcFile, e, cplErr);
+			bus.at('删除已生成的页面代码文件', srcFile, err);
 			throw err;
 		}
 
@@ -45,7 +45,7 @@ console.time('build')
 		// 检查有没有被其他页面使用，有的话更新输出关联页面
 		// ----------------------------------------------------
 		for ( let i=0,file,allrequires; file=files[i++]; ) {
-			if ( !bus.at('是否页面源文件', file) || file == btfFile ) {
+			if ( !bus.at('是否页面源文件', file) || file == srcFile ) {
 				continue; // 非页面或是页面自己时都不用处理
 			}
 
