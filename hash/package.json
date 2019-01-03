@@ -1,0 +1,36 @@
+{
+  "name": "@gotoeasy/hash",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "hasha": "*"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*",
+    "opn": "*"
+  },
+  "scripts": {
+    "test": "nyc ava",
+    "coverage": "nyc ava & nyc report --reporter=html & node coverage"
+  },
+  "description": "simple file/string hash",
+  "keywords": [
+    "gotoeasy",
+    "rpose",
+    "hash"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/hash/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
