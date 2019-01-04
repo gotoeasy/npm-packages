@@ -149,7 +149,6 @@ function isDocumentEnd(line) {
 }
 
 function getBlockName(line) {
-	// FIXME
 	for ( let i=1; i<line.length; i++) {
 		if ( line.charAt(i-1) !== '\\' && line.charAt(i) === ']' ) {
 			return line.substring(1, i).toLowerCase().replace(/\\\]/g, ']');			 // 名称部分转义 [\]] => ]; 

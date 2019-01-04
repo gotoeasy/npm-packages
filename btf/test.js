@@ -82,3 +82,27 @@ test('BTF读取文件测试', t => {
 	t.is(doc4.getText(']]'), ']]');
 
 });
+
+
+test('BTF读取文件测试', t => {
+
+    let btf;
+	btf = new Btf('[\\]\nabc', true);
+	t.is(btf.getText('\\'), 'abc');
+
+	btf = new Btf('[\\\\]\nabc', true);
+	t.is(btf.getText('\\\\'), 'abc');
+
+	btf = new Btf('[\\\\]]\nabc', true);
+	t.is(btf.getText('\\]'), 'abc');
+
+	btf = new Btf('[\\\\\\]]\nabc', true);
+	t.is(btf.getText('\\\\]'), 'abc');
+
+	btf = new Btf('[\\\\\\]\\]\nabc', true);
+	t.is(btf.getText('\\\\]\\'), 'abc');
+
+	btf = new Btf('[\\\\\\]\\]]]]]]]]\nabc', true);
+	t.is(btf.getText('\\\\]]'), 'abc');
+
+});
