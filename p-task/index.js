@@ -1,14 +1,4 @@
-const hash = require('string-hash');
-/*
-function hash(str){
-	let rs = 5381, i = str.length;
-	while ( i ) {
-		rs = (rs * 33) ^ str.charCodeAt(--i);
-	}
-	return rs >>> 0;
-}
-*/
-
+const hash = require('@gotoeasy/hash');
 
 module.exports = function PTask(fnTaskGetter){
 	let pResult = new Map();

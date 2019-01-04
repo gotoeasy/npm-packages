@@ -2,9 +2,9 @@ const Btf = require('@gotoeasy/btf');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
 const Err = require('@gotoeasy/err');
+const hash = require('@gotoeasy/hash');
 const chokidar = require('chokidar');
 const bs = require("browser-sync").create('sync');
-const hash = require('string-hash');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 

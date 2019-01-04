@@ -16,6 +16,7 @@ module.exports = bus.on('编译组件', function(fnTmpl){
 			if ( file.endsWith('.rpose') ) {
 				let btf = await bus.at('编译源文件', file, restart);
 				let doc = btf.getDocument();
+                doc.imagepath = bus.at('页面图片相对路径', file);
 				doc.js = fnTmpl(doc);
 let to = env.path.build_temp + '/' + bus.at('默认标签名', file) + '.js';		// 假定组件都编译到%build_temp%目录
 !env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
@@ -27,6 +28,7 @@ let to = env.path.build_temp + '/' + bus.at('默认标签名', file) + '.js';		/
 				}
 				let btf = await bus.at('编译源文件', srcFile, restart);
 				let doc = btf.getDocument();
+                doc.imagepath = bus.at('页面图片相对路径', srcFile);
 				doc.js = fnTmpl(doc);
 let to = env.path.build_temp + '/' + bus.at('默认标签名', srcFile) + '.js';		// 假定组件都编译到%build_temp%目录
 !env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));

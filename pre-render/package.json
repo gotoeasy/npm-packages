@@ -1,20 +1,18 @@
 {
-  "name": "@gotoeasy/file",
-  "version": "0.0.11",
+  "name": "@gotoeasy/pre-render",
+  "version": "0.0.1",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "description": "常用文件操作封装",
+  "description": "rpose用页面预渲染器",
   "keywords": [
-    "fs",
-    "file"
+    "gotoeasy",
+    "rpose",
+    "pre-render"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/file/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/pre-render/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

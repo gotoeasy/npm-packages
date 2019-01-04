@@ -2,7 +2,6 @@ const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const File = require('@gotoeasy/file');
-const hash = require('string-hash');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 

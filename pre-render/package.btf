@@ -1,40 +1,30 @@
 [name] // 项目名 （必填）
-@gotoeasy/p-task
+@gotoeasy/pre-render
 
 [version] // 版本号 （必填）
-0.0.7
+0.0.1
 
 
 
 [main] // 入口文件
 index.js
 
-[bin] // cli命令
-
 [dependencies] // 依赖库
-@gotoeasy/hash = *
 
 [devDependencies] // 开发依赖库
-ava = *
-nyc = *
-opn = *
-
-[scripts] // 脚本命令
-test = nyc ava
-coverage = nyc ava & nyc report --reporter=html & node coverage
 
 [description] // 描述
-promise task
+rpose用页面预渲染器
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, rpose, p-task, task
+gotoeasy, rpose, pre-render
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/p-task/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/pre-render/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

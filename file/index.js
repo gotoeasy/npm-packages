@@ -284,6 +284,10 @@ function filename(file){
 	return require('path').parse(file).base;
 }
 
+function fnName(file){
+	return require('path').parse(file).name;
+}
+
 function relative(from, to){
 	return require('path').relative(dirname(from), to).replace(/\\/g, '/');
 }
@@ -320,6 +324,7 @@ api.dir = dirname;
 api.dirname = dirname;
 api.extname = require('path').extname;  // d:/b/c/abc.txt => .txt
 api.ext = require('path').extname;
+api.name = fnName;
 api.filename = filename;				// d:/b/c/abc.txt => abc.txt
 api.relative = relative;				// d:/a/b/c, d:/a/b/e/f  => ../e/f
 api.resolve = resolve;

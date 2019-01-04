@@ -1,6 +1,6 @@
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
-const stringhash = require('string-hash');
+const hash = require('@gotoeasy/hash');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -113,7 +113,7 @@ bus.on('组件类名', function(){
 	return (tag, pkg='') => {
 
 		if ( tag === '```' ) {
-			return '$BuildIn$_' + stringhash(tag);  // buildin 特殊处理
+			return '$BuildIn$_' + hash(tag);  // buildin 特殊处理
 		}
 
 		// ui-tag
@@ -148,4 +148,16 @@ bus.on('页面编译状态', function(){
 
 }());
 
+
+bus.on('页面图片相对路径', function(){
+
+	return (srcFile) => {
+		let env = bus.at('编译环境');
+        
+        let pathLen = srcFile.startsWith(env.path.src) ? env.path.src.length : env.path.src_buildin.length;
+        let ary = srcFile.substring(pathLen).split('/');
+        return '../'.repeat(ary.length-2) + 'images/';
+	};
+
+}());
 

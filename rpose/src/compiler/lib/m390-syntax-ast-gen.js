@@ -3,7 +3,11 @@ const REG_TAGS = /^(html|link|meta|style|title|address|article|aside|footer|head
 // HTML标准所定义的全部标签事件
 const REG_EVENTS = /^(onclick|onchange|onabort|onafterprint|onbeforeprint|onbeforeunload|onblur|oncanplay|oncanplaythrough|oncontextmenu|oncopy|oncut|ondblclick|ondrag|ondragend|ondragenter|ondragleave|ondragover|ondragstart|ondrop|ondurationchange|onemptied|onended|onerror|onfocus|onfocusin|onfocusout|onformchange|onforminput|onhashchange|oninput|oninvalid|onkeydown|onkeypress|onkeyup|onload|onloadeddata|onloadedmetadata|onloadstart|onmousedown|onmouseenter|onmouseleave|onmousemove|onmouseout|onmouseover|onmouseup|onmousewheel|onoffline|ononline|onpagehide|onpageshow|onpaste|onpause|onplay|onplaying|onprogress|onratechange|onreadystatechange|onreset|onresize|onscroll|onsearch|onseeked|onseeking|onselect|onshow|onstalled|onsubmit|onsuspend|ontimeupdate|ontoggle|onunload|onunload|onvolumechange|onwaiting|onwheel)$/i;
 
+const bus = require('@gotoeasy/bus');
+const File = require('@gotoeasy/file');
+const hash = require('@gotoeasy/hash');
 const Err = require('@gotoeasy/err');
+const fs = require('fs');
 const acorn = require('acorn');
 const acornGlobals = require('acorn-globals');
 const options = require('./m020-options')();
@@ -86,10 +90,19 @@ console.debug(MODULE, src);
 					// 其他标签，正常处理
 					let isSvgTag = isSVG || /^svg$/i.test(tag);							// 是否SVG标签或SVG子标签
 					let isStdTag = isSvgTag || REG_TAGS.test(tag);						// 是否标准标签
+                    if ( /^img$/i.test(tag) ) {
+                        let imgname = hashImageName(this.doc.file, node.attrs.src);
+                        if ( !imgname ) {
+                            throw new Err('image file not found');
+                        }
+                        node.attrs.src = '%imagepath%' + imgname;
+                    }
+
 					let events = getDomEvents(node.attrs, isStdTag, this.$actionsKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
 					let attrs = attrsStringify(node, this.doc);							// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
 					let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
 					let cnt = ++this.$counter;
+
 
 					let tagpkg = npmPkg ? (tag + ':' + npmPkg) : tag;					// 标签全名
 					!isStdTag && tagSet.add( tagpkg );
@@ -440,6 +453,31 @@ function checkAndInitVars(doc, src, $dataKeys, $optsKeys){
 	}
 
 	return FN_TMPL_DEF + vars.join('\n') + src.substring(FN_TMPL_DEF.length);
+}
+
+function hashImageName(srcFile, imgSrc){
+    let file;
+    if ( File.exists(imgSrc) ) {
+        file = imgSrc;
+    }else{
+        file = File.resolve(srcFile, imgSrc);
+        if ( !File.exists(file) ) {
+            return false;
+        }
+    }
+
+    let name = hash({file}) + File.extname(file); // 去除目录，文件名哈希化，后缀名不变
+
+    // TODO 复制文件
+	let env = bus.at('编译环境');
+    let distDir = env.path.build_dist + '/images';
+    let distFile = env.path.build_dist + '/images/' + name;
+    if ( !File.exists(distFile) ) {
+        !File.existsDir(distDir) && File.mkdir(distDir);
+        fs.createReadStream(file).pipe(fs.createWriteStream(distFile));
+    }
+
+    return name;
 }
 
 /*

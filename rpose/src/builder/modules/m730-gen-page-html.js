@@ -1,34 +1,21 @@
 const Err = require('@gotoeasy/err');
+const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
-const PTask = require('@gotoeasy/p-task');
 
 module.exports = bus.on('生成页面HTML代码', function(){
 
-	let ptask = new PTask(resolve => function(srcFile){
+    return async function(srcFile){
+    
+        let env = bus.at('编译环境');
+        let btf = await bus.at('解析源文件', srcFile);
+        let doc = btf.getDocument();
 
-        let date = new Date();
-        let ver = '?ver=' + date.getFullYear() + '' + (date.getMonth()+1) + '' + date.getDate();
-		let fileName = srcFile.substring(srcFile.lastIndexOf('/') + 1, srcFile.length - 6); // pages/abc-def.rpose => acd-def
-		resolve( `
-
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="Cache-Control" content="max-age=18000"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./${fileName}.js${ver}" defer></script>
-<link href="./${fileName}.css${ver}" rel="stylesheet">
-</head>
-<body></body>
-</html>
-
-`.trim() );
-
-	});
-
-
-	return (srcFile) => ptask.start(srcFile);
+        let srcPath = env.path.src;
+        let file = srcFile;
+        let name = File.name(srcFile);
+        let type = doc.prerender;
+        return require(env.prerender)({srcPath, file, name, type});
+    }
 
 }());
+

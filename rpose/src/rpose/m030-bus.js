@@ -39,8 +39,14 @@ const BUS = (()=>{
 	};
 
 	// 安装些默认事件处理
-	window.onload = e => at('window.onload', e) > (window.onload = null);
+    on('window.onload', e => {
+        console.info($$('.pre-render').length)
+        $$('.pre-render').addClass('loaded');              // onload时添加loaded类
+        setTimeout(()=>$$('.pre-render').remove(), 5000);  // 5秒后删除节点
+    });
+	let handler = e => at('window.onload', e) > window.removeEventListener('load', handler);                        // 触发后解除绑定
 
+    window.addEventListener('load', handler, false);
 
 	return {on: on, off: off, once: once, at: at};
 })();

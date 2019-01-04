@@ -74,6 +74,7 @@ function editBtfDocument(doc, file, fileContent){
 	oApi.rposepkg		= oApi.rposepkg || oApi['rpose-pkg'];
 	oApi.optionkeys		= oApi.optionkeys || oApi['option-keys'];
 	oApi.statekeys		= oApi.statekeys || oApi['state-keys'];
+	oApi.prerender		= oApi.prerender || oApi['pre-render'] || '';
 
 	doc.tag				= bus.at('默认标签名', file);					// 没有指定tag时按文件名取默认标签名
 	doc.rposepkg		= oApi.rposepkg;								// 包名
@@ -81,7 +82,9 @@ function editBtfDocument(doc, file, fileContent){
 	doc.statekeys		= parseKeys(oApi.statekeys);					// 可变更KEY
 	doc.actionskeys		= oActions.names;								// 事件KEY
 	doc.methodskeys		= oMethods.names;								// 方法KEY
-	doc.singleton		= toBoolean(oApi.singleton)						// 单例组件
+	doc.prerender		= oApi.prerender						        // 预渲染类型
+
+    //doc.singleton		= toBoolean(oApi.singleton)						// 单例组件
 
 	doc.$componentName	= bus.at('组件类名', doc.tag, doc.rposepkg);		// 组件类名
 	doc.tagpkg			= bus.at('标签全名', doc.tag, doc.rposepkg);

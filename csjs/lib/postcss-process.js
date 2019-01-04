@@ -1,4 +1,6 @@
 
+const hash = require('@gotoeasy/hash');
+
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
 
 // ------------------------------------------------------------------------
@@ -44,7 +46,7 @@ module.exports = async function (src, opts={}){
 	let from = opts.from || 'from.css';
 	let to = opts.to || 'to.css';
 	let assetsPath = opts.assetsPath || File.relative(to, File.path(to) + '/images');
-	let postcssUrlOpt = {url: 'copy', from, to, basePath:File.path(from), assetsPath, useHash: true};
+	let postcssUrlOpt = {url: 'copy', from, to, basePath:File.path(from), assetsPath, useHash: true, hashOptions: {method: contents => hash({contents})} };
 	let plugins = [];
 	opts.debug && plugins.push( require('postcss-devtools') );									// 输出各插件处理时间
 	plugins.push( require('postcss-preset-env')({stage: 3}) );									// 默认支持使用stage3新特性，已含autoprefixer处理
@@ -73,4 +75,3 @@ module.exports = async function (src, opts={}){
 
 	return require('postcss')(plugins).process(css, {from, to});
 };
-
