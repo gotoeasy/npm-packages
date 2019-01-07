@@ -29,6 +29,8 @@ class AstGen{
 		this.$actionsKeys = doc.actionskeys || [];	// 已解析的方法对象属性名名
 
 		this.$counter = 0;
+
+		this.doc.slotnmaes = null;
 	}
 
 	toJavaScript (){
@@ -170,14 +172,14 @@ console.debug(MODULE, src);
 				// 模板函数的顶部节点，加入属性m=1
 				let sReturn = '{r:1,' + str.trim().substring(1);					// 组件根节点标记 {r:1, .....}
 				// 确保包含取slot的代码
-				return FN_TMPL_DEF + genSlotVnodesScript(slotNmaes) + ' return ' + sReturn + ';}'; // 'function nodeTemplate($state, $options){ return ' + sReturn + ';}';
+				return FN_TMPL_DEF + genSlotVnodesScript(slotNmaes, this.doc) + ' return ' + sReturn + ';}'; // 'function nodeTemplate($state, $options){ return ' + sReturn + ';}';
 			}else{
 				let sReturn = '[' + str + ']';										// [nnnn, nnnn, nn]
 				return sReturn; // 内部箭头函数默认返回
 			}
 
 		}else{
-			isFn && (arySrc[2] = genSlotVnodesScript(slotNmaes)); // 确保包含取slot的代码
+			isFn && (arySrc[2] = genSlotVnodesScript(slotNmaes, this.doc)); // 确保包含取slot的代码
 		}
 
 
@@ -186,8 +188,10 @@ console.debug(MODULE, src);
 
 }
 
-function genSlotVnodesScript(slotNmaes){
+function genSlotVnodesScript(slotNmaes, doc){
 	if ( !slotNmaes.length ) return '';
+
+    doc.slotnmaes = slotNmaes; // 保存起来备用
 
 	let nameSet = new Set();
 	let names = [];
@@ -203,10 +207,15 @@ function genSlotVnodesScript(slotNmaes){
 	});
 
 	let scripts = [];
-	scripts.push('let ' + names.join(',') + ';');				// let slotVnodes_xxx, slotVnodes_yyy, slotVnodes_zzz;
-	scripts.push('($state.$SLOT || []).forEach(vn => {');	// ($state.$SLOT || []).forEach(vn => {
-	scripts.push(setnm.join('\n'));
-	scripts.push('});');
+	scripts.push('let ' + names.join(',') + ';');				                // let slotVnodes_xxx, slotVnodes_yyy, slotVnodes_zzz;
+	scripts.push('($state.$SLOT || []).forEach(vn => {');	                    // ($state.$SLOT || []).forEach(vn => {
+	scripts.push(setnm.join('\n'));                                             //     ...
+	scripts.push('});');                                                        // }); 
+
+    // 仅有一个插槽，待插入模板支持省略定义，全部子节点作为默认模板
+    if ( names.length === 1 ) {
+	    scripts.push(`!${names[0]} && (${names[0]} = $state.$SLOT);`);          // !slotVnodes_xxx && (slotVnodes_xxx = $state.$SLOT);
+    }
 	return scripts.join('\n');
 }
 

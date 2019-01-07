@@ -107,10 +107,11 @@ function parse(list, lines, lf) {
 			blockStart = false;
 		} else {
 			if ( blockStart ) {
-				if ( line.startsWith('\\[') && line.indexOf(']') > 0 || line.startsWith('\\---------') || line.startsWith('\\=========') ) {
-					line = line.substring(1);	// 去除转义字符
-				}
-				buf[buf.length] = line;			// 拼接当前Block内容
+                if ( line.charAt(0) === '\\' && (/^\\+\[.*\]/.test(line) || /^\\+\---------/.test(line) || /^\\+\=========/.test(line)) ) {
+				    buf[buf.length] = line.substring(1);    // 去除转义字符，拼接当前Block内容
+                }else{
+				    buf[buf.length] = line;			        // 直接拼接当前Block内容
+                }
 				buf[buf.length] = lf;
 			} else {
 				// ignore line

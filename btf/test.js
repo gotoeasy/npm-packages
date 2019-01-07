@@ -84,7 +84,7 @@ test('BTF读取文件测试', t => {
 });
 
 
-test('BTF读取文件测试', t => {
+test('块名转义测试', t => {
 
     let btf;
 	btf = new Btf('[\\]\nabc', true);
@@ -104,5 +104,55 @@ test('BTF读取文件测试', t => {
 
 	btf = new Btf('[\\\\\\]\\]]]]]]]]\nabc', true);
 	t.is(btf.getText('\\\\]]'), 'abc');
+
+});
+
+
+
+test('转义测试', t => {
+
+    let btf;
+	btf = new Btf('[abc]\n\\[]', true);
+	t.is(btf.getText('abc'), '[]');
+
+	btf = new Btf('[abc]\n\\[a]', true);
+	t.is(btf.getText('abc'), '[a]');
+
+	btf = new Btf('[abc]\n\\\\[a]', true);
+	t.is(btf.getText('abc'), '\\[a]');
+
+	btf = new Btf('[abc]\n\\\\\\[a]', true);
+	t.is(btf.getText('abc'), '\\\\[a]');
+
+	btf = new Btf('[abc]\n\\---------', true);
+	t.is(btf.getText('abc'), '---------');
+
+	btf = new Btf('[abc]\n\\---------5646', true);
+	t.is(btf.getText('abc'), '---------5646');
+
+	btf = new Btf('[abc]\n\\\\---------', true);
+	t.is(btf.getText('abc'), '\\---------');
+
+	btf = new Btf('[abc]\n\\\\\\---------', true);
+	t.is(btf.getText('abc'), '\\\\---------');
+
+	btf = new Btf('[abc]\n\\\\\\---------5646', true);
+	t.is(btf.getText('abc'), '\\\\---------5646');
+
+	btf = new Btf('[abc]\n\\=========', true);
+	t.is(btf.getText('abc'), '=========');
+
+	btf = new Btf('[abc]\n\\=========5646', true);
+	t.is(btf.getText('abc'), '=========5646');
+
+	btf = new Btf('[abc]\n\\\\=========', true);
+	t.is(btf.getText('abc'), '\\=========');
+
+	btf = new Btf('[abc]\n\\\\\\=========', true);
+	t.is(btf.getText('abc'), '\\\\=========');
+
+	btf = new Btf('[abc]\n\\\\\\=========5646', true);
+	t.is(btf.getText('abc'), '\\\\=========5646');
+
 
 });

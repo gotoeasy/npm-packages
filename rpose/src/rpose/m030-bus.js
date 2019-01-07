@@ -40,7 +40,6 @@ const BUS = (()=>{
 
 	// 安装些默认事件处理
     on('window.onload', e => {
-        console.info($$('.pre-render').length)
         $$('.pre-render').addClass('loaded');              // onload时添加loaded类
         setTimeout(()=>$$('.pre-render').remove(), 5000);  // 5秒后删除节点
     });

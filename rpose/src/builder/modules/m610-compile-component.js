@@ -18,6 +18,7 @@ module.exports = bus.on('编译组件', function(fnTmpl){
 				let doc = btf.getDocument();
                 doc.imagepath = bus.at('页面图片相对路径', file);
 				doc.js = fnTmpl(doc);
+                replaceCssClassName(doc);
 let to = env.path.build_temp + '/' + bus.at('默认标签名', file) + '.js';		// 假定组件都编译到%build_temp%目录
 !env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 				return btf;
@@ -30,6 +31,7 @@ let to = env.path.build_temp + '/' + bus.at('默认标签名', file) + '.js';		/
 				let doc = btf.getDocument();
                 doc.imagepath = bus.at('页面图片相对路径', srcFile);
 				doc.js = fnTmpl(doc);
+                replaceCssClassName(doc);
 let to = env.path.build_temp + '/' + bus.at('默认标签名', srcFile) + '.js';		// 假定组件都编译到%build_temp%目录
 !env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(doc.js));
 				return btf;
@@ -46,3 +48,16 @@ let to = env.path.build_temp + '/' + bus.at('默认标签名', srcFile) + '.js';
 
 }());
 
+function replaceCssClassName(doc){
+    let oMapping = doc.mapping;
+    // TODO 通过AST修改
+    if ( oMapping ) {
+        let js = doc.js;
+        for ( let k in oMapping ) {
+            js = js.replace(new RegExp(`\\$\\$\\(("|')\\.?${k}("|')\\)`, 'ig'), `$$$('.${oMapping[k]}')`);              // 类名哈希化， $$('.my-class') -> $$('.xxxxxxxx')
+            js = js.replace(new RegExp(`\\.addClass\\(("|')${k}("|')\\)`, 'ig'), `.addClass('${oMapping[k]}')`);        // 类名哈希化， .addClass('my-class') -> .addClass('xxxxxxxx')
+            js = js.replace(new RegExp(`\\.removeClass\\(("|')${k}("|')\\)`, 'ig'), `.removeClass('${oMapping[k]}')`);  // 类名哈希化， .removeClass('my-class') -> .removeClass('xxxxxxxx')
+        }
+        doc.js = js;
+    }
+}
