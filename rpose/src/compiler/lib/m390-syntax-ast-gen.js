@@ -84,9 +84,10 @@ console.debug(MODULE, src);
 				
 				if ( /^slot$/i.test(tag) ) {
 					// 占位标签，特殊处理
-					let name = node.attrs ? (node.attrs.name || '') : '';			// name不写默认空白
+					let name = node.attrs ? (node.attrs.name || '') : '';			    // name不写默认空白
 					!slotNmaes.includes(name) && slotNmaes.push(name);
-					arySrc.push( `slotVnodes_${name} && slotVnodes_${name}.length && ${aryNm}.push( ...slotVnodes_${name} );` );	// 插入参数传入的虚拟占位子节点
+					//arySrc.push( `slotVnodes_${name} && slotVnodes_${name}.length && ${aryNm}.push( ...slotVnodes_${name} );` );	// 插入参数传入的虚拟占位子节点
+					arySrc.push( `${aryNm}.push( ...(slotVnodes_${hash(name)} || []) );` );	// 插入参数传入的虚拟占位子节点
 					hasCodeBlock = true;
 				}else{
 					// 其他标签，正常处理
@@ -191,30 +192,30 @@ console.debug(MODULE, src);
 function genSlotVnodesScript(slotNmaes, doc){
 	if ( !slotNmaes.length ) return '';
 
-    doc.slotnmaes = slotNmaes; // 保存起来备用
+    doc.slotnmaes = slotNmaes; // 保存起来备用?
 
 	let nameSet = new Set();
 	let names = [];
 	let setnm = [];
 	slotNmaes.forEach(name => {
-		if ( !nameSet.has(name) ) {
-			nameSet.add(name);
-			names.push(`slotVnodes_${name}`);
-			setnm.push(`if ( vn.a && vn.a.slot == '${name}' ) {`);
-			setnm.push(`    slotVnodes_${name} = vn.c;`);
-			setnm.push(`}`);
+        let varName = `slotVnodes_${hash(name)}`;
+		if ( !nameSet.has(varName) ) {
+			nameSet.add(varName);
+			names.push(varName);
+			setnm.push(`vn.a && vn.a.slot !== undefined && (_hasDefinedSlotTemplate = 1);`);
+			setnm.push(`vn.a && vn.a.slot === '${name}' && (${varName} = vn.c);`);
 		}
 	});
 
 	let scripts = [];
-	scripts.push('let ' + names.join(',') + ';');				                // let slotVnodes_xxx, slotVnodes_yyy, slotVnodes_zzz;
+	scripts.push('let _hasDefinedSlotTemplate, ' + names.join(',') + ';');		// let _hasDefinedSlotTemplate, slotVnodes_xxx, slotVnodes_yyy, slotVnodes_zzz;
 	scripts.push('($state.$SLOT || []).forEach(vn => {');	                    // ($state.$SLOT || []).forEach(vn => {
 	scripts.push(setnm.join('\n'));                                             //     ...
 	scripts.push('});');                                                        // }); 
 
     // 仅有一个插槽，待插入模板支持省略定义，全部子节点作为默认模板
     if ( names.length === 1 ) {
-	    scripts.push(`!${names[0]} && (${names[0]} = $state.$SLOT);`);          // !slotVnodes_xxx && (slotVnodes_xxx = $state.$SLOT);
+	    scripts.push(`!_hasDefinedSlotTemplate && !${names[0]} && (${names[0]} = $state.$SLOT);`);          // !_hasDefinedSlotTemplate && !slotVnodes_xxx && (slotVnodes_xxx = $state.$SLOT);
     }
 	return scripts.join('\n');
 }

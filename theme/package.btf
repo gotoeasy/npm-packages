@@ -2,12 +2,11 @@
 @gotoeasy/theme
 
 [version] // 版本号 （必填）
-0.0.2
+0.0.3
 
 
 
 [dependencies] // 依赖库
-@gotoeasy/btf = *
 
 [description] // 描述
 rpose theme

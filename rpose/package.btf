@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.44
+0.0.47
 
 
 
@@ -19,6 +19,7 @@ index.js
 @gotoeasy/p-task = *
 @gotoeasy/theme = *
 @gotoeasy/pre-render = *
+@gotoeasy/npm = *
 acorn-globals = *
 astring = *
 chokidar = *

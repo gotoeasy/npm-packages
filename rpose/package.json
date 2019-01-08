@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.44",
+  "version": "0.0.47",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
@@ -12,6 +12,7 @@
     "@gotoeasy/p-task": "*",
     "@gotoeasy/theme": "*",
     "@gotoeasy/pre-render": "*",
+    "@gotoeasy/npm": "*",
     "acorn-globals": "*",
     "astring": "*",
     "chokidar": "*",

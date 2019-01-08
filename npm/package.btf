@@ -2,7 +2,7 @@
 @gotoeasy/npm
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.10
 
 
 
@@ -13,6 +13,8 @@ index.js
 @gotoeasy/file = *
 compressing = *
 https-proxy-agent = *
+is-installed = *
+sync-exec = *
 
 [devDependencies] // 开发依赖库
 

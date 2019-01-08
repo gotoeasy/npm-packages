@@ -1,9 +1,6 @@
 {
   "name": "@gotoeasy/theme",
-  "version": "0.0.2",
-  "dependencies": {
-    "@gotoeasy/btf": "*"
-  },
+  "version": "0.0.3",
   "description": "rpose theme",
   "keywords": [
     "gotoeasy",

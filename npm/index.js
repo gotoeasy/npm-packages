@@ -1,6 +1,11 @@
 
 module.exports = {
-	download: require('./lib/download'),
+
+    isInstalled: require('./lib/is-installed'),
+    install: require('./lib/npm-install'),
+    uninstall: require('./lib/npm-uninstall'),
+
+    download: require('./lib/download'),
 	getRegistryInfo: require('./lib/get-npm-registry-info'),
 	getLatestVersion: require('./lib/get-npm-latest-version'),
 	getNpmTarball: require('./lib/get-npm-tarball'),

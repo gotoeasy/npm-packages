@@ -3,6 +3,7 @@ const Btf = require('@gotoeasy/btf');
 const bus = require('@gotoeasy/bus');
 const util = require('@gotoeasy/util');
 const Err = require('@gotoeasy/err');
+const npm = require('@gotoeasy/npm');
 const path = require('path');
 
 // 从根目录的rpose.config.btf读取路径文件配置
@@ -49,8 +50,10 @@ module.exports = bus.on('编译环境', function(result){
 			result.path.build_dist = result.path.build + '/dist';
 
 			result.theme = ((btf.getText('theme') == null || !btf.getText('theme').trim()) ? '@gotoeasy/theme' : btf.getText('theme').trim());
-
 			result.prerender = ((btf.getText('prerender') == null || !btf.getText('prerender').trim()) ? '@gotoeasy/pre-render' : btf.getText('prerender').trim());
+
+            // 自动检查安装依赖包
+            autoInstallLocalModules(result.theme, result.prerender);
 
 			// 继续浅复制配置
 			Object.assign(result, opts);
@@ -77,4 +80,13 @@ function getConfPath(root, mapDefault, map, key){
 		return root + '/' + defaultSetting.split('/').filter(v => !!v).join('/');
 	}
 	return root + '/' + map.get(key).split('/').filter(v => !!v).join('/');
+}
+
+// TODO 提高性能
+function autoInstallLocalModules(...names){
+    let ignores = ['@gotoeasy/theme', '@gotoeasy/pre-render'];
+    names.forEach(v => {
+        !ignores.includes(v) && !npm.isInstalled(v) && npm.install(v);
+    });
+
 }
