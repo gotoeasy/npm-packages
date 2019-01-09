@@ -264,7 +264,7 @@ function attrsStringify(node, doc){
 				let expr = '(' + unescapeAttrExpr(ary.join(' + ')) + ')';	// 把【\{】和【\}】替换回来
 
 				if ( k == 'class' ) {
-					kvs.push('"' + k + '": ' + JSON.stringify(classStrToObject(attrs[k], doc)) );  // class="abc def" => {class:{abc:1, def:1}}
+					kvs.push('"' + k + '": ' + classStrToObjectString(attrs[k], doc) );  // class="abc def" => {class:{abc:1, def:1}}
 				}else{
 					kvs.push('"' + k + '": ' + expr);
 				}
@@ -365,21 +365,45 @@ function parseExpression(ary, val){
 }
 
 
-function classStrToObject(clas, doc){
+function classStrToObjectString(clas, doc){
 	if ( !clas.trim()) {
-		return {};
+		return '{}';
 	}
 
-	let mapping = doc.mapping || {};
+    // TODO 含大括号冒号的复杂表达式
+    let oRs = {};
+    clas = clas.replace(/\{.*?\}/g, function(match){
+        let str = match.substring(1, match.length-1);   // {'xxx': ... , yyy: ...} => 'xxx': ... , yyy: ...
+        
+        let idx, key, val;
+        while ( str.indexOf(':') > 0 ) {
+            idx = str.indexOf(':');
+            key = str.substring(0, idx).replace(/['"]/g, '');   // key
+
+            val = str.substring(idx+1);
+            idx = val.indexOf(':');
+            if ( idx > 0 ) {
+                str = str.substring(idx+1);                     // 更新临时变量
+
+                val = val.substring(0, idx);
+                val = val.substring(0, val.lastIndexOf(','));   // val
+            }else{
+                str = '';
+            }
+
+            oRs[bus.at('哈希样式类名', doc.file, key)] = '@(' + val + ')@';
+        }
+
+        return '';
+    });
+    
+
 	let ary = clas.split(/\s/);
-	let rs = {};
-	for ( let i=0,cls; i<ary.length; i++) {
-		cls = ary[i].trim();
-		mapping[cls] && (cls = mapping[cls]);
-		rs[cls] = 1;
+	for ( let i=0; i<ary.length; i++) {
+		oRs[bus.at('哈希样式类名', doc.file, ary[i].trim())] = 1;
 	}
 
-	return rs;
+	return JSON.stringify(oRs).replace(/('@|@'|"@|@")/g, '');
 }
 
 // 抽取并删除事件属性，返回事件属性

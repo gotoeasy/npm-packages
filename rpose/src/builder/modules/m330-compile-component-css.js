@@ -11,7 +11,7 @@ module.exports = bus.on('编译组件CSS', function(){
 	return async function(css, srcFile){
 		
 		// ------------ 修改样式类名 ------------
-		let rename = name => renameCssClassName(srcFile, name);
+		let rename = name => bus.at('哈希样式类名', srcFile, name);
 		// -------------------------------------
 
 		try{
@@ -35,21 +35,3 @@ module.exports = bus.on('编译组件CSS', function(){
 
 }());
 
-function renameCssClassName(srcFile, cls){
-	if ( cls == 'hljs' || cls.startsWith('hljs-') ) {
-		return cls; // 语法高亮的.hljs/.hljs-xxx默认支持，不做修改 // TODO，转为配置实现？
-	}
-	let aryHash = [];
-	aryHash.push(bus.at('默认标签名', srcFile));
-	aryHash.push(cls);
-	return hash(aryHash.join('\n'));
-}
-
-function hash(str){
-	let rs = 5381, i = str.length;
-	while ( i ) {
-		rs = (rs * 33) ^ str.charCodeAt(--i);
-	}
-	
-	return '_' + (rs >>> 0).toString(36);
-}
