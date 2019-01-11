@@ -48,11 +48,17 @@ function domVnode(el, vnode){
 	}
 
 	// 设值
-	delete vnode.c;				// 删除虚拟节点的子节点引用
+    let vn = vnode;
+    if ( vnode.c ) {
+        // 有子节点时，保存节点的副本，删除副本的子节点引用（直接删除子节点引用会破坏slot虚拟节点结构）
+        vn = Object.assign({}, vnode);
+	    delete vn.c;
+    }
+
 	let oVal = map.get(el);
 	if ( !oVal ) {
 		// 单纯虚拟节点
-		return map.set(el, vnode);
+		return map.set(el, vn);
 	}
 
 	if ( !oVal.M ) {
@@ -62,7 +68,7 @@ function domVnode(el, vnode){
 		map.set(el, mVal);
 		oVal = mVal;
 	}
-	oVal[vnode.t] = vnode;		// 并入复合虚拟节点
+	oVal[vn.t] = vn;		// 并入复合虚拟节点
 
 	return oVal;
 }

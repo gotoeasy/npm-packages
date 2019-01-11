@@ -22,6 +22,7 @@ api.off = BUS.off;
 api.once = BUS.once;
 api.at = BUS.at;
 
+api.router = Router;
 
 /*
 api.isFunction = isFunction;

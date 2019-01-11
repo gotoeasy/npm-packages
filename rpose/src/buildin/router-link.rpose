@@ -1,0 +1,12 @@
+[api]
+optionkeys = path, params, text
+
+[view]
+<a href={ /^http[s]?:/i.test(path) ? path : ('#' + ($options.path || '')) } onclick="click">{text}</a>
+
+[actions]
+{
+    click: e => {
+        rpose.router.push((this.$options.path || ''), this.$options.params);
+    }
+}

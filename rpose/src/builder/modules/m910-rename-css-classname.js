@@ -6,7 +6,7 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('哈希样式类名', function(){
     
-    let regIgnore = /^hide$|^hljs/i; // 语法高亮的.hljs/.hljs-xxx默认支持，不做修改 // TODO，转为配置实现？
+    let regIgnore = /^rpose-|^hide$|^hljs/i; // 语法高亮的.hljs/.hljs-xxx默认支持，不做修改 // TODO，转为配置实现？
 
     return function renameCssClassName(srcFile, clsName){
         if ( regIgnore.test(clsName) ) {

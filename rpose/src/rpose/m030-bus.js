@@ -43,7 +43,7 @@ const BUS = (()=>{
         $$('.pre-render').addClass('loaded');              // onload时添加loaded类
         setTimeout(()=>$$('.pre-render').remove(), 5000);  // 5秒后删除节点
     });
-	let handler = e => at('window.onload', e) > window.removeEventListener('load', handler);                        // 触发后解除绑定
+	let handler = e => at('window.onload', e) > window.removeEventListener('load', handler) > off('window.onload');       // 触发后解除绑定
 
     window.addEventListener('load', handler, false);
 

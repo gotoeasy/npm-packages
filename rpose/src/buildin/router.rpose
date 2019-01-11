@@ -1,0 +1,21 @@
+[api]
+optionkeys = path, name, onroute, default, notfound
+statekeys = active
+
+[view]
+<div class="rpose-router {hide: !$state.active}">
+    <slot/>
+</div>
+
+[methods]
+{
+    init: () => {
+        rpose.router.register({path: this.$options.path, component: this, default: this.$options.default, notfound: this.$options.notfound});
+        this.route = this.$options.onroute || (p => this.setState({active:1}));
+    }
+}
+
+[less]
+.hide{
+    display: none;
+}
