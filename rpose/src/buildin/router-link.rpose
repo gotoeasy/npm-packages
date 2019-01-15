@@ -7,6 +7,9 @@ optionkeys = path, params, text
 [actions]
 {
     click: e => {
-        rpose.router.push((this.$options.path || ''), this.$options.params);
+        e.preventDefault(); // 取消事件，避免自动触发路由变更事件，改由程序代码控制
+        let path = this.$options.path || '';
+        let state = this.$options.params;
+        rpose.router.page({path, state});
     }
 }

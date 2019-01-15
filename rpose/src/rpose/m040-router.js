@@ -2,8 +2,10 @@
 // 前端路由
 // ---------------------------
 const Router = ((BUS)=>{
-
-    let curPath;                        // 当前路由地址
+    let routes = [];                                                                // 本页除notfound以外的全部路由，可能异步注册或按需注册
+    let notfoundRoutes = [];                                                        // 404页
+    let defaultRoutes = [];                                                         // 默认页
+    let activeRoutes = [];                                                          // 当前活动路由
 
     // 安装路由事件
     let fnLocationChange = e => BUS.at('router.locationchange', e);
@@ -11,85 +13,89 @@ const Router = ((BUS)=>{
     
     // 期初显示，window.onload时按指定路由显示
     BUS.on('window.onload', e => {
-        route(!location.hash ? '' : location.hash.substring(1), null, '', true);             // 用true指定当找不到时跳转到默认地址，无默认地址时再显示404
+        let path = location.hash ? location.hash.substring(1) : '', useDefault = 1;
+        route({path, useDefault}) && history.replaceState({useDefault}, '', '#' + path);   // 地址+默认页，无参数，实际使用了默认页时修改地址避免唐突
     });
 
     // 路由地址变化时，显示指定路由
     BUS.on('router.locationchange', e => {
-        route(!location.hash ? '' : location.hash.substring(1), e.state);
+        let path = location.hash ? location.hash.substring(1) : '';
+        let state = e.state;
+        let useDefault = state ? state.useDefault : 0;
+        useDefault ? route({path, useDefault}) : route({path, state});              // 地址+参数，无默认页
     });
 
-
     // 路由注册
-    let routes = [];                                                            // 本页除notfound以外的全部路由，可能异步注册或按需注册
-    let notfoundRoutes = [];                                                    // 404页
-    let defaultRoutes = [];                                                     // 默认页
     let register = route => {
         if ( route.notfound ) {
-            notfoundRoutes.push(route);
-            return;
+            notfoundRoutes.push(route);                                             // 404页
+        }else{
+            route.path == null && (route.path = '');                                // 路径没填时默认为空串
+            routes.push(route);                                                     // 指定页
         }
-
-        route.path == null && (route.path = '');                                // 路径没填时默认为空串
-        routes.push(route);
-        route.default && defaultRoutes.push(route);
+        route.default && defaultRoutes.push(route);                                 // 默认页
     };
 
-    // 路由匹配器
+    // 路由匹配器 （通配符*代表任意）
     let match = (pattern, path) => {
-        return pattern == path; // TODO 通配符匹配
+        return pattern.indexOf('*') < 0 ? (pattern == path) : patternToRegExp(pattern).test(path);
     };
+
+    let patternToRegExp = pattern => {
+        let reg = pattern.replace(/[\^\$\.\+\-\=\!\(\)\[\]\{\}\/\?]{1}/g, ch => ('\\' + ch) );        
+        reg = reg.replace(/\*+/g, '.*');	// 单个或连续多个星号，代表任意字符
+        return new RegExp('^' + reg + '$');
+    }
 
     // 单纯路由跳转，历史记录无关，通常当地址变化时调用
-    let currentRoutes = [];
-    let route = (path, state, title, useDefault) => {
-        if ( !routes.length ) {
-            notfoundRoutes.forEach(rt => rt.component.route());                 // 如果有404页则显示，漏配置路由，或配置了路由但不能及时注册，总之很奇怪
-            return;                                                             // 多数是没有路由的页面，也可能是会异步添加路由，不能贸然关闭事件
-        }
+    let route = (ctx) => {
+        let useDefault;
+        if ( routes.length ) {
+            let nextRoutes = [];
+            routes.forEach(rt => match(rt.path, ctx.path) && nextRoutes.push(rt));  // 找出匹配的待显示路由
 
-        let nextRoutes = [];
-        routes.forEach(rt => match(rt.path, path) && nextRoutes.push(rt));      // 找出匹配的待显示路由
+            // 找不到路由时，如果指定使用默认路由且存在默认路由时，使用默认路由
+            if ( !nextRoutes.length && ctx.useDefault && defaultRoutes.length ) {
+                nextRoutes = defaultRoutes;                                         // 初期显示输入错误路由时，可指定默认路由，比如首页，避免404
+                useDefault = 1;
+            }
 
-        if ( !nextRoutes.length && useDefault && defaultRoutes.length ) {
-            nextRoutes = defaultRoutes;                                         // 初期显示输入错误路由时，可指定默认路由，比如首页，避免404
-            history.replaceState('', '', '#' + defaultRoutes[0].path);          // 改下地址，免得难看
-        }
-
-        if ( nextRoutes.length ) {
-            // 正常找到
-            notfoundRoutes.forEach(rt => rt.component.setState({active:0}));    // 隐藏404页
-            currentRoutes.forEach(rt => rt.component.setState({active:0}));     // 隐藏当前页
-            nextRoutes.forEach(rt => rt.component.route(state));                // 显示指定页
-            currentRoutes = nextRoutes;                                         // 保存活动路由
-            curPath = path;                                                     // 保存活动路径
+            if ( nextRoutes.length ) {
+                // 正常找到
+                notfoundRoutes.forEach(rt => rt.component.setState({active:0}));    // 隐藏404页
+                activeRoutes.forEach(rt => rt.component.setState({active:0}));      // 隐藏当前页
+                nextRoutes.forEach(rt => rt.component.route(ctx));                  // 显示指定页
+                activeRoutes = nextRoutes;                                          // 保存活动路由
+            }else{
+                // 无效的地址
+                activeRoutes.forEach(rt => rt.component.setState({active:0}));      // 隐藏当前页
+                notfoundRoutes.forEach(rt => rt.component.route(ctx));              // 显示404页
+            }
         }else{
-            // 无效的地址
-            currentRoutes.forEach(rt => rt.component.setState({active:0}));     // 隐藏当前页
-            notfoundRoutes.forEach(rt => rt.component.route());                 // 显示404页
+            notfoundRoutes.forEach(rt => rt.component.route());                     // 如果有404页则显示，漏配置路由，或配置了路由但不能及时注册，总之很奇怪
         }
+
+        BUS.at('router.onroute', ctx);
+        return useDefault;
     };
 
-    // 显示指定路由，指定路由地址和活动路由地址不相同时添加历史记录，通常由程序调用
-    let push = (path, state, title) => {
-        if ( /^http[s]?:/i.test(path) ) return link(path, state);               // 以http[s]:开头时直接跳转页面
-
-       // route(path, state, title);                                              // 路由跳转
-        curPath != path && history.pushState(state, title, '#' + path);               // 路由地址不一致时，添加历史记录
+    let push = (ctx) => {
+        history.pushState(ctx.state, ctx.title, '#' + ctx.path);                    // 路由地址不一致时，添加历史记录
     };
 
-    // 显示指定路由，并替换当前历史记录，通常由程序调用
-    let replace = (path, state, title) => {
-        if ( /^http[s]?:/i.test(path) ) return link(path, state);               // 以http[s]:开头时直接跳转页面
-
-        //route(path, state, title);                                              // 路由跳转
-        history.replaceState(state, title, '#' + path);                               // 替换当前历史记录
+    let replace = (ctx) => {
+        history.replaceState(ctx.state, ctx.title, '#' + ctx.path);                 // 替换当前历史记录
     };
 
-    // 页面跳转
-    let url = (url, params) => {
-        location.href = url;                                                    // 页面跳转
+    let url = (url) => {
+        location.href = url;                                                        // 页面跳转
     };
 
-    return {register, route, push, replace, url};
+    // 添加历史 & 激活页面
+    let page = ctx => {
+        if ( /^http[s]?:/i.test(ctx.path) ) return url(ctx.path);                   // 以http[s]:开头时直接跳转页面
+        push(ctx) > route(ctx);                                                     // 添加历史 & 激活页面
+    }
+
+    return {register, page, route, push, replace, url};
 })(BUS);

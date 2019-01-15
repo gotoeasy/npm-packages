@@ -34,6 +34,11 @@ async function pageJs(allrequires, srcFile){
 	let srcComponents = await getSrcComponents(allrequires);
 	let requireAxios = ''; // srcComponents.indexOf('axios') > 0 ? 'let axios = require("axios");' : ''; // 简易的按需引入axios
 
+    let	btf = await bus.at('编译组件', srcFile);
+	let tag  = bus.at('默认标签名', srcFile);
+	let mount  = btf.getText('mount');
+
+
 	let src = `
 			${requireAxios}
 			${srcRpose}
@@ -43,11 +48,13 @@ async function pageJs(allrequires, srcFile){
 				${srcStmt}
 
 				${srcComponents}
+
+                // 组件挂载
+                rpose.mount( rpose.newComponentProxy('${tag}').render(), '${mount}' );
 			})(rpose.$$, rpose.escapeHtml);
 		`;
 
 	let env  = bus.at('编译环境');
-	let tag  = bus.at('默认标签名', srcFile);
 	if ( env.release ) {
 		try{
 			console.time(MODULE + 'babel      ' + tag)

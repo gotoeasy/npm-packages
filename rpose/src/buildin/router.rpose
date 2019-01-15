@@ -1,5 +1,5 @@
 [api]
-optionkeys = path, name, onroute, default, notfound
+optionkeys = path, onroute, default, notfound
 statekeys = active
 
 [view]
@@ -11,7 +11,7 @@ statekeys = active
 {
     init: () => {
         rpose.router.register({path: this.$options.path, component: this, default: this.$options.default, notfound: this.$options.notfound});
-        this.route = this.$options.onroute || (p => this.setState({active:1}));
+        this.route = ctx => this.setState({active:1});
     }
 }
 

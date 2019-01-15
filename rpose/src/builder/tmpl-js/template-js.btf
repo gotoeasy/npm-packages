@@ -60,11 +60,3 @@ function <%= $data['$componentName'] %>(options={}) {
  */
 <%= $data['$componentName'] %>.prototype.nodeTemplate = <%= $data['$fnTemplate'] %>
 
-<% if ( $data['mount'] ){ %>
-    // 组件挂载
-    rpose.mount( rpose.newComponentProxy('<%=$data['tag']%>').render(), '<%= $data['mount'] %>' );
-<% } %>
-
-
-
-

@@ -304,6 +304,7 @@ function parseAttrValExpr(valTxt){
 }
 
 function parseExpression(ary, val){
+
 	
 	let idx1 = val.indexOf(options.ExpressionStart);
 	let idx2 = val.indexOf(options.ExpressionUnescapeStart);
@@ -327,13 +328,21 @@ function parseExpression(ary, val){
 		}
 	}
 
+
 	if ( idx1 >= 0 ) {
 		idxEnd = val.indexOf(options.ExpressionEnd);
+
 		if ( idxEnd <= idx1 ) {
 			ary.push('"' + util.lineString(val) + '"'); // 无表达式
 			return;
 		}
 		
+        if ( /^\{\=?\s*\{\=?.*\}\s*\}$/.test(val) ) {
+            // TODO 临时补丁，待改善
+            ary.push(util.getExpression(val));						// {{a:123}} : {a:123}
+            return;
+        }
+
 		tmp = val.substring(idx1, idxEnd + options.ExpressionEnd.length);
 		if ( idx1 > 0 ) {
 			ary.push('"' + util.lineString(val.substring(0, idx1)) + '"');	// acb{=def}ghi : abc
@@ -341,7 +350,7 @@ function parseExpression(ary, val){
 		ary.push(util.getExpression(tmp));						// acb{=def}ghi : {=def}
 
 		tmp = val.substring(idxEnd + options.ExpressionEnd.length);
-		tmp.trim() && parseExpression(ary, tmp);				// acb{=def}ghi : ghi
+        tmp.trim() && parseExpression(ary, tmp);				// acb{=def}ghi : ghi
 		return;
 	}
 	
