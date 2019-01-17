@@ -10,7 +10,7 @@ bus.on('是否页面源文件', function(){
 	// 判断是否页面源文件
 	return function(srcFile){
 		let env = bus.at('编译环境');
-		return !srcFile.startsWith(env.path.src_components) && !srcFile.startsWith(env.path.src_buildin); // 非组件目录就按页面看待
+		return !/\/components\//i.test(srcFile) && !srcFile.startsWith(env.path.src_buildin); // 目录不含components且不是buildin目录就按页面看待
 	}
 
 }());

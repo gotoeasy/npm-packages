@@ -284,8 +284,7 @@ function fnDocumentEventListener(event) {
 function addDocumentEventListener(name){
 	if ( !addDocumentEventListener[name] ) {
 		addDocumentEventListener[name] = 1;
-		document.addEventListener ? document.addEventListener(name, fnDocumentEventListener, false)
-									: document.attachEvent ? document.attachEvent("on" + name, fnDocumentEventListener)
-															: (document["on" + name] = fnDocumentEventListener);
+		document.addEventListener ? document.addEventListener(name, fnDocumentEventListener, false)	: document.attachEvent("on" + name, fnDocumentEventListener);
+
 	}
 }

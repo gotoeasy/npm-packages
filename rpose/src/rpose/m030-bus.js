@@ -43,9 +43,13 @@ const BUS = (()=>{
         $$('.pre-render').addClass('loaded');              // onload时添加loaded类
         setTimeout(()=>$$('.pre-render').remove(), 5000);  // 5秒后删除节点
     });
-	let handler = e => at('window.onload', e) > window.removeEventListener('load', handler) > off('window.onload');       // 触发后解除绑定
-
-    window.addEventListener('load', handler, false);
+	let handler = e => {
+        // 触发后解除绑定
+        at('window.onload', e);
+        window.removeEventListener ? window.removeEventListener('load', handler) : window.detachEvent("onload", handler);
+        off('window.onload');
+    };
+	window.addEventListener ? window.addEventListener('load', handler, false) : window.attachEvent("onload", handler);
 
 	return {on: on, off: off, once: once, at: at};
 })();

@@ -41,9 +41,8 @@ module.exports = bus.on('编译环境', function(result){
 			result.path.root = root;
 
 			result.path.src = getConfPath(root, mapPathDefault, mapPath, 'src');
-			result.path.src_components = getConfPath(root, mapPathDefault, mapPath, 'src_components');
 
-			result.path.src_buildin = path.resolve(__dirname, '../../buildin').replace(/\\/g, '/');
+            result.path.src_buildin = path.resolve(__dirname, '../../buildin').replace(/\\/g, '/');
 
 			result.path.build = getConfPath(root, mapPathDefault, mapPath, 'build');
 			result.path.build_temp = result.path.build + '/temp';

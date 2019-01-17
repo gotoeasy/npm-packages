@@ -2,28 +2,65 @@
 // 前端路由
 // ---------------------------
 const Router = ((BUS)=>{
+    let historyApi = history && history.pushState;                                  // 判断是否不支持historyApi
+
     let routes = [];                                                                // 本页除notfound以外的全部路由，可能异步注册或按需注册
     let notfoundRoutes = [];                                                        // 404页
     let defaultRoutes = [];                                                         // 默认页
     let activeRoutes = [];                                                          // 当前活动路由
 
+    let ignoreHashchange;                                                           // 是否忽略hashchange事件
+
     // 安装路由事件
     let fnLocationChange = e => BUS.at('router.locationchange', e);
-    window.addEventListener('popstate', fnLocationChange, false);
-    
+    let eventname = historyApi ? 'popstate' : 'hashchange';
+	document.addEventListener ? document.addEventListener(eventname, fnLocationChange, false) : document.attachEvent("on" + eventname, fnLocationChange);
+
     // 期初显示，window.onload时按指定路由显示
     BUS.on('window.onload', e => {
         let path = location.hash ? location.hash.substring(1) : '', useDefault = 1;
-        route({path, useDefault}) && history.replaceState({useDefault}, '', '#' + path);   // 地址+默认页，无参数，实际使用了默认页时修改地址避免唐突
+        route({path, useDefault}) && replace({path, state:{useDefault}});           // 地址+默认页，初期显示不支持参数，实际使用了默认页时修改地址避免唐突
     });
 
     // 路由地址变化时，显示指定路由
-    BUS.on('router.locationchange', e => {
-        let path = location.hash ? location.hash.substring(1) : '';
-        let state = e.state;
-        let useDefault = state ? state.useDefault : 0;
-        useDefault ? route({path, useDefault}) : route({path, state});              // 地址+参数，无默认页
-    });
+    let locationchange;
+    if ( historyApi ) {
+        locationchange = e => {
+            let path = location.hash ? location.hash.substring(1) : '';
+            let state = e.state;
+            let useDefault = state ? state.useDefault : 0;
+            useDefault ? route({path, useDefault}) : route({path, state});          // 地址+参数，无默认页
+        };
+    }else{
+        locationchange = e => {
+            if ( !ignoreHashchange ) {
+                let hash = location.hash ? location.hash.substring(1) : '';
+                let idx = hash.indexOf('?');
+                if ( idx >= 0 ) {
+                    let path = hash.substring(0, idx);
+                    let key = hash.substring(idx+1);
+                    let ctx = sessionStorage.getItem(key);
+                    if ( ctx != null ) {
+                        ctx = JSON.parse(ctx);
+                        if ( ctx.path != path ) {
+                            route({path: hash});                                    // 参数有误，直接切换路由（结果应该是404）
+                        }else{
+                            if ( ctx.state && ctx.state.useDefault ) {
+                                route({path, useDefault: 1});                       // 默认页切换
+                            }else{
+                                route(ctx);                                         // 参数正确，正常切换路由
+                            }
+                        }
+                    }else{
+                        route({path: hash});                                        // 参数有误，直接切换路由（结果应该是404）
+                    }
+               }else{
+                    route({path: hash});                                            // 无参数，直接切换路由
+               }
+            }
+        };
+    }
+    BUS.on('router.locationchange', locationchange);
 
     // 路由注册
     let register = route => {
@@ -80,11 +117,35 @@ const Router = ((BUS)=>{
     };
 
     let push = (ctx) => {
-        history.pushState(ctx.state, ctx.title, '#' + ctx.path);                    // 路由地址不一致时，添加历史记录
+        if ( historyApi ) {
+            history.pushState(ctx.state, ctx.title, '#' + ctx.path);                // 路由地址不一致时，添加历史记录
+        }else{
+            ignoreHashchange = true;
+            if ( ctx.state == null ) {
+                location.hash = ctx.path;                                           // 无参数，直接添加历史记录
+            }else{
+                let jsonStr = JSON.stringify(ctx);
+                let key = hashString(jsonStr);
+                sessionStorage.setItem(key, jsonStr);
+                location.hash = ctx.path + '?' + key                                // 有参数，拼接哈希参数后添加历史记录
+            }
+            setTimeout(()=>ignoreHashchange = false)
+        }
     };
 
     let replace = (ctx) => {
-        history.replaceState(ctx.state, ctx.title, '#' + ctx.path);                 // 替换当前历史记录
+        if ( historyApi ) {
+            history.replaceState(ctx.state, ctx.title, '#' + ctx.path);             // 替换当前历史记录
+        }else{
+            if ( ctx.state == null ) {
+                location.replace('#' + ctx.path);                                   // 无参数，直接替换当前历史记录
+            }else{
+                let jsonStr = JSON.stringify(ctx);
+                let key = hashString(jsonStr);
+                sessionStorage.setItem(key, jsonStr);
+                location.replace('#' + ctx.path + '?' + key);                       // 有参数，拼接哈希参数后替换当前历史记录
+            }
+        }
     };
 
     let url = (url) => {
@@ -95,6 +156,14 @@ const Router = ((BUS)=>{
     let page = ctx => {
         if ( /^http[s]?:/i.test(ctx.path) ) return url(ctx.path);                   // 以http[s]:开头时直接跳转页面
         push(ctx) > route(ctx);                                                     // 添加历史 & 激活页面
+    }
+
+    let hashString = str => {
+        let rs = 53653, i = str.length;
+        while ( i ) {
+            rs = (rs * 33) ^ str.charCodeAt(--i);
+        }
+        return (rs >>> 0).toString(36);
     }
 
     return {register, page, route, push, replace, url};

@@ -1,6 +1,5 @@
 [path]
 src                 : src
-src_components      : src/components
 build               : build
 
 [theme] // 样式风格包

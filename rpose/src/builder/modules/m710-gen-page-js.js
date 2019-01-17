@@ -66,7 +66,8 @@ async function pageJs(allrequires, srcFile){
 
 		try{
 			console.time(MODULE + 'browserify ' + tag)
-			src = await csjs.browserify(src);
+			src = await csjs.browserify(src, null);
+//			src = await csjs.browserify(src, null, 'axios');  // browserify(code, basedir, ...externals)
 			console.timeEnd(MODULE + 'browserify ' + tag)
 		}catch(e){
 			throw Err.cat(MODULE + 'browserify transform page js failed', e)
