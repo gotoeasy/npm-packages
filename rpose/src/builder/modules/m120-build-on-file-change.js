@@ -6,34 +6,21 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 module.exports = bus.on('重新编译被更新源文件', function(){
 
 	return async function(srcFile){
-		let env = bus.at('编译环境');
+
+        // 事件触发时，文件清单已更新，文件内容已读取到缓存，只管重新编译就行
+        let env = bus.at('编译环境');
 
 console.time('build')
 
-		let files = bus.at('源文件清单', srcFile);
-		let isPage = bus.at('是否页面源文件', srcFile);
+		let files = bus.at('源文件清单');
 		
 		let cplErr, btf, tag = bus.at('默认标签名', srcFile);
 
 		// 先同步编译，方便查找编译错误
 		try{
-			//btf = await bus.at('编译组件', srcFile, true);			// 重新解析编译
-			bus.at('编译组件', srcFile, true);			// 重新解析编译
+			await bus.at('编译组件', srcFile, true);			// 重新解析编译
 		}catch(e){
-			//cplErr = Err.cat(MODULE + 'compile failed on file change', srcFile, e);
-		}
-
-		// ----------------------------------------------------
-		// 页面文件更新时，需要输出页面文件
-		// ----------------------------------------------------
-		try{
-			if ( isPage ) {
-				await bus.at('输出页面代码文件', srcFile);
-			}
-		}catch(e){
-			let err = Err.cat(MODULE + 'build page failed on change', srcFile, e, cplErr);
-			bus.at('删除已生成的页面代码文件', srcFile, err);
-			throw err;
+			cplErr = Err.cat(MODULE + 'compile failed on file change', srcFile, e);
 		}
 
 		let err;
@@ -45,8 +32,8 @@ console.time('build')
 		// 检查有没有被其他页面使用，有的话更新输出关联页面
 		// ----------------------------------------------------
 		for ( let i=0,file,allrequires; file=files[i++]; ) {
-			if ( !bus.at('是否页面源文件', file) || file == srcFile ) {
-				continue; // 非页面或是页面自己时都不用处理
+			if ( !bus.at('是否页面源文件', file) ) {
+				continue; // 非页面时不用处理
 			}
 
 			try{
@@ -75,6 +62,7 @@ console.time('build')
 			throw err;
 		}
 
+        bus.at('缓存序列化');
 
 
 console.timeEnd('build')

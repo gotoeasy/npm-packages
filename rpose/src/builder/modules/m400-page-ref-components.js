@@ -10,8 +10,9 @@ module.exports = bus.on('查找页面依赖组件', function(){
 	let ptask = new PTask((resolve, reject, isBroken) => async function(srcFile){
 		try{
 			let oSetAllRequires = new Set(), oStatus = {};
-			let btf = await bus.at('编译源文件', srcFile);
-			let requires = btf.getDocument().requires;
+			let oCompile = await bus.at('编译源文件', srcFile);
+			let requires = oCompile.requires || [];
+//console.error(MODULE, '------------requires------------', requires);
 			for ( let i=0,tagpkg; tagpkg=requires[i++]; ) {
 				await addRefComponent(tagpkg, oSetAllRequires, oStatus);
 			}
@@ -37,7 +38,7 @@ module.exports = bus.on('查找页面依赖组件', function(){
 	});
 
 	return function(srcFile, restart=false){
-		restart && bus.at('编译源文件', srcFile, true).catch();
+		restart && bus.at('编译源文件', srcFile).catch();
 		return restart ? ptask.restart(srcFile) : ptask.start(srcFile);
 	};
 
@@ -53,8 +54,8 @@ async function addRefComponent(tagpkg, oSetAllRequires, oStatus){
 	oSetAllRequires.add(tagpkg);
 	oStatus[tagpkg] = true;
 
-	let btf = await bus.at('编译组件', tagpkg);
-	let requires = btf.getDocument().requires;
+	let oComp = await bus.at('编译组件', tagpkg);
+	let requires = oComp.requires;
 
 	for ( let i=0,subTagpkg; subTagpkg=requires[i++]; ) {
 		await addRefComponent(subTagpkg, oSetAllRequires, oStatus);

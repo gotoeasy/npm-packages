@@ -5,13 +5,14 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = function build(opts){
 	(async function(){
-console.time('build');
 
-		try{
 console.time('load');
 			require('./loadModules')();
 console.timeEnd('load');
 
+
+console.time('build');
+		try{
 			let env = bus.at('编译环境', opts);
 			bus.at('clean');
 
@@ -19,8 +20,8 @@ console.timeEnd('load');
 		}catch(e){
 			console.error(MODULE, Err.cat('build failed', e).toString());
 		}
-
 console.timeEnd('build');
+
 	})();
 }
 

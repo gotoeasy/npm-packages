@@ -8,18 +8,30 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('汇总页面关联JS代码', function(){
 
-	return async function(srcFile, allrequires){
+	return async function(file, allrequires){
+
+        let env = bus.at('编译环境');
+        let hashs = bus.at('计算页面哈希', file, allrequires);
+        let cache = bus.at('缓存', env.release ? 'js-min' : 'js-format');
+        let oRs = cache.get(file);
+        if ( oRs ) {
+            if ( oRs.hashs === hashs ) {        // TODO 考虑配置变化
+                return oRs.js;
+            }
+        }
+
+        oRs = {hashs};
+        cache.put(file, oRs);                   // 更新缓存
+
 		try{
 			// 组装代码
-			let src = await pageJs(allrequires, srcFile);
+			let src = await pageJs(allrequires, file);
 
 			// 默认美化，release时则压缩
-			let env = bus.at('编译环境');
-			src = (env.release ? csjs.miniJs(src) : csjs.formatJs(src));
-
-			return src;
+			oRs.js = env.release ? csjs.miniJs(src) : csjs.formatJs(src);
+            return oRs.js;
 		}catch(e){
-			throw Err.cat(MODULE + 'gen page js failed', srcFile, e)
+			throw Err.cat(MODULE + 'gen page js failed', file, e)
 		}
 	};
 
@@ -27,16 +39,16 @@ module.exports = bus.on('汇总页面关联JS代码', function(){
 
 
 // 页面代码组装
-async function pageJs(allrequires, srcFile){
+async function pageJs(allrequires, file){
 
 	let srcRpose = await bus.at('编译RPOSE');
 	let srcStmt = getSrcRegisterComponents(allrequires);
 	let srcComponents = await getSrcComponents(allrequires);
 	let requireAxios = ''; // srcComponents.indexOf('axios') > 0 ? 'let axios = require("axios");' : ''; // 简易的按需引入axios
 
-    let	btf = await bus.at('编译组件', srcFile);
-	let tag  = bus.at('默认标签名', srcFile);
-	let mount  = btf.getText('mount');
+    let	oParse = bus.at('解析源文件', file);
+	let tag  = bus.at('默认标签名', file);
+	let mount  = oParse.mount;
 
 
 	let src = `
@@ -96,9 +108,9 @@ function getSrcRegisterComponents(allrequires){
 async function getSrcComponents(allrequires){
 	try{
 		let ary = [];
-		for ( let i=0,tagpkg,btf; tagpkg=allrequires[i++]; ) {
-			btf = await bus.at('编译组件', tagpkg);
-			ary.push( btf.getText('js') );
+		for ( let i=0,tagpkg,oComponent; tagpkg=allrequires[i++]; ) {
+			oComponent = await bus.at('编译组件', tagpkg);
+			ary.push( oComponent.js );
 		}
 		return ary.join('\n');
 	}catch(e){

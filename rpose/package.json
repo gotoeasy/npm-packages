@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.54",
+  "version": "0.0.56",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
@@ -8,7 +8,7 @@
     "@gotoeasy/csjs": "*",
     "@gotoeasy/util": "*",
     "@gotoeasy/err": "*",
-    "@gotoeasy/os": "*",
+    "@gotoeasy/cache": "*",
     "@gotoeasy/p-task": "*",
     "@gotoeasy/theme": "*",
     "@gotoeasy/pre-render": "*",

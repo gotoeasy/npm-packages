@@ -50,9 +50,6 @@ function <%= $data['$componentName'] %>(options={}) {
     <% } %>
 
     <% let actionskeys = $data['actionskeys'] || []; %>
-    <% if ( actionskeys.includes('window.onload') ){ %>
-        rpose.once('window.onload', this.$actions['window.onload'].bind(this)); // 自定义方法中有window.onload时，自动调用
-    <% } %>
 }
 
 /**

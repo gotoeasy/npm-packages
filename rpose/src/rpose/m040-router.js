@@ -14,7 +14,7 @@ const Router = ((BUS)=>{
     // 安装路由事件
     let fnLocationChange = e => BUS.at('router.locationchange', e);
     let eventname = historyApi ? 'popstate' : 'hashchange';
-	document.addEventListener ? document.addEventListener(eventname, fnLocationChange, false) : document.attachEvent("on" + eventname, fnLocationChange);
+	window.addEventListener ? window.addEventListener(eventname, fnLocationChange, false) : window.attachEvent("on" + eventname, fnLocationChange);
 
     // 期初显示，window.onload时按指定路由显示
     BUS.on('window.onload', e => {

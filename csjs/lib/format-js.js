@@ -25,7 +25,7 @@ function uglifyFormat(src){
 };
 
 
-const optPrettier = { parser: "babylon", printWidth: 150, tabWidth: 4 };
+const optPrettier = { parser: "babel", printWidth: 150, tabWidth: 4 };
 
 function prettierFormat(src){
 	try{

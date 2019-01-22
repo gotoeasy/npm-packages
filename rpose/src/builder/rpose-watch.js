@@ -11,34 +11,51 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 module.exports = function (opts){
 
 	(async function(){
-console.time('build');
 
 		// 初始化
 console.time('load');
 		require('./loadModules')();
 console.timeEnd('load');
+
+
+console.time('build');
 		let env = bus.at('编译环境', opts);
 		bus.at('clean');
 
 		// 全部编译
 		let buildAllOk = await buildAllPages();
-
 console.timeEnd('build');
+
 
 		// 监视文件变化
 		let ready, watcher = chokidar.watch(env.path.src);
 		watcher.on('add', async file => {
 			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') ) {
 				!buildAllOk && (buildAllOk = await buildAllPages());
-				notifyAdd(file);
+                bus.at('源文件添加', file);
+                bus.at('源文件读取并缓存', file)
+                console.info(MODULE, 'add ......', file);
+                bus.at('重新编译被更新源文件', file).catch(e=>console.error(Err.cat(e).toString()));
 			}
 		}).on('change', async file => {
 			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') ) {
 				!buildAllOk && (buildAllOk = await buildAllPages());
-				notifyChange(file);
+                if ( bus.at('源文件读取并缓存', file) ) {
+                    console.info(MODULE, 'change ......', file);
+                    bus.at('重新编译被更新源文件', file).catch(e=>console.error(Err.cat(e).toString()));
+                }
 			}
-		}).on('unlink', file => {
-			ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') && notifyRemove(file);
+		}).on('unlink', async file => {
+			if ( ready && (file = file.replace(/\\/g, '/')) && file.endsWith('.rpose') ) {
+                !buildAllOk && (buildAllOk = await buildAllPages());
+                bus.at('源文件删除', file);
+                console.info(MODULE, 'remove ......', file);
+                try{
+                    await bus.at('源文件删除时再编译', file);
+                }catch(e){
+                    console.error(Err.cat(e).toString());
+                }
+            }
 		}).on('ready', () => {
 			ready = true;
 		});
@@ -63,46 +80,4 @@ async function buildAllPages(){
 	}catch(e){
 		console.error(Err.cat(e).toString());
 	}
-}
-
-
-// 哪里的问题导致一次保存两次文件变更。。。
-// 暂用文件内容哈希判断是否真的变了
-const mapFileHash = new Map();
-function notifyAdd(file){
-	console.info(MODULE, 'add ......', file);
-
-	bus.at('异步读文件', file, true)
-		.then(txt => {
-			let hashVal = hash(txt);
-			if ( mapFileHash.get(file) != hashVal ) {
-				mapFileHash.set(file, hashVal);
-				bus.at('重新编译被更新源文件', file).catch(e=>console.error(Err.cat(e).toString()));
-			}
-		})
-		.catch(e=>console.error(Err.cat(e).toString()));
-}
-function notifyChange(file){
-
-	bus.at('异步读文件', file, true)
-		.then(txt => {
-			let hashVal = hash(txt);
-			if ( mapFileHash.get(file) != hashVal ) {
-console.info(MODULE, 'change ......', file);
-				mapFileHash.set(file, hashVal);
-				bus.at('重新编译被更新源文件', file).catch(e=>console.error(Err.cat(e).toString()));
-			}
-		})
-		.catch(e=>console.error(Err.cat(e).toString()));
-}
-function notifyRemove(file){
-
-	(async ()=>{
-		console.info(MODULE, 'remove ......', file);
-		try{
-			await bus.at('源文件删除时再编译', file);
-		}catch(e){
-			console.error(Err.cat(e).toString());
-		}
-	})();
 }

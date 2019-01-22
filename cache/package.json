@@ -1,0 +1,37 @@
+{
+  "name": "@gotoeasy/cache",
+  "version": "0.0.2",
+  "main": "index.js",
+  "dependencies": {
+    "@gotoeasy/os": "*",
+    "flat-cache": "*"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "nyc": "*",
+    "opn": "*"
+  },
+  "scripts": {
+    "test": "nyc ava",
+    "coverage": "nyc ava & nyc report --reporter=html & node coverage"
+  },
+  "description": "disk based cache",
+  "keywords": [
+    "gotoeasy",
+    "rpose",
+    "cache"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/cache/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

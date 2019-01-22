@@ -31,7 +31,7 @@ function enhanceRender(component) {
 			}
 
 			if (this.$updater){
-				this.$updater(state);						// 更关注更新性能时，自定义逻辑实现视图更新
+				this.$updater(this.$state); 				// 更关注更新性能时，自定义逻辑实现视图更新
 			}else{
 				let vnode2 = this.nodeTemplate(this.$state, this.$options, this.$actions, this);
 				diffRender(this, vnode2);					// 默认使用虚拟节点比较进行差异更新

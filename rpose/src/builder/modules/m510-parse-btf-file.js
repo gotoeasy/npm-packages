@@ -2,6 +2,7 @@ const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
 const PTask = require('@gotoeasy/p-task');
 const Btf = require('@gotoeasy/btf');
+const hash = require('@gotoeasy/hash');
 const acorn = require('acorn');
 const astring = require('astring');
 
@@ -9,46 +10,69 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('解析源文件', function(){
 
-	let ptask = new PTask((resolve, reject, isBroken) => async function(srcFile){
+	return function (file) {
+        let cache = bus.at('缓存', 'parse-btf');      // 指定名的缓存对象
 
-		try{
-			let text = await bus.at('异步读文件', srcFile);
-			if ( text === undefined ) {
-				reject(MODULE + 'file not found: ' + srcFile);
-				return;
-			}
-			let btf = new Btf(text, true);
+        let oResult = cache.get(file);
+        let oSrc = bus.at('源文件内容', file);
+        if ( oResult && oResult.hashcode === oSrc.hashcode ) {     // TODO 考虑配置因素
+            return oResult;
+        }
 
-			let doc = btf.getDocument();
-			doc.file = srcFile;
+        oResult = Object.assign( parseBtf(file, oSrc.text), {hashcode: oSrc.hashcode} );     // 解析
 
-			let rs = /^\[view\].*\r?\n?|\n\[view\].*\r?\n?/i.exec(text);
-			doc.posView = rs ? (rs.index + rs[0].length) : 0;
-			rs = /^\[actions\].*\r?\n?|\n\[actions\].*\r?\n?/i.exec(text);
-			doc.posActions = rs ? (rs.index + rs[0].length) : 0;
-			rs = /^\[methods\].*\r?\n?|\n\[methods\].*\r?\n?/i.exec(text);
-			doc.posMethods = rs ? (rs.index + rs[0].length) : 0;
-			rs = /^\[css\].*\r?\n?|\n\[css\].*\r?\n?/i.exec(text);
-			doc.posCss = rs ? (rs.index + rs[0].length) : 0;
-			rs = /^\[less\].*\r?\n?|\n\[less\].*\r?\n?/i.exec(text);
-			doc.posLess = rs ? (rs.index + rs[0].length) : 0;
-			rs = /^\[scss\].*\r?\n?|\n\[scss\].*\r?\n?/i.exec(text);
-			doc.posSass = rs ? (rs.index + rs[0].length) : 0;
-
-			editBtfDocument(doc, srcFile, text);
-
-			resolve( btf );
-		}catch(e){
-			reject(Err.cat(MODULE + 'parse btf failed', srcFile, e));
-		}
-	});
-
-
-	return function (srcFile, restart=false) {
-		return restart ? ptask.restart(srcFile) : ptask.start(srcFile)
+        cache.put(file, oResult);                   // 更新缓存
+        return oResult;
 	};
 
 }());
+
+function parseBtf(file, src){
+    let btf = new Btf(src, true);
+
+    let doc = btf.getDocument();
+    doc.file = file;
+
+    let rs = /^\[view\].*\r?\n?|\n\[view\].*\r?\n?/i.exec(src);
+    doc.posView = rs ? (rs.index + rs[0].length) : 0;
+    rs = /^\[actions\].*\r?\n?|\n\[actions\].*\r?\n?/i.exec(src);
+    doc.posActions = rs ? (rs.index + rs[0].length) : 0;
+    rs = /^\[methods\].*\r?\n?|\n\[methods\].*\r?\n?/i.exec(src);
+    doc.posMethods = rs ? (rs.index + rs[0].length) : 0;
+    rs = /^\[css\].*\r?\n?|\n\[css\].*\r?\n?/i.exec(src);
+    doc.posCss = rs ? (rs.index + rs[0].length) : 0;
+    rs = /^\[less\].*\r?\n?|\n\[less\].*\r?\n?/i.exec(src);
+    doc.posLess = rs ? (rs.index + rs[0].length) : 0;
+    rs = /^\[scss\].*\r?\n?|\n\[scss\].*\r?\n?/i.exec(src);
+    doc.posSass = rs ? (rs.index + rs[0].length) : 0;
+
+    editBtfDocument(doc, file, src);
+
+
+    let api, view, options, state, actions, methods, css, less, scss, mount, tag, tagpkg, rposepkg, optionkeys, statekeys, actionskeys, methodskeys, prerender, $componentName, _hash;
+    api = doc.api;
+    view = doc.view;
+    options = doc.options;
+    state = doc.state;
+    actions = doc.actions;
+    methods = doc.methods;
+    css = doc.css;
+    less = doc.less;
+    scss = doc.scss;
+    mount = doc.mount;
+    tag = doc.tag;
+    tagpkg = doc.tagpkg;
+    rposepkg = doc.rposepkg;
+    optionkeys = doc.optionkeys;
+    statekeys = doc.statekeys;
+    actionskeys = doc.actionskeys;
+    methodskeys = doc.methodskeys;
+    prerender = doc.prerender;
+    $componentName = doc.$componentName;
+
+    _hash = hash(src);
+    return {file, api, view, options, state, actions, methods, css, less, scss, mount, tag, tagpkg, rposepkg, optionkeys, statekeys, actionskeys, methodskeys, prerender, $componentName, _hash};
+}
 
 
 function editBtfDocument(doc, file, fileContent){
@@ -87,7 +111,7 @@ function editBtfDocument(doc, file, fileContent){
     //doc.singleton		= toBoolean(oApi.singleton)						// 单例组件
 
 	doc.$componentName	= bus.at('组件类名', doc.tag, doc.rposepkg);		// 组件类名
-	doc.tagpkg			= bus.at('标签全名', doc.tag, doc.rposepkg);
+    doc.tagpkg			= bus.at('标签全名', doc.tag, doc.rposepkg);
 
 	return doc;
 }
@@ -118,17 +142,6 @@ function toBoolean(arg){
 	if ( typeof arg !== 'string' ) return true;
 	return !/^(0|false|f|no|n)$/i.test((arg + '').trim());
 }
-
-function hasHighlightCode(view){
-	let idx = view.indexOf('\n```');
-	if ( idx < 0 ) return false;
-
-	if ( view.startsWith('```') ) {
-		return true;	// 由```起始，且有结束行
-	}
-	return view.indexOf('\n```', idx+3) > 0; // 中间有开始行，再后面也有结束行
-}
-
 
 function generateActions2(doc, text){
 	if ( doc.actions.startsWith('{') ) {

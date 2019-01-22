@@ -3,19 +3,26 @@ optionkeys = path, onroute, default, notfound
 statekeys = active
 
 [view]
-<div class="rpose-router {hide: !$state.active}">
+<div ref="root" class="rpose-router hide">
     <slot/>
 </div>
 
 [methods]
 {
     init: () => {
-        rpose.router.register({path: this.$options.path, component: this, default: this.$options.default, notfound: this.$options.notfound});
-        this.route = ctx => this.setState({active:1});
+        rpose.router.register({path: this.$options.path, component: this, default: !!this.$options.default, notfound: !!this.$options.notfound});
+        this.route = ctx => this.setState({active: 1});
+    },
+    $updater: (state) => {
+        let $$el = $$(this.getRefElement('root'));
+        this.$state.active ? $$el.removeClass('hide') : $$el.addClass('hide');
     }
 }
 
 [less]
 .hide{
+    display: none;
+}
+.hidsadsde{
     display: none;
 }

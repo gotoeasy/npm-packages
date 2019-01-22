@@ -88,6 +88,10 @@ bus.on('默认标签名', function(){
 bus.on('标签源文件', function(){
 
 	return tag => {
+        if ( tag.endsWith('.rpose') ) {
+            return tag; // 已经是文件
+        }
+
 		let files = bus.at('源文件清单');
 		let name = '/' + tag + '.rpose';
 		for ( let i=0,file; file=files[i++]; ) {
@@ -161,3 +165,45 @@ bus.on('页面图片相对路径', function(){
 
 }());
 
+
+
+bus.on('页面哈希', function(){
+
+	return (file, allrequires) => {
+        let cache = bus.at('缓存', 'page');      // 指定名的缓存对象
+
+        if ( allrequires === undefined ) {
+            // 读取缓存
+            let oPage = cache.get(file);
+            return oPage ? oPage.hashs : undefined;
+        }else{
+            // 保存缓存
+            let oComp = bus.at('编译组件', file);
+            let hashs = bus.at('计算页面哈希', file, oComp.allrequires);
+            cache.put(file, {hashs});
+            return hashs;
+        }
+	};
+
+}());
+
+bus.on('计算页面哈希', function(){
+
+	return (file, allrequires) => {
+
+        // 页面关联的全部组件文件，去除重复后排序
+        let fileSet = new Set();
+        fileSet.add(file);
+        allrequires.forEach(tag => fileSet.add( bus.at('标签源文件', tag) ));
+        let files = [...fileSet];
+        files.sort();
+
+        // 取出文件hashcode存入数组
+        let ary = [];
+        files.forEach(f => ary.push( (bus.at('源文件内容', f) || {hashcode: f}).hashcode ) );
+
+        // 计算数组hashcode返回
+        return hash(ary.join('\r\n'));
+	};
+
+}());

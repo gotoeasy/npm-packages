@@ -15,7 +15,7 @@ bus.on('输出页面代码文件', function(){
 		let htmlFile;
 		try{
 			let allrequires = await bus.at('查找页面依赖组件', srcFile);
-//console.error(MODULE, '------------allrequires------------', srcFile, allrequires);
+//console.error(MODULE, '------------allrequires------------', allrequires);
 			await Promise.all( [bus.at('输出页面JS文件', srcFile, allrequires), bus.at('输出页面CSS文件', srcFile, allrequires)]  );
 			
 			htmlFile = await bus.at('输出页面HTML文件', srcFile);

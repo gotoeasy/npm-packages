@@ -7,13 +7,11 @@ module.exports = bus.on('编译全部页面', function(){
 
 	return async function(rebuild=false){
 		try{
-			let env = bus.at('编译环境');
+			let files = bus.at('源文件清单');
+            bus.at('源文件读取并缓存', ...files);
 
-			let files = bus.at('源文件清单', undefined, undefined, rebuild); // rebuild时重新读取，否则用缓存
 			let pages = [];
-
 			for ( let i=0,file; file=files[i++]; ) {
-				//bus.at('编译组件', file).catch(e=>console.info('------------------'));
 				await bus.at('编译组件', file, true);
 				bus.at('是否页面源文件', file) && pages.push(file);
 			}
@@ -25,6 +23,8 @@ module.exports = bus.on('编译全部页面', function(){
 		}catch(e){
 			throw Err.cat(MODULE + 'compile all pages failed', e);
 		}
+
+        bus.at('缓存序列化');
 	};
 
 
