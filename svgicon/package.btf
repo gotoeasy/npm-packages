@@ -1,39 +1,42 @@
 [name] // 项目名 （必填）
-@gotoeasy/hash
+@gotoeasy/svgicon
 
 [version] // 版本号 （必填）
-0.0.3
-
+0.0.1
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-xxhashjs = *
-
-[devDependencies] // 开发依赖库
-ava = *
-nyc = *
-opn = *
+@gotoeasy/bus = *
+@gotoeasy/file = *
+@gotoeasy/hash = *
+@gotoeasy/os = *
+svgicons2svgfont = *
+svgfont2svgicons = *
+svg2ttf = *
+ttf2svg = *
+ttf2eot = *
+ttf2woff = *
+ttf2woff2 = *
 
 [description] // 描述
-simple file/string hash
+webfont converter
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, rpose, hash
+gotoeasy, svgicon, webfont
 
 [scripts] // 脚本命令
-test = nyc ava
-coverage = nyc ava & nyc report --reporter=html & node coverage
+test = echo "Error: no test specified" && exit 1
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
-[homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/hash/README.md
+[homepage] // 主页
+https://github.com/gotoeasy/npm-packages/blob/master/webfont/README.md
 
-[bugs] // BUG提交地址，github项目会自动识别设定
+[bugs] // BUG提交地址
 url = https://github.com/gotoeasy/npm-packages/issues
 
 [author] // 作者信息

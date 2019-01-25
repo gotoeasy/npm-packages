@@ -21,7 +21,7 @@ function hashString(str){
 	return rs >>> 0;
 }
 
-function hash(opts){
+function hash(opts, numResult){
     if ( opts && opts.file ) {
         return hashFile(opts.file);
     }
@@ -29,7 +29,7 @@ function hash(opts){
         return hashFileContents(opts.contents);
     }
     
-    return hashString(opts).toString(36);
+    return numResult ? hashString(opts) : hashString(opts).toString(36);
 }
 
 module.exports = hash;

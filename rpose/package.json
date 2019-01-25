@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.56",
+  "version": "0.0.57",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",

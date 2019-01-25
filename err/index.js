@@ -60,7 +60,7 @@ function setCodeframe(e){
 	}
 
 	if ( e.codeframe == null ) {
-		let stacks = e.stack.split('\n');
+		let stacks = (e.stack || '').split('\n');
 		for ( let i=0,str; str=stacks[i++]; ) {
 			if ( /\:\d+\:\d+/.test(str) ) {
 				// 从堆栈信息中查找出错文件，堆栈信息格式有所不同需判断处理

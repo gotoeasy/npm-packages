@@ -1,0 +1,40 @@
+{
+  "name": "@gotoeasy/svgicon",
+  "version": "0.0.1",
+  "main": "index.js",
+  "dependencies": {
+    "@gotoeasy/bus": "*",
+    "@gotoeasy/file": "*",
+    "@gotoeasy/hash": "*",
+    "@gotoeasy/os": "*",
+    "svgicons2svgfont": "*",
+    "svgfont2svgicons": "*",
+    "svg2ttf": "*",
+    "ttf2svg": "*",
+    "ttf2eot": "*",
+    "ttf2woff": "*",
+    "ttf2woff2": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "webfont converter",
+  "keywords": [
+    "gotoeasy",
+    "svgicon",
+    "webfont"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/webfont/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
