@@ -3,6 +3,7 @@
 // ---------------------------------------------
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
+const hash = require('@gotoeasy/hash');
 const os = require('@gotoeasy/os');
 const fs = require('fs');
 const SVGIcons2SVGFont = require("svgicons2svgfont");
@@ -22,12 +23,13 @@ module.exports = bus.on('svgicons2svgfont-normalize1000', function(){
                     File.remove(fileTmpSvgfont);
                     resolve(txt);
                 }).on("error", (err) => {
+                    File.remove(fileTmpSvgfont);
                     reject(err);
                 });
 
             // 读取目录，文件去重复
             let fileSet = new Set();
-            files.forEach( file => File.isDirectoryExists(file) ? File.files(file, '**.svg').forEach(f => fileSet.add(f)) : fileSet.add(file) );
+            files.forEach( file => fileSet.add(file) );
 
             // 读取合并
             fileSet.forEach(file => {

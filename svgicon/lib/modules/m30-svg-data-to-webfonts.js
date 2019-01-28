@@ -1,6 +1,3 @@
-// ---------------------------------------------
-// 读取svg图标文件，转换统一大小，存放缓存并序列化
-// ---------------------------------------------
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 const hash = require('@gotoeasy/hash');
@@ -14,18 +11,22 @@ const ttf2woff2 = require('ttf2woff2');
 // E000-EFFF共4095个按d值取模定位
 module.exports = bus.on('svg-data-to-webfonts', function(){
 
-	return (dist, fontname, keys) => {
+	return (dist, fontname, keys=[]) => {
+
+        let env = bus.at('svgicon-env');
+        dist = dist || env.path.dist;
+        fontname = fontname || 'svgiconfont';
+
         let svgdata = bus.at('cache-svg-data');
-        (!keys || !keys.length) && (keys = Object.keys(svgdata));
+        !keys.length && (keys = Object.keys(svgdata));
 
-        genWebfonts(keys, dist, fontname);
-
+        keys.length && genWebfonts(keys, dist, fontname);
 	};
 
 }());
 
 
-function genWebfonts(keys, dist='./dist', fontname='svgiconfont'){
+function genWebfonts(keys, dist, fontname){
 
     let fileSvg = File.resolve(dist, fontname + '.svg');
     let fileTtf = File.resolve(dist, fontname + '.ttf');

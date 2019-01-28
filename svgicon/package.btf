@@ -2,7 +2,7 @@
 @gotoeasy/svgicon
 
 [version] // 版本号 （必填）
-0.0.1
+0.0.2
 
 [main] // 入口文件
 index.js
@@ -19,6 +19,7 @@ ttf2svg = *
 ttf2eot = *
 ttf2woff = *
 ttf2woff2 = *
+git-pull-or-clone = *
 
 [description] // 描述
 webfont converter

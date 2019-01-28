@@ -10,7 +10,28 @@ module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
 
     const opts = {name: 'svgfont', fontHeight: 1000, normalize: true, log: x=>x};
 
-	return (...files) => {
+	return (...fileOrPaths) => {
+
+        // 筛选出svg图标文件
+        let svficonfiles = [];
+        let svffiles = [];
+        for ( let i=0,fileOrPath; fileOrPath=fileOrPaths[i++]; ) {
+            if ( !File.exists(fileOrPath) ) continue;
+
+            if ( File.isDirectory(fileOrPath) ) {
+                svffiles.push(...File.files(fileOrPath, '**.svg'));
+            }else{
+                /[^\/\\]+\.svg$/i.test(fileOrPath) && svffiles.push(File.resolve('', fileOrPath));
+            }
+        }
+
+        for ( let i=0,svffile,xml; svffile=svffiles[i++]; ) {
+            xml = File.read(svffile);
+            if ( /<path\s+[\s\S]*d\s?=\s?".+".*\/>/.test(xml) ) {
+                svficonfiles.push(svffile);                   
+            }
+        }
+
 
         let fnResolve, fnReject;
         let promise = new Promise((resolve, reject) => {
@@ -18,7 +39,7 @@ module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
             fnReject = reject;
         });
 
-        bus.at('svgicons2svgfont-normalize1000', ...files).then(svgfontxml => {
+        bus.at('svgicons2svgfont-normalize1000', ...svficonfiles).then(svgfontxml => {
             svgfontxml.replace(/<glyph\s+glyph-name="(.*?)"[\s\S]*?d="(.*?)"[\s\S]*?\/>/g, function(glyph, filehashcode, d){
                 if ( d ) {
                     let rs = bus.at('cache-svg-data', filehashcode);
@@ -30,6 +51,8 @@ module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
             });
 
             fnResolve( bus.at('cache-svg-data') );
+        }).catch(err => {
+            fnReject(err);
         });
 
         return promise;

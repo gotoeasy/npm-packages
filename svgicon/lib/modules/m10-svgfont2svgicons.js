@@ -3,14 +3,15 @@
 // ---------------------------------------------
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
+const hash = require('@gotoeasy/hash');
 const fs = require('fs');
 const svgfont2svgicons = require("svgfont2svgicons");
 
 module.exports = bus.on('svgfont2svgicons', function(){
 
-	return (file, opts={}) => {
+	return async (file, opts={}) => {
 
-        return new Promise((resolve, reject) => {
+        let promise = new Promise((resolve, reject) => {
 
             if ( !/\.svg$/i.test(file) || !File.exists(file) ) {          // 仅简单检查，调用需注意文件正常
                 resolve([]);
@@ -35,13 +36,16 @@ module.exports = bus.on('svgfont2svgicons', function(){
                     iconfile = File.resolve(dist, `${unicode}#${name}.svg`);
                     files.push(iconfile);
                     !mkdir && (mkdir = true) && File.mkdir(dist);
+
                     icon.pipe(fs.createWriteStream(iconfile));
                 }
-            }).once('end', function() {
-                resolve(files);
+            }).once('end', function(xxx) {
+                setTimeout(x=> resolve(files), 5000);
+               
             });
         });
 
+        return await promise;
 	};
 
 }());

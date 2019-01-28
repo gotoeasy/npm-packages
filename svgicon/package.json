@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/svgicon",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/bus": "*",
@@ -13,7 +13,8 @@
     "ttf2svg": "*",
     "ttf2eot": "*",
     "ttf2woff": "*",
-    "ttf2woff2": "*"
+    "ttf2woff2": "*",
+    "git-pull-or-clone": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
