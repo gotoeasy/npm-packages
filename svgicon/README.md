@@ -1,4 +1,9 @@
 # @gotoeasy/svgicon
+
+[![NPM version](https://img.shields.io/npm/v/@gotoeasy/svgicon.svg)](https://www.npmjs.com/package/@gotoeasy/svgicon)
+[![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+<br>
+
 简化满足svg图标需求<br>
 
 - [x] 使用命令行，从指定git地址导入svg图标到本地磁盘缓存<br>
@@ -9,11 +14,6 @@
 - [x] 使用命令行，按收藏内容生成webfonts相关文件<br>
 - [ ] 使用命令行，清除svg图标的本地磁盘缓存<br>
 
-<br>
-<br>
-
-[![NPM version](https://img.shields.io/npm/v/@gotoeasy/svgicon.svg)](https://www.npmjs.com/package/@gotoeasy/svgicon)
-[![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 <br>
 <br>
 
