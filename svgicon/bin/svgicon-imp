@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options] [path]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+!cmmd.debug && (console.debug = x=>x);
+
+
+
+
+
+
+const bus = require('@gotoeasy/bus');
+const File = require('@gotoeasy/file');
+require('../lib/loadModules')();
+
+let arg = cmmd.args.length ? cmmd.args[0] : '';
+if (!arg) {
+	console.debug('missing argument');
+	return;
+}
+
+if ( /^(http:\/\/|https:\/\/|git@)/.test(arg) ) {
+	console.debug('import from git url ......', arg);
+	bus.at('import-from-git', arg);
+}else if ( File.isDirectoryExists(arg) || arg.startsWith('/') || arg.startsWith('.') || arg.indexOf(':') > 0 ) {
+	console.debug('import from dir ......', arg);
+	File.isDirectoryExists(arg) && bus.at('svgicons-normalize-to-svg-data', arg);
+}else{
+	console.debug('import from npm package ......', arg);
+	bus.at('import-from-npm', arg);
+}

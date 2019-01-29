@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options] [path]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+!cmmd.debug && (console.debug = x=>x);
+
+
+
+
+require('../server/server')
+

@@ -3,19 +3,20 @@
 // ---------------------------------------------
 const bus = require('@gotoeasy/bus');
 
-module.exports = bus.on('cache-svg-data', function(cache={}){
+module.exports = bus.on('cache-svg-data', function(){
 
-    // TODO 用fast-json-stringify提升性能
+    let cache = require('@gotoeasy/cache').load('svgicon-cache-svg-data');
+
 	return (hashcode, objVal) => {
         if ( hashcode === undefined ) {
             return cache;
         }
         
         if ( objVal === undefined ) {
-            return cache[hashcode];
+            return cache.get(hashcode);
         }
 
-        return cache[hashcode] = objVal;
+        cache.put(hashcode, objVal);
 	};
 
 }());

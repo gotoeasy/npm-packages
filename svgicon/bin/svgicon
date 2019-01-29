@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+const commander = require('commander')
+
+commander
+  .version(require('../package').version)
+  .usage('<command> [options]')
+  .command('imp', 'import svg icons from git url or npm package or dir')
+  .command('font', 'create webfonts')
+  .command('open', 'open server')
+  .parse(process.argv);

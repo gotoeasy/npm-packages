@@ -29,10 +29,10 @@ module.exports = bus.on('svgicons2svgfont-normalize1000-glyph', function(nStart=
 
         // 存缓存
         let keywords = [basename];
-        bus.at('cache-svg-data', filehashcode, {filehashcode, keywords});   // name为unicode编码，如【e001】；图标内容d另做
+        bus.at('cache-svg-data', filehashcode, {keywords});                 // 文件名作为keywords，缓存用unicode、图标内容d另行设定（m20-svgicons-normalize-to-svg-data）
 
         // 创建glyph
-        let unicode = [String.fromCharCode(nStart++)];
+        let unicode = [String.fromCharCode(nStart++)];                      // 此unicode仅统一转换使用，不是最终字体unicode
         let glyph = fs.createReadStream(file);
         glyph.metadata = {unicode, name: filehashcode};                     // 通过filehashcode关联图标
         return glyph;

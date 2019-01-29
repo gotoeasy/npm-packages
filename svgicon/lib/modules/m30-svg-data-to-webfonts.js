@@ -11,16 +11,14 @@ const ttf2woff2 = require('ttf2woff2');
 // E000-EFFF共4095个按d值取模定位
 module.exports = bus.on('svg-data-to-webfonts', function(){
 
-	return (dist, fontname, keys=[]) => {
+	return (dist, fontname='svgiconfont', keys=bus.at('cache-favorites').keys()) => {
 
-        let env = bus.at('svgicon-env');
-        dist = dist || env.path.dist;
-        fontname = fontname || 'svgiconfont';
+        dist = dist || File.resolve(process.cwd(), './dist');
 
-        let svgdata = bus.at('cache-svg-data');
-        !keys.length && (keys = Object.keys(svgdata));
+        !keys.length && (keys = bus.at('cache-svg-data').keys());
 
         keys.length && genWebfonts(keys, dist, fontname);
+        return dist;
 	};
 
 }());
@@ -71,9 +69,15 @@ function genSvgfonts(fontname, keys){
     ary.push(`<font-face font-family="${fontname}" units-per-em="1000" ascent="1000" descent="0"/>`);
     ary.push('<missing-glyph horiz-adv-x="0"/>');
 
-    let svgdata = bus.at('cache-svg-data');
-    keys.forEach( k => ary.push(`<glyph unicode="&#x${svgdata[k].unicode};" glyph-name="${svgdata[k].name || svgdata[k].keywords[0]}" horiz-adv-x="1000" d="${svgdata[k].d}"/>`) );
-
+    let cache = bus.at('cache-svg-data');
+    keys.forEach( k =>{
+        let rs = cache.get(k);
+        let name = rs.name || rs.keywords[0];
+        let d = rs.d;
+        let unicode = rs.unicode;
+        ary.push(`<glyph unicode="&#x${unicode};" glyph-name="${name}" horiz-adv-x="1000" d="${d}"/>`);
+    });
+    
     ary.push('</font>');
     ary.push('</defs>');
     ary.push('</svg>');
@@ -106,8 +110,13 @@ function genCss(fontname, keys, ver){
     ary.push('}');
     ary.push('');
 
-    let svgdata = bus.at('cache-svg-data');
-    keys.forEach( k => ary.push(`.${svgdata[k].name || svgdata[k].keywords[0]}:before { content: "\\${svgdata[k].unicode}"; }`) );
+    let cache = bus.at('cache-svg-data');
+    keys.forEach( k =>{
+        let rs = cache.get(k);
+        let name = rs.name || rs.keywords[0];
+        let unicode = rs.unicode;
+        ary.push(`.${name}:before { content: "\\${unicode}"; }`)
+    });
     ary.push('');
 
     return ary.join('\n');
@@ -127,13 +136,16 @@ function genHtml(keys){
     ary.push('</head>');
     ary.push('<body>');
 
-    let svgdata = bus.at('cache-svg-data');
+    let cache = bus.at('cache-svg-data');
     ary.push('<div style="margin:0 auto;display:block;">');
     ary.push('<ul style="text-align:center;list-style:none;margin:0;padding:0;">');
-    keys.forEach( k => {
+    keys.forEach( k =>{
+        let rs = cache.get(k);
+        let name = rs.name || rs.keywords[0];
+        let keywords = rs.keywords;
         ary.push('<li style="width:100px;height:70px;text-align:center;float:left;background-color:beige;margin:1px;padding-top:10px;">');
-        ary.push(`<i class="icon ${svgdata[k].name || svgdata[k].keywords[0]}"></i>`);
-        ary.push(`<br><span style="font-size:13px">${svgdata[k].keywords.join('<br>')}</span>`);
+        ary.push(`<i class="icon ${name}"></i>`);
+        ary.push(`<br><span style="font-size:13px">${keywords.join('<br>')}</span>`);
         ary.push('</li>');
     });
     ary.push('</ul></div>');

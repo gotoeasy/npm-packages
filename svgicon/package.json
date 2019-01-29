@@ -1,12 +1,14 @@
 {
   "name": "@gotoeasy/svgicon",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/bus": "*",
     "@gotoeasy/file": "*",
     "@gotoeasy/hash": "*",
     "@gotoeasy/os": "*",
+    "@gotoeasy/npm": "*",
+    "@gotoeasy/cache": "*",
     "svgicons2svgfont": "*",
     "svgfont2svgicons": "*",
     "svg2ttf": "*",
@@ -14,12 +16,17 @@
     "ttf2eot": "*",
     "ttf2woff": "*",
     "ttf2woff2": "*",
-    "git-pull-or-clone": "*"
+    "git-pull-or-clone": "*",
+    "commander": "*",
+    "opn": "*"
+  },
+  "bin": {
+    "svgicon": "bin/svgicon"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "description": "webfont converter",
+  "description": "SVG图标字体管理",
   "keywords": [
     "gotoeasy",
     "svgicon",
@@ -29,7 +36,7 @@
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/webfont/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/svgicon/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

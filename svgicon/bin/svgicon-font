@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options] [path]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+!cmmd.debug && (console.debug = x=>x);
+
+
+
+
+
+
+const bus = require('@gotoeasy/bus');
+const File = require('@gotoeasy/file');
+require('../lib/loadModules')();
+
+let arg = cmmd.args.length ? cmmd.args[0] : '';
+
+let dist = bus.at('svg-data-to-webfonts');
+console.debug('check the folder:', dist);
+
+const opn = require('opn');
+opn(dist + '/index.html');
+

@@ -2,7 +2,7 @@
 @gotoeasy/svgicon
 
 [version] // 版本号 （必填）
-0.0.2
+0.0.6
 
 [main] // 入口文件
 index.js
@@ -12,6 +12,8 @@ index.js
 @gotoeasy/file = *
 @gotoeasy/hash = *
 @gotoeasy/os = *
+@gotoeasy/npm = *
+@gotoeasy/cache = *
 svgicons2svgfont = *
 svgfont2svgicons = *
 svg2ttf = *
@@ -20,12 +22,17 @@ ttf2eot = *
 ttf2woff = *
 ttf2woff2 = *
 git-pull-or-clone = *
+commander = *
+opn = *
 
 [description] // 描述
-webfont converter
+SVG图标字体管理
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
 gotoeasy, svgicon, webfont
+
+[bin]
+svgicon = bin/svgicon
 
 [scripts] // 脚本命令
 test = echo "Error: no test specified" && exit 1
@@ -35,7 +42,7 @@ type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页
-https://github.com/gotoeasy/npm-packages/blob/master/webfont/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/svgicon/README.md
 
 [bugs] // BUG提交地址
 url = https://github.com/gotoeasy/npm-packages/issues

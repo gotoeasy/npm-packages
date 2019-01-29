@@ -5,8 +5,7 @@ const os = require('@gotoeasy/os');
 const fs = require('fs');
 const SVGIcons2SVGFont = require("svgicons2svgfont");
 
-// TODO 解决unicode冲突
-module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
+module.exports = bus.on('svgicons-normalize-to-svg-data', function(nStart=0xA000){
 
     const opts = {name: 'svgfont', fontHeight: 1000, normalize: true, log: x=>x};
 
@@ -25,11 +24,18 @@ module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
             }
         }
 
-        for ( let i=0,svffile,xml; svffile=svffiles[i++]; ) {
+        for ( let i=0,svffile,xml,states,filehashcode; svffile=svffiles[i++]; ) {
+            states = fs.statSync(svffile);
+            if ( states.size > 1024*3 ) continue;                           // 忽略大于3K的图标文件
+
             xml = File.read(svffile);
-            if ( /<path\s+[\s\S]*d\s?=\s?".+".*\/>/.test(xml) ) {
-                svficonfiles.push(svffile);                   
-            }
+            filehashcode = hash(xml);
+            if ( bus.at('cache-file', filehashcode) ) continue;             // 忽略已处理文件
+
+            if ( !/<path\s+[\s\S]*d\s?=\s?".+".*\/>/.test(xml) ) continue;  // 忽略没有path标签没有d属性的文件
+
+            svficonfiles.push(svffile);
+            bus.at('cache-file', filehashcode, 1);                          // 标记为已处理
         }
 
 
@@ -43,10 +49,13 @@ module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
             svgfontxml.replace(/<glyph\s+glyph-name="(.*?)"[\s\S]*?d="(.*?)"[\s\S]*?\/>/g, function(glyph, filehashcode, d){
                 if ( d ) {
                     let rs = bus.at('cache-svg-data', filehashcode);
-                    rs && (rs.d = d) && (rs.unicode = (0xEA00 + hash(d, true) % (0xEFFF-0xEA00)).toString(16) );   // 提取文件内容中glyph标签的d属性值，按d计算unicode
+                    if ( rs ) {
+                        rs.d = d;
+                        rs.unicode = (0xE000 + hash(d, true) % (0xFFFF-0xE000)).toString(16);  // 提取文件内容中glyph标签的d属性值，按d计算缓存用unicode
+                    }
                 }else{
-                    let rs = bus.at('cache-svg-data');
-                    delete rs[filehashcode];
+                    let cache = bus.at('cache-svg-data');
+                    cache.remove(filehashcode);             // d属性没有内容，删除该缓存
                 }
             });
 
