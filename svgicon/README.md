@@ -21,7 +21,7 @@
 
 ## Install
 ```
-npm i -g @rpose/svgicon
+npm i -g @gotoeasy/svgicon
 ```
 
 
