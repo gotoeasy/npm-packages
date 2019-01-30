@@ -11,5 +11,5 @@ cmmd.usage('[options] [path]')
 
 
 
-require('../server/server')
+require('../www/server')
 

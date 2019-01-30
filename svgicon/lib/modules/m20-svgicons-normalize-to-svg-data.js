@@ -1,13 +1,9 @@
 const bus = require('@gotoeasy/bus');
 const File = require('@gotoeasy/file');
 const hash = require('@gotoeasy/hash');
-const os = require('@gotoeasy/os');
 const fs = require('fs');
-const SVGIcons2SVGFont = require("svgicons2svgfont");
 
-module.exports = bus.on('svgicons-normalize-to-svg-data', function(nStart=0xA000){
-
-    const opts = {name: 'svgfont', fontHeight: 1000, normalize: true, log: x=>x};
+module.exports = bus.on('svgicons-normalize-to-svg-data', function(){
 
 	return (...fileOrPaths) => {
 
@@ -47,16 +43,19 @@ module.exports = bus.on('svgicons-normalize-to-svg-data', function(nStart=0xA000
 
         bus.at('svgicons2svgfont-normalize1000', ...svficonfiles).then(svgfontxml => {
             svgfontxml.replace(/<glyph\s+glyph-name="(.*?)"[\s\S]*?d="(.*?)"[\s\S]*?\/>/g, function(glyph, filehashcode, d){
+                let cache = bus.at('cache-svg-data');
                 if ( d ) {
-                    let rs = bus.at('cache-svg-data', filehashcode);
+                    let rs = cache.get(filehashcode);
                     if ( rs ) {
+                        let ihash = hash(d, true);
+                        rs.id = ihash.toString(36);                 // 按d属性重新计算id
                         rs.d = d;
-                        rs.unicode = (0xE000 + hash(d, true) % (0xFFFF-0xE000)).toString(16);  // 提取文件内容中glyph标签的d属性值，按d计算缓存用unicode
+                        rs.unicode = (0xE000 + ihash % (0xFFFF-0xE000)).toString(16);  // 提取文件内容中glyph标签的d属性值，按d计算unicode，最终字体数量通常几十个，冲突可能性极小极小
+
+                        cache.put(rs.id, Object.assign({}, rs));    // 重新按d属性计算id存入缓存,keywords复制引用 （缓存对象属性：id、d、unicode、keywords）
                     }
-                }else{
-                    let cache = bus.at('cache-svg-data');
-                    cache.remove(filehashcode);             // d属性没有内容，删除该缓存
                 }
+                cache.remove(filehashcode);                         // 原缓存key是根据输入文件计算，已存放最新对象，删除旧对象
             });
 
             fnResolve( bus.at('cache-svg-data') );

@@ -194,6 +194,16 @@ function Dom(queryResult){
 	}
 
 	// ---------------------------
+	// 是否含class $$('.xxxx').hasClass('js-active')
+	this.hasClass = function (name){
+        let rs;
+		name && (name = name.replace(/\./g, '')) && els.forEach(el => {
+            !rs && ( rs = IS_IE ? el.className.split(' ').indexOf(name) >= 0 : el.classList.contains(name) );
+		});
+        return rs;
+	}
+
+	// ---------------------------
 	// 删除class $$('.xxxx').removeClass('js-active')
 	this.removeClass = function (name){ 
 		name && (name = name.replace(/\./g, '')) && els.forEach(el => {

@@ -143,9 +143,9 @@ function genHtml(keys){
         let rs = cache.get(k);
         let name = rs.name || rs.keywords[0];
         let keywords = rs.keywords;
-        ary.push('<li style="width:100px;height:70px;text-align:center;float:left;background-color:beige;margin:1px;padding-top:10px;">');
+        ary.push('<li style="width:100px;height:70px;text-align:center;float:left;background-color:#0C9D58;color:white;margin:1px;padding-top:10px;">');
         ary.push(`<i class="icon ${name}"></i>`);
-        ary.push(`<br><span style="font-size:13px">${keywords.join('<br>')}</span>`);
+        ary.push(`<br><span style="font-size:13px;">${name}</span>`);
         ary.push('</li>');
     });
     ary.push('</ul></div>');

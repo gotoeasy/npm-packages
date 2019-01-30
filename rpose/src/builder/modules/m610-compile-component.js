@@ -64,6 +64,7 @@ function replaceCssClassName(oMapping, js){
             js = js.replace(new RegExp(`\\$\\$\\(("|')\\.?${k}("|')\\)`, 'ig'), `$$$('.${oMapping[k]}')`);              // 类名哈希化， $$('.my-class') -> $$('.xxxxxxxx')
             js = js.replace(new RegExp(`\\.addClass\\(("|')${k}("|')\\)`, 'ig'), `.addClass('${oMapping[k]}')`);        // 类名哈希化， .addClass('my-class') -> .addClass('xxxxxxxx')
             js = js.replace(new RegExp(`\\.removeClass\\(("|')${k}("|')\\)`, 'ig'), `.removeClass('${oMapping[k]}')`);  // 类名哈希化， .removeClass('my-class') -> .removeClass('xxxxxxxx')
+            js = js.replace(new RegExp(`\\.hasClass\\(("|')${k}("|')\\)`, 'ig'), `.hasClass('${oMapping[k]}')`);        // 类名哈希化， .hasClass('my-class') -> .hasClass('xxxxxxxx')
         }
     }
 

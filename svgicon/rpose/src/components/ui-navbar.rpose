@@ -1,0 +1,68 @@
+[view]
+<nav class="nav">
+    <a href="#" class="nav-icon">
+        <svg width="30" height="30">
+            <path d="M0,5 30,5" stroke="#ddd" stroke-width="5"/>
+            <path d="M0,14 30,14" stroke="#ddd" stroke-width="5"/>
+            <path d="M0,23 30,23" stroke="#ddd" stroke-width="5"/>
+        </svg>
+    </a>
+    <ul class="nav-link">
+        <li><a href="./index.html">Icons({$state.total})</a></li>
+        <li><a href="./favorites.html">Favorites({$state.favorites})</a></li>
+    </ul>
+</nav>
+
+[state]
+{
+    total: 0,
+    favorites: 0
+}
+
+[methods]
+{
+    init: e => {
+        rpose.on('update.count', (total, favorites)=>{
+            this.$state.total = total;
+            this.$state.favorites = favorites;
+            this.render();
+        });
+    }
+}
+
+[css]
+.nav{
+    background-color: #217346;
+    overflow: hidden;
+    height: 50px;
+}
+
+.nav-icon{
+    float: left;
+    display: block;
+    padding: 10px 20px 10px 20px;
+}
+
+.nav-icon:hover{
+    cursor: pointer;
+}
+
+.nav-link{
+    padding: 8px 0 0 0;
+    list-style: none;
+}
+
+.nav-link a{
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 0px 15px 5px 15px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-link a:hover{
+    background-color: #ddd;
+    color: #000;
+}

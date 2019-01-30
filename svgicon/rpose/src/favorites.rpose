@@ -1,0 +1,107 @@
+[view]
+<div>
+    <ui-navbar/>
+    <div class="warp">
+        <ul class="ul">
+        {% for (let i=0,icon; icon=$state.icons[i++]; ) { %}
+            <li index={i-1} onclick='fnClick' class={favorite: icon.favorite} style="color:white">
+                <svg-icon iconid={icon.id} d={icon.d}/>
+                {% for (let j=0,kw; kw=icon.keywords[j++]; ) { %}
+                <br><span>{kw}</span>
+                {% } %}
+            </li>
+        {% } %}
+        </ul>
+    </div>
+</div>
+
+[state]
+{
+    icons: [],
+    total: 1042,
+    favorites: 110
+}
+
+[actions]
+{
+    fnClick: e => {
+        let axios = require('axios');
+        let $$el = $$(e.target);
+        let index = $$el.attr('index');
+        let icon = this.$state.icons[index];
+        if ( icon.favorite ) {
+            axios.get('/removefavorites?id=' + icon.id).then(res=>{
+                this.$state.total = res.data.total;
+                this.$state.favorites = res.data.favorites;
+                rpose.at('update.count', this.$state.total, this.$state.favorites);
+            }).catch(console.error);
+            delete icon.favorite;
+            $$el.removeClass('favorite');
+        }else{
+            axios.get('/addfavorites?id=' + icon.id).then(res=>{
+                this.$state.total = res.data.total;
+                this.$state.favorites = res.data.favorites;
+                rpose.at('update.count', this.$state.total, this.$state.favorites);
+            }).catch(console.error);
+            icon.favorite = true;
+            $$el.addClass('favorite');
+        }
+
+        rpose.at('update.count', this.$state.total, this.$state.favorites);
+    }
+}
+
+[methods]
+{
+    init: () => {
+        rpose.on('window.onload', e => {
+            require('axios').get('/favorites').then(res => {
+                this.$state.icons = res.data.icons;
+                this.$state.total = res.data.total;
+                this.$state.favorites = res.data.favorites;
+                this.render();
+
+                rpose.at('update.count', this.$state.total, this.$state.favorites);
+            }).catch(console.error);
+        });
+    }
+}
+
+[mount]
+body
+
+[css]
+body{
+	margin: 0;
+    background-color: #F9F9F9;
+}
+
+.warp{
+    margin:5px 0 10px 20px;
+    display:block;
+}
+
+.warp > ul{
+    text-align:center;
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+.warp > ul > li{
+    width:100px;
+    height:70px;
+    text-align:center;
+    float:left;
+    background-color:#4FC08D;
+    margin:1px;
+    padding-top:10px;
+}
+
+.favorite{
+    background-color:#0C9D58 !important;
+}
+
+.warp > ul > li > span{
+    font-size:13px;
+}
