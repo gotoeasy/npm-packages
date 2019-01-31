@@ -2,7 +2,7 @@
 @gotoeasy/svgicon
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.9
 
 [main] // 入口文件
 index.js

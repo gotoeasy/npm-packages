@@ -1,50 +1,59 @@
+[api]
+prerender = loader // loader （旋转动画），loader-section （旋转动画加芝麻开门）
+
 [view]
-<div>
-    <ui-navbar/>
-    <div class="warp">
-        <ul class="ul">
-        {% for (let i=0,icon; icon=$state.icons[i++]; ) { %}
-            <li index={i-1} onclick='fnClick' class={favorite: icon.favorite} style="color:white">
-                <svg-icon iconid={icon.id} d={icon.d}/>
-                {% for (let j=0,kw; kw=icon.keywords[j++]; ) { %}
-                <br><span>{kw}</span>
-                {% } %}
-            </li>
-        {% } %}
-        </ul>
+<ui-layout>
+    <div slot="header">
+        <ui-navbar/>
     </div>
-</div>
+    <div slot="main">
+        <div class="warp">
+            <ul>
+            {% for (let i=0,icon; icon=$state.icons[i++]; ) { %}
+                <li iconid={icon.id} onclick='fnClick' favorite={icon.favorite||''} class="rpose-icon {'rpose-favorite': icon.favorite}">
+                    <svg-icon d={icon.d}/>
+                    {% for (let j=0,kw; kw=icon.keywords[j++]; ) { %}
+                    <br><span onclick="fnClickSpan" >{kw}</span>
+                    {% } %}
+                </li>
+            {% } %}
+            </ul>
+        </div>
+    </div>
+</ui-layout>
 
 [state]
 {
     icons: [],
-    total: 1042,
-    favorites: 110
+    total: 0,
+    favorites: 0
 }
 
 [actions]
 {
+    fnClickSpan: e => {
+        e.target.parentNode.click();
+    },
     fnClick: e => {
         let axios = require('axios');
         let $$el = $$(e.target);
-        let index = $$el.attr('index');
-        let icon = this.$state.icons[index];
-        if ( icon.favorite ) {
-            axios.get('/removefavorites?id=' + icon.id).then(res=>{
-                this.$state.total = res.data.total;
-                this.$state.favorites = res.data.favorites;
+        let iconid = $$el.attr('iconid');
+        let favorite = $$el.attr('favorite');
+        if ( favorite ) {
+            axios.get('/removefavorites?id=' + iconid).then(res=>{
+                this.$state.favorites--;
                 rpose.at('update.count', this.$state.total, this.$state.favorites);
             }).catch(console.error);
-            delete icon.favorite;
-            $$el.removeClass('favorite');
+            $$el.attr('favorite', '');
+            $$el.removeClass('rpose-favorite');
         }else{
-            axios.get('/addfavorites?id=' + icon.id).then(res=>{
-                this.$state.total = res.data.total;
-                this.$state.favorites = res.data.favorites;
+            axios.get('/addfavorites?id=' + iconid).then(res=>{
+                this.$state.favorites++;
                 rpose.at('update.count', this.$state.total, this.$state.favorites);
             }).catch(console.error);
-            icon.favorite = true;
-            $$el.addClass('favorite');
+
+            $$el.attr('favorite', 'true');
+            $$el.addClass('rpose-favorite');
         }
 
         rpose.at('update.count', this.$state.total, this.$state.favorites);
@@ -55,12 +64,29 @@
 {
     init: () => {
         rpose.on('window.onload', e => {
-            require('axios').get('/list').then(res => {
+            let url = location.href.indexOf('/favorites.html') > 0 ? '/favorites' : 'list';
+            require('axios').get(url).then(res => {
                 this.$state.icons = res.data.icons;
                 this.$state.total = res.data.total;
                 this.$state.favorites = res.data.favorites;
                 this.render();
 
+                rpose.at('update.count', this.$state.total, this.$state.favorites);
+                this.$state.icons = [];
+            }).catch(console.error);
+        });
+
+        rpose.on('search', searchkeys => {
+            require('axios').get('/search?key=' + searchkeys).then(res => {
+                this.$state.icons = [];
+                this.render();
+
+                this.$state.icons = res.data.icons;
+                this.$state.total = res.data.total;
+                this.$state.favorites = res.data.favorites;
+                this.render();
+
+                this.$state.icons = [];
                 rpose.at('update.count', this.$state.total, this.$state.favorites);
             }).catch(console.error);
         });
@@ -94,12 +120,18 @@ body{
     text-align:center;
     float:left;
     background-color:#4FC08D;
+    color:white;
     margin:1px;
     padding-top:10px;
 }
 
-.favorite{
+.hide{
+    display: none;
+}
+
+.rpose-favorite{
     background-color:#0C9D58 !important;
+    display: inline !important;
 }
 
 .warp > ul > li > span{

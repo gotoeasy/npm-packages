@@ -1,0 +1,31 @@
+[view]
+<div class='layout'>
+    <div class='layout-header'><slot name="header"/></div> 
+    <div class='layout-main'><slot name="main"/></div> 
+</div> 
+
+[less]
+body{
+	margin: 0;
+}
+
+.layout {
+    height: 100vh;
+    .display(flex);
+    .flex-direction(column);
+    overflow: hidden;
+}
+
+.layout-header {
+    height: 50px;
+    color: #fff;
+    .box-shadow(2px 2px 3px 0 #E6E6E6);
+    overflow: hidden;
+}
+
+.layout-main {
+    .calc(height, ~'100% - '50px);
+    .display(flex);
+    .flex-direction(row);
+    overflow-x: hidden;
+}

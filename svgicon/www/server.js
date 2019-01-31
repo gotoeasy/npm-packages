@@ -15,33 +15,82 @@ const server = http.createServer(async (req, res) => {
     let removefavorites = /^\/removefavorites$/i.test(oUrl.pathname);
     let list = /^\/list$/i.test(oUrl.pathname);
     let favorites = /^\/favorites$/i.test(oUrl.pathname);
+    let search = /^\/search$/i.test(oUrl.pathname);
 
-    if ( addfavorites || removefavorites || list || favorites ) {
+    if ( addfavorites || removefavorites || list || favorites || search ) {
 
         if ( addfavorites ) {
             let param = getQueryParam(oUrl.query);
             addFavorites( param.id );           // 地址格式 /addfavorites?id=_j2c084
-            res.end(JSON.stringify({}));
+
+            let total, favorites;
+            total = bus.at('cache-svg-data').keys().length;
+            favorites = bus.at('cache-favorites').keys().length;
+            res.end(JSON.stringify({total, favorites}));
             console.log('add favorites:', bus.at('cache-svg-data', param.id).keywords[0]);
         }else if ( removefavorites ) {
             let param = getQueryParam(oUrl.query);
             removeFavorites ( param.id );     // 地址格式 /removefavorites?_j2c084
-            res.end(JSON.stringify({}));
+
+            let total, favorites;
+            total = bus.at('cache-svg-data').keys().length;
+            favorites = bus.at('cache-favorites').keys().length;
+            res.end(JSON.stringify({total, favorites}));
             console.log('remove favorites:', bus.at('cache-svg-data', param.id).keywords[0]);
         }else if ( list ) {
             let cache = bus.at('cache-svg-data');
             let keys = cache.keys();
-            let rs = [];
-            keys.forEach(k => rs.push(cache.get(k)));
-            res.end( JSON.stringify(rs) )
-            console.log('query all icons', keys.length);
+
+            let icons=[], total, favorites;
+            keys.forEach(k => icons.push(cache.get(k)));
+
+            total = icons.length;
+            favorites = bus.at('cache-favorites').keys().length;
+            res.end( JSON.stringify({icons, total, favorites}) )
+            console.log('query all icons', icons.length);
         }else if ( favorites ) {
-            let cache = bus.at('cache-favorites');
+            let cache = bus.at('cache-svg-data');
+            let keys = bus.at('cache-favorites').keys();
+
+            let icons=[], total, favorites;
+            keys.forEach(k => {
+                let icon = cache.get(k);
+                if ( icon ) {
+                     (icon.favorite = true) && icons.push(icon);
+               }else{
+                    bus.at('cache-favorites').remove(k);
+                }
+            });
+
+            total = bus.at('cache-svg-data').keys().length;
+            favorites = icons.length;
+            res.end( JSON.stringify({icons, total, favorites}) )
+            console.log('query favorites icons', icons.length);
+        }else if ( search ) {
+            let param = getQueryParam(oUrl.query);
+            let searchkeys = param.key.toLowerCase().split('+');
+
+            let cache = bus.at('cache-svg-data');
             let keys = cache.keys();
-            let rs = [];
-            keys.forEach(k => rs.push(cache.get(k)));
-            res.end( JSON.stringify(rs) )
-            console.log('query favorites icons', keys.length);
+            let icons = [];
+            keys.forEach(k => {
+                let icon = cache.get(k);
+                let kws = icon.keywords.join(' ');
+                let match = true;
+                for ( let i=0; i<searchkeys.length; i++ ) {
+                    if ( kws.indexOf(searchkeys[i]) < 0 ) {
+                        match = false;
+                        break;
+                    }
+                }
+                match && icons.push(icon);
+            });
+
+            let total, favorites;
+            total = cache.keys().length;
+            favorites = bus.at('cache-favorites').keys().length;
+            res.end(JSON.stringify({total, favorites, icons}));
+            console.log('search icons:', icons.length);
         }
 
         res.writeHead(200, {'Content-Type': 'application/json'});

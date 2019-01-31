@@ -1,8 +1,8 @@
 [api]
-statekeys = iconid, d, color
+statekeys = d
 
 [view]
-<svg fill={$state.color||'white'} iconid={$state.iconid} width="20" height="20" viewBox="0 0 1000 1000">
+<svg fill="white" width="20" height="20" viewBox="0 0 1000 1000">
     <g transform="translate(0,1000) scale(-1, 1) rotate(180)">
         <path d={$state.d} />
     </g>
