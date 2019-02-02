@@ -15,8 +15,8 @@ module.exports = bus.on('编译LESS', function(lessIndexText){
 			if ( lessIndexText === undefined ) {
 				lessIndexText = File.exists(env.file.common_less) ? File.read(env.file.common_less) : '';
 			}
-		
-			let rs = await csjs.lessToCss(lessIndexText + less, {filename: env.file.common_less});
+			//let rs = await csjs.lessToCss(lessIndexText + less, {filename: srcFile+'.less'});    // 按源文件所在目录查找import文件（指定文件的方式）
+			let rs = await csjs.lessToCss(lessIndexText + less, {paths: File.path(srcFile)});       // 按源文件所在目录查找import文件（指定目录的方式）
 			console.debug(MODULE, 'less compile ok');
 			resolve( rs.css );
 		}catch(e){

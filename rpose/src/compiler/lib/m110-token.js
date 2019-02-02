@@ -214,8 +214,9 @@ function TokenParser(doc){
 			if ( reader.getCurrentChar() == '"' ) {
 				// 值由双引号包围
 				reader.skip(1);	// 跳过左双引号
-				while ( !reader.eof() && reader.getCurrentChar() != '"' && reader.getCurrentChar() != '\r' && reader.getCurrentChar() != '\n' ) {
-					val += reader.readChar();	// 只要不是【"】就算属性值
+				while ( !reader.eof() && reader.getCurrentChar() != '"' ) {
+                    let ch = reader.readChar();
+                    (ch != '\r' && ch != '\n') && (val += ch);	// 忽略回车换行，其他只要不是【"】就算属性值
 				}
 
 				if ( reader.eof() || reader.getCurrentChar() != '"' ) {
@@ -235,8 +236,9 @@ function TokenParser(doc){
 			}else if ( reader.getCurrentChar() == "'" ) {
 				// 值由单引号包围
 				reader.skip(1);	// 跳过左单引号
-				while ( !reader.eof() && reader.getCurrentChar() != "'" && reader.getCurrentChar() != '\r' && reader.getCurrentChar() != '\n' ) {
-					val += reader.readChar();	// 只要不是【'】就算属性值
+				while ( !reader.eof() && reader.getCurrentChar() != "'" ) {
+                    let ch = reader.readChar();
+                    (ch != '\r' && ch != '\n') && (val += ch);	// 忽略回车换行，其他只要不是【'】就算属性值
 				}
 
 				if ( reader.eof() || reader.getCurrentChar() != "'" ) {

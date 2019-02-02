@@ -1,6 +1,6 @@
 {
   "name": "rpose-theme-demo",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "dependencies": {
     "@gotoeasy/theme": "*"
   },
@@ -8,7 +8,6 @@
   "keywords": [
     "gotoeasy",
     "rpose",
-    "rpose theme",
     "theme",
     "demo"
   ],

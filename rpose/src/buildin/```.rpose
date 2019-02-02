@@ -30,7 +30,7 @@ optionkeys  = lang, height, $code    // $code非常特殊，编译期硬编码�
             let el = rpose.createDom(vnode, this); 
             if ( el && el.nodeType == 1 ) {
                 $$(el).addClass(this.$COMPONENT_ID);
-                this.$options.height ? $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:{this.$options.height}">${this.$options.$code}</code>`)
+                this.$options.height ? $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" style="max-height:${this.$options.height}">${this.$options.$code}</code>`)
                                      : $$(el).attr('innerHTML', `<code lang="${this.$options.lang}" class="hljs" >${this.$options.$code}</code>`);
             } 
             this.isInitRender = false;

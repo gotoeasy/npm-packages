@@ -187,20 +187,14 @@ function Dom(queryResult){
 				}
 			}else{
 				// 单纯的文本节点没有classList
-				name.split(/\s+/).forEach(nm => el.classList.contains(nm) || el.classList.add(nm));
+                let nms = name.split(/\s+/);
+                for ( let i=0,nm; nm=nms[i++]; ) {
+                    !el.classList.contains(nm) && el.classList.add(nm);
+                }
+			//	name.split(/\s+/).forEach(nm => !el.classList.contains(nm) || el.classList.add(nm));
 			}
 		});
 		return this;
-	}
-
-	// ---------------------------
-	// 是否含class $$('.xxxx').hasClass('js-active')
-	this.hasClass = function (name){
-        let rs;
-		name && (name = name.replace(/\./g, '')) && els.forEach(el => {
-            !rs && ( rs = IS_IE ? el.className.split(' ').indexOf(name) >= 0 : el.classList.contains(name) );
-		});
-        return rs;
 	}
 
 	// ---------------------------

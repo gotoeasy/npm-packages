@@ -19,10 +19,11 @@ module.exports = bus.on('编译SCSS', function(scssIndexText){
 				scssIndexText = File.exists(env.file.common_sass) ? File.read(env.file.common_sass) : '';
 			}
 			
-			// TODO 友好的出错信息提示
-			let rs = csjs.scssToCss(scssIndexText + scss, srcFile);
-			return rs.css;
+            let file = srcFile.replace(/rpose$/i, 'scss');
+            let includePaths = [File.path(srcFile)];
+			return csjs.scssToCss(scssIndexText + scss, {file, includePaths});
 		}catch(e){
+			// TODO 友好的出错信息提示
 			throw Err.cat(MODULE + 'compile scss failed', srcFile, e);
 		}
 	};

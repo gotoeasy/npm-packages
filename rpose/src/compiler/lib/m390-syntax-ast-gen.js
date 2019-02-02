@@ -101,6 +101,17 @@ console.debug(MODULE, src);
                         node.attrs.src = '%imagepath%' + imgname;
                     }
 
+                    // ----- 支持@if -----
+                    let hasIf = node.attrs && node.attrs['@if'] != undefined;
+                    if ( hasIf ) {
+                        let expr = node.attrs['@if'];
+                        expr.startsWith('{') && expr.endsWith('}') && (expr = expr.substring(1,expr.length-1));
+                        arySrc.push( 'if ( ' + expr + ') {' );
+                        delete node.attrs['@if'];
+                        hasCodeBlock = true;
+                    }
+                    // -------------------
+
 					let events = getDomEvents(node.attrs, isStdTag, this.$actionsKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
 					let attrs = attrsStringify(node, this.doc);							// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
 					let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
@@ -123,7 +134,11 @@ console.debug(MODULE, src);
 					str += `} );`;
 
 					arySrc.push( str );	// {t:'div', a:{...}, c:[...], e:{...}, m: 1}
-				}
+
+                    // ----- 支持@if -----
+                    hasIf && arySrc.push( '}' );
+               
+                }
 			}
 
 		}
@@ -264,7 +279,7 @@ function attrsStringify(node, doc){
 				let expr = '(' + unescapeAttrExpr(ary.join(' + ')) + ')';	// 把【\{】和【\}】替换回来
 
 				if ( k == 'class' ) {
-					kvs.push('"' + k + '": ' + classStrToObjectString(attrs[k], doc) );  // class="abc def" => {class:{abc:1, def:1}}
+					kvs.push('"' + k + '": ' + classStrToObjectString(attrs[k], doc) );  // class="abc def {bar:!bar}" => {class:{abc:1, def:1, bar:!bar}}
 				}else{
 					kvs.push('"' + k + '": ' + expr);
 				}
@@ -390,17 +405,15 @@ function classStrToObjectString(clas, doc){
             key = str.substring(0, idx).replace(/['"]/g, '');   // key
 
             val = str.substring(idx+1);
-            idx = val.indexOf(':');
-            if ( idx > 0 ) {
-                str = str.substring(idx+1);                     // 更新临时变量
-
-                val = val.substring(0, idx);
+            let idx2 = val.indexOf(':');
+            if ( idx2 > 0 ) {
+                val = val.substring(0, idx2);
                 val = val.substring(0, val.lastIndexOf(','));   // val
+                str = str.substring(idx + 1 + val.length + 1);                     // 更新临时变量
             }else{
                 str = '';
             }
-
-            oRs[bus.at('哈希样式类名', doc.file, key)] = '@(' + val + ')@';
+            oRs[bus.at('哈希样式类名', doc.file, key.trim())] = '@(' + val + ')@';
         }
 
         return '';
@@ -409,7 +422,7 @@ function classStrToObjectString(clas, doc){
 
 	let ary = clas.split(/\s/);
 	for ( let i=0; i<ary.length; i++) {
-		oRs[bus.at('哈希样式类名', doc.file, ary[i].trim())] = 1;
+		ary[i].trim() && (oRs[bus.at('哈希样式类名', doc.file, ary[i].trim())] = 1);
 	}
 
 	return JSON.stringify(oRs).replace(/('@|@'|"@|@")/g, '');
