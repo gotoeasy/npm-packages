@@ -76,7 +76,7 @@ function getThemeBtfFile() {
 }
 
 function getThemeBtfFileByPkg(themePkg) {
-	let ary = require('find-node-modules')({ cwd: __dirname, relative: false });
+	let ary = [ ...require('find-node-modules')({ cwd: __dirname, relative: false }), ...require('find-node-modules')({ relative: false })];
 	for ( let i=0,path,file; path=ary[i++]; ) {
 		file = path.replace(/\\/g, '/') + '/' + themePkg + '/theme.btf';
 		if ( File.exists(file) ) {

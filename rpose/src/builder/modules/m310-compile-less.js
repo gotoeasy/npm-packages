@@ -8,6 +8,11 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
 
 module.exports = bus.on('编译LESS', function(lessIndexText){
 
+	let node_modules = [...require('find-node-modules')({ cwd: process.cwd(), relative: false }), ...require('find-node-modules')({ cwd: __dirname, relative: false })];
+    let paths = [];
+    node_modules.forEach(p => paths.push(File.resolve(p, '..')));
+
+
 	let ptask = new PTask((resolve, reject, isBroken) => async function(less, srcFile){
 		try{
 			const env = bus.at('编译环境');
@@ -15,8 +20,9 @@ module.exports = bus.on('编译LESS', function(lessIndexText){
 			if ( lessIndexText === undefined ) {
 				lessIndexText = File.exists(env.file.common_less) ? File.read(env.file.common_less) : '';
 			}
-			//let rs = await csjs.lessToCss(lessIndexText + less, {filename: srcFile+'.less'});    // 按源文件所在目录查找import文件（指定文件的方式）
-			let rs = await csjs.lessToCss(lessIndexText + less, {paths: File.path(srcFile)});       // 按源文件所在目录查找import文件（指定目录的方式）
+
+            let includePaths = [File.path(srcFile), ...paths];  // 加入node-modules的上级目录作为查找路径，便于在代码中直接使用node-modules相对路径
+			let rs = await csjs.lessToCss(lessIndexText + less, {paths: includePaths});
 			console.debug(MODULE, 'less compile ok');
 			resolve( rs.css );
 		}catch(e){

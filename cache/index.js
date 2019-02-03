@@ -19,19 +19,20 @@ process.on('exit', e => {
     map.forEach(cache => cache.save(true))
 })
 
-function load(name, disableDiskCache) {
+function load(name, opts={}) {
     if ( name == null ) {
         return defaultCache;
     }
 
-    disableDiskCache && (name = hash(name));
+    opts.disableDiskCache && (name = hash(name));
 
     if ( map.has(name) ) {
         return map.get(name);
     }
 
-    let oCache = flatCache.load(name, os.homedir() + '/.gotoeasy/.cache');
-    oCache.disableDiskCache = disableDiskCache;
+    let cachePath = opts.path || (os.homedir() + '/.gotoeasy/.cache');
+    let oCache = flatCache.load(name, cachePath);
+    oCache.disableDiskCache = opts.disableDiskCache;
     oCache.put = (key, value) => oCache.setKey(key, value);
     oCache.remove = key => oCache.removeKey(key);
     oCache.get = (key, defaultValue) => {
@@ -39,7 +40,7 @@ function load(name, disableDiskCache) {
         return value !== undefined ? value : defaultValue;
     };
     oCache.fnSave = oCache.save;
-    oCache.save = yes => !disableDiskCache && oCache.fnSave(yes);
+    oCache.save = yes => !opts.disableDiskCache && oCache.fnSave(yes);
 
     map.set(name, oCache);
     return oCache;

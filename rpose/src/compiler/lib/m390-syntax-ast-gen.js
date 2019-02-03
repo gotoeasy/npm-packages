@@ -261,6 +261,16 @@ function attrsStringify(node, doc){
     // 含ref属性时，自动添加$context属性，避免组件对象上下文混乱，深度slot内的标签含ref属性时特需
     attrs.ref && (attrs.$context = '{=$this}');
 
+    // ----- TODO支持@show -----
+    let hasShow = node.attrs && node.attrs['@show'] != undefined;
+    let showExpr;
+    if ( hasShow ) {
+        showExpr = node.attrs['@show'];
+        delete node.attrs['@show'];
+    }
+    // -------------------
+    let hasClass = node.attrs && node.attrs['class'] != undefined;
+
 	for ( let k in attrs ) {
 		if ( (k.startsWith(options.ExpressionStart) && k.endsWith(options.ExpressionEnd)) || (k.startsWith(options.ExpressionUnescapeStart) && k.endsWith(options.ExpressionUnescapeEnd)) ) {
 			// 键名是表达式，是个单纯的属性键值对象 <tag {prop} />

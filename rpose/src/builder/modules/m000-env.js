@@ -84,8 +84,20 @@ function getConfPath(root, mapDefault, map, key){
 // TODO 提高性能
 function autoInstallLocalModules(...names){
     let ignores = ['@gotoeasy/theme', '@gotoeasy/pre-render'];
-    names.forEach(v => {
-        !ignores.includes(v) && !npm.isInstalled(v) && npm.install(v);
-    });
+
+	let node_modules = [ ...require('find-node-modules')({ cwd: __dirname, relative: false }), ...require('find-node-modules')({ cwd: process.cwd(), relative: false })];
+
+    for ( let i=0,name; name=names[i++]; ) {
+        if ( ignores.includes(name) ) continue;
+
+        let isInstalled = false;
+        for ( let j=0,dir; dir=node_modules[j++]; ) {
+            if ( File.isDirectoryExists( File.resolve(dir, name) ) ) {
+                isInstalled = true;
+                continue;
+            }
+        }
+        !isInstalled && npm.install(name);
+    }
 
 }
