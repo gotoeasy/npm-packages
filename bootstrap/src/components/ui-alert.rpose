@@ -1,0 +1,22 @@
+[api]
+optionkeys = type, style
+
+[view]
+<div class="alert {
+    'alert-primary': /^primary$/i.test(type),
+    'alert-secondary': /^secondary$/i.test(type),
+    'alert-success': /^success$/i.test(type),
+    'alert-danger': /^danger$/i.test(type),
+    'alert-warning': /^warning$/i.test(type),
+    'alert-info': /^info$/i.test(type),
+    'alert-dark': /^dark$/i.test(type)
+    }" style="{style}"><slot/></div>
+
+[options]
+{
+    type: 'primary'
+}
+
+[scss]
+@import "node_modules/bootstrap/scss/bootstrap-reboot";
+@import "node_modules/bootstrap/scss/alert";

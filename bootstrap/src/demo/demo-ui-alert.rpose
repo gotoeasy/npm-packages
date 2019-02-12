@@ -1,0 +1,25 @@
+[view]
+<div>
+    <ui-alert type="primary">A simple primary alert—check it out!</ui-alert>
+    <ui-alert type="secondary">A simple secondary alert—check it out!</ui-alert>
+    <ui-alert type="success">A simple success alert—check it out!</ui-alert>
+    <ui-alert type="danger">A simple danger alert—check it out!</ui-alert>
+    <ui-alert type="warning">A simple warning alert—check it out!</ui-alert>
+    <ui-alert type="info">A simple info alert—check it out!</ui-alert>
+    <ui-alert type="light">A simple light alert—check it out!</ui-alert>
+    <ui-alert type="dark">A simple dark alert—check it out!</ui-alert>
+
+```rpose 300px
+<ui-alert type="primary">A simple primary alert—check it out!</ui-alert>
+<ui-alert type="secondary">A simple secondary alert—check it out!</ui-alert>
+<ui-alert type="success">A simple success alert—check it out!</ui-alert>
+<ui-alert type="danger">A simple danger alert—check it out!</ui-alert>
+<ui-alert type="warning">A simple warning alert—check it out!</ui-alert>
+<ui-alert type="info">A simple info alert—check it out!</ui-alert>
+<ui-alert type="light">A simple light alert—check it out!</ui-alert>
+<ui-alert type="dark">A simple dark alert—check it out!</ui-alert>
+```
+</div>
+
+[mount]
+body

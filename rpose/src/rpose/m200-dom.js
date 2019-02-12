@@ -170,30 +170,37 @@ function Dom(queryResult){
 	// ---------------------------
 	// 添加class $$('.xxxx').addClass('js-active')
 	this.addClass= function (name){
-		name && (name = name.replace(/\./g, '')) && els.forEach(el => {
-			if ( !el ) return;
 
-			if (IS_IE){
-				// The classList property is not supported by IE9 and lower. IE11 still bug on classList, it does not support classList on SVG element
-				if (!el.className){
-					el.className = name;
-				}else{
-					var ary = el.className.split(' ');
-					if (ary.indexOf(name) >= 0) {
-						return;
-					}
-					ary.push(name);
-					el.className = ary.join(' ');
-				}
-			}else{
-				// 单纯的文本节点没有classList
+        if ( !name ) {
+            return this;
+        }
+
+        name = name.replace(/\./g, '');
+        for ( let i=0,el; i<els.length; i++ ) {
+            el = els[i];
+            if ( !el ) continue;
+
+            if (IS_IE){
+                // The classList property is not supported by IE9 and lower. IE11 still bug on classList, it does not support classList on SVG element
+                if (!el.className){
+                    el.className = name;
+                }else{
+                    var ary = el.className.split(' ');
+                    if (ary.indexOf(name) >= 0) {
+                        return this;
+                    }
+                    ary.push(name);
+                    el.className = ary.join(' ');
+                }
+            }else{
+                // 单纯的文本节点没有classList
                 let nms = name.split(/\s+/);
                 for ( let i=0,nm; nm=nms[i++]; ) {
                     !el.classList.contains(nm) && el.classList.add(nm);
                 }
-			//	name.split(/\s+/).forEach(nm => !el.classList.contains(nm) || el.classList.add(nm));
-			}
-		});
+            }
+        }
+
 		return this;
 	}
 

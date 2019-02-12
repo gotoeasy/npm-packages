@@ -26,11 +26,11 @@ function <%= $data['$componentName'] %>(options={}) {
     <% } %>
 
     <% if ( $data['statekeys'] != null ){ %>
-    // 组件默认数据状态值 （TODO：声明式简化实现数据双向绑定？）
+    // 组件默认数据状态值
     this.$state = <%= $data['state'] %>;
     rpose.extend(this.$state, options, this.$STATE_KEYS);       // 按属性接口克隆数据状态
     <% }else{ %>
-    // 组件默认数据状态值 （TODO：声明式简化实现数据双向绑定？）
+    // 组件默认数据状态值
     this.$state = <%= $data['state'] %>;
     <% } %>
 

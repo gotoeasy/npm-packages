@@ -1,0 +1,30 @@
+[view]
+<div class="warp">
+    <ui-badge type="primary" text="Danger"/>
+    <ui-badge type="secondary" text="Secondary"/>
+    <ui-badge type="success" text="Success"/>
+    <ui-badge type="danger" text="Danger"/>
+    <ui-badge type="warning" text="Warning"/>
+    <ui-badge type="info" text="Info"/>
+    <ui-badge type="light" text="Light"/>
+    <ui-badge type="dark" text="Dark"/>
+
+```rpose
+<ui-badge type="primary" text="Danger"/>
+<ui-badge type="secondary" text="Secondary"/>
+<ui-badge type="success" text="Success"/>
+<ui-badge type="danger" text="Danger"/>
+<ui-badge type="warning" text="Warning"/>
+<ui-badge type="info" text="Info"/>
+<ui-badge type="light" text="Light"/>
+<ui-badge type="dark" text="Dark"/>
+```
+</div>
+
+[mount]
+body
+
+[css]
+.warp span{
+   margin: 1px
+}

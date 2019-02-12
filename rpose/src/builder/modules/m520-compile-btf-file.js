@@ -27,21 +27,16 @@ module.exports = bus.on('编译源文件', function(){
 				return oResult;
 			}
 
-			if ( file.indexOf(':') < 0 ) {
-				let srcFile = bus.at('标签源文件', file);
-				if ( !File.exists(srcFile) ) {
-					throw new Err('component not found (tag = ' + file + ')');
-				}
-
-                let oParse = bus.at('解析源文件', file);
-                oResult = Object.assign( await parseBtfoParseument(oParse, file), {hashcode: oSrc.hashcode} );
-
-                cache.put(file, oResult);
-				return oResult;
+            let srcFile = bus.at('标签源文件', file);
+            if ( !File.exists(srcFile) ) {
+                throw new Err('component not found (tag = ' + file + ')');
             }
 
-			// TODO npm pkg
-			throw new Err('TODO npm pkg');
+            let oParse = bus.at('解析源文件', file);
+            oResult = Object.assign( await parseBtfoParseument(oParse, file), {hashcode: oSrc.hashcode} );
+
+            cache.put(file, oResult);
+            return oResult;
 		}catch(e){
 			throw Err.cat(MODULE + 'src compile failed', e);
 		}

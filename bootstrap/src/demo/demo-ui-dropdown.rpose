@@ -1,0 +1,21 @@
+[view]
+<div>
+    <ui-dropdown {$state} onclick="fnClickItem" type="primary"></ui-dropdown>
+</div>
+
+[state]
+{
+    text: 'Dropdown',
+    items: [{text: 'Action'}, {text: 'Another action'}, {text: 'Something else here'}, {divider: true}, {text: 'Separated link'}]
+}
+
+[actions]
+{
+    fnClickItem: item => {
+        console.info('点击了', item)
+    }
+}
+
+
+[mount]
+body

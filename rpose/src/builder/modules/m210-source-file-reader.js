@@ -33,7 +33,13 @@ const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastInd
     bus.on('源文件内容', function (){
 
         return function(file){
-            return map.get(file) || {};
+            if ( !map.has(file) ) {
+                // 是模块源码
+                let text = File.read(file);
+                let hashcode = hash(text);
+                map.set(file, {hashcode, text});
+            }
+            return map.get(file);
         }
 
     }());

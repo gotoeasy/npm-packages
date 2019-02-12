@@ -11,7 +11,7 @@ console.time('build')
 
 		try{
 		    let files = bus.at('源文件清单');
-			let tag = bus.at('默认标签名', srcFile);  // TODO 标签全名
+			let tagpkg = bus.at('标签全名', srcFile);
 
 			if ( bus.at('是否页面源文件', srcFile) ) {
 				bus.at('删除已生成的页面代码文件', srcFile);
@@ -42,7 +42,7 @@ console.time('build')
 					}
 				}
 
-				if ( allrequires.includes(tag) ) {
+				if ( allrequires.includes(tagpkg) ) {
 					bus.at('查找页面依赖组件', file, true);							// 异步任务重新查找页面依赖组件
 					writePages.push( bus.at('输出页面代码文件', file) );
 				}

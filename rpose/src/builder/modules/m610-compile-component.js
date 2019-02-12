@@ -10,8 +10,15 @@ module.exports = bus.on('编译组件', function(){
 	return async function(fileOrTag){
 
         let file = fileOrTag.endsWith('.rpose') ? fileOrTag : bus.at('标签源文件', fileOrTag);
+        if ( !File.exists(file) ) {
+            throw new Err('component not found (tag = ' + fileOrTag + ')');
+        }
+//console.info(MODULE, '----------compile componennt--------------', fileOrTag);
+//console.info(MODULE, '----------file--------------', file);
         
-        let cache = bus.at('缓存', 'compile-component');      // 指定名的缓存对象
+        let pkgname = bus.at('源文件所在模块', file).replace('/', '#');
+        let name = pkgname ? ('compile-component_' + pkgname) : 'compile-component';
+        let cache = bus.at('缓存', name);      // 指定名的缓存对象
         let oResult = cache.get(file);
         let oSrc = bus.at('源文件内容', file);
         if ( oResult && oResult.hashcode === oSrc.hashcode ) {     // TODO 考虑配置因素
@@ -19,35 +26,30 @@ module.exports = bus.on('编译组件', function(){
         }
 
         oResult = {hashcode: oSrc.hashcode};
-        cache.put(file, oResult);
 
         try{
 			let env = bus.at('编译环境');
             let fnTmpl = bus.at('编译模板JS');
 
-			if ( fileOrTag.endsWith('.rpose') || fileOrTag.indexOf(':') < 0 ) {
-				if ( !File.exists(file) ) {
-					throw new Err('component not found (tag = ' + fileOrTag + ')');
-				}
+            if ( !File.exists(file) ) {
+                throw new Err('component not found (tag = ' + fileOrTag + ')');
+            }
 
-                let oCompile = await bus.at('编译源文件', file);
-                oCompile.imagepath = bus.at('页面图片相对路径', file);
-				let js = fnTmpl(oCompile);
-                js = replaceCssClassName(oCompile.mapping, js);
+            let oCompile = await bus.at('编译源文件', file);
+            oCompile.imagepath = bus.at('页面图片相对路径', file);
+            let js = fnTmpl(oCompile);
+            js = replaceCssClassName(oCompile.mapping, js);
 
-                oResult.js = js;
-                oResult.css = oCompile.css;
-                oResult.requires = oCompile.requires;
+            oResult.js = js;
+            oResult.css = oCompile.css;
+            oResult.requires = oCompile.requires;
+//console.info(MODULE, '----------requires--------------', oResult.requires)
 
-let to = env.path.build_temp + '/' + bus.at('默认标签名', file) + '.js';		// 假定组件都编译到%build_temp%目录
+let to = env.path.build_temp + '/' + bus.at('组件目标文件名', file) + '.js';		// 假定组件都编译到%build_temp%目录
 !env.release && await File.writePromise(to, await require('@gotoeasy/csjs').formatJs(js));
 
-				return oResult;
-
-			}else{
-				// TODO npm package
-				throw new Err('TODO npm pkg');
-			}
+            cache.put(file, oResult);
+            return oResult;
 
 		}catch(e){
 			// console.info(MODULE, '------------------------', file)

@@ -93,9 +93,15 @@ async function pageJs(allrequires, file){
 function getSrcRegisterComponents(allrequires){
 	try{
 		let obj = {};
-		for ( let i=0,tagpkg, key; tagpkg=allrequires[i++]; ) {
+		for ( let i=0,tagpkg,key,file; tagpkg=allrequires[i++]; ) {
 			key = "'" + tagpkg + "'";
-			obj[key] = bus.at('组件类名', tagpkg);
+
+            file = bus.at('标签源文件', tagpkg);
+            if ( !File.exists(file) ) {
+                throw new Err('component not found (tag = ' + tagpkg + ')');
+            }
+
+			obj[key] = bus.at('组件类名', file);
 		}
 
 		return `rpose.registerComponents(${JSON.stringify(obj).replace(/"/g,'')});`;

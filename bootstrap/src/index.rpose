@@ -1,0 +1,29 @@
+[view]
+<div class="demo">
+    <ui-dropdown type="primary" {$state} onclick="click"/>
+</div>
+
+[state]
+{
+    text: '组件例子',
+    items: [
+            { text: 'ui-alert',         page: 'demo/demo-ui-alert.html' }
+           ,{ text: 'ui-badge',         page: 'demo/demo-ui-badge.html' }
+           ,{ text: 'ui-breadcrumb',    page: 'demo/demo-ui-breadcrumb.html' }
+           ,{ text: 'ui-button',        page: 'demo/demo-ui-button.html' }
+           ,{ text: 'ui-dropdown',      page: 'demo/demo-ui-dropdown.html' }
+          ]
+}
+
+[actions]
+function click(item){
+    location.href = item.page;
+}
+
+[mount]
+body
+
+[css]
+.demo{
+    margin: 20px;
+}

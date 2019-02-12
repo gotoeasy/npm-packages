@@ -1,0 +1,33 @@
+{
+  "name": "@gotoeasy/bootstrap",
+  "version": "0.0.3",
+  "dependencies": {
+    "bootstrap": "^4.2.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "rpose base components that extend bootstrap",
+  "keywords": [
+    "gotoeasy",
+    "rpose",
+    "rpose components",
+    "rpose ui",
+    "bootstrap",
+    "components",
+    "ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/bootstrap/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}

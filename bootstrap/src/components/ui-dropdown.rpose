@@ -1,0 +1,42 @@
+[api]
+optionkeys = text, onclick, type
+statekeys  = items, disabled
+
+[view]
+<div class="dropdown">
+    <ui-button type="dropdown {type}" onclick="fnToggle" disabled={disabled}>{text}</ui-button>
+    <div class="dropdown-menu {show: this.$state.items.length && $state.show}">
+    {% for(let i=0,item; item=$state.items[i++]; ){ %}
+        <div @if={item.line} class="dropdown-divider"></div>
+        <a @if={!item.line} class="dropdown-item" href="javascript:void(0)" onclick="fnClickItem" index={i}>{item.text}</a>
+    {% } %}
+    </div>
+</div>
+
+
+[state]
+{
+    text: 'Dropdown',
+    items: []
+}
+
+[actions]
+{
+    fnToggle: e => {
+        let index = $$(e.target).attr('index') - 1;
+        this.$state.show = !this.$state.show;
+        this.render();
+    },
+    fnClickItem: e => {
+       // e.preventDefault();
+        let fn = this.$options.onclick;
+        fn && fn(this.$state.items[$$(e.target).attr('index')-1]);
+
+        this.$state.show = !this.$state.show;
+        this.render();
+    }
+}
+
+[scss]
+@import "node_modules/bootstrap/scss/bootstrap-reboot";
+@import "node_modules/bootstrap/scss/dropdown";

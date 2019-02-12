@@ -1,47 +1,35 @@
 [name] // 项目名 （必填）
-@gotoeasy/rpose-cli
+@gotoeasy/bootstrap
 
 [version] // 版本号 （必填）
-0.0.15
+0.0.3
 
 
 
 [main] // 入口文件
-index.js
-
-[bin] // cli命令
-rpose = bin/rpose
-rp = bin/rpose
 
 [dependencies] // 依赖库
-@gotoeasy/rpose = *
-commander = *
-chalk = *
-inquirer = *
+bootstrap = ^4.2.1
 
 [devDependencies] // 开发依赖库
-@gotoeasy/rpose = *
-commander = *
-chalk = *
-inquirer = *
-
-[description] // 描述
-rpose-cli
-
-[keywords] // 检索关键字，多个关键字用半角逗号分隔
-rpose, rpose-cli
 
 [scripts] // 脚本命令
 test = echo "Error: no test specified" && exit 1
+
+[description] // 描述
+rpose base components that extend bootstrap
+
+[keywords] // 检索关键字，多个关键字用半角逗号分隔
+gotoeasy, rpose, rpose components, rpose ui, bootstrap, components, ui
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
-[homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/rpose-cli/README.md
+[homepage] // 主页
+https://github.com/gotoeasy/npm-packages/blob/master/bootstrap/README.md
 
-[bugs] // BUG提交地址，github项目会自动识别设定
+[bugs] // BUG提交地址
 url = https://github.com/gotoeasy/npm-packages/issues
 
 [author] // 作者信息

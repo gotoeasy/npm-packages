@@ -1,0 +1,56 @@
+[view]
+<div class="demo">
+    <ui-button>Default</ui-button>
+    <ui-button type="primary">Primary</ui-button>
+    <ui-button type="secondary">Secondary</ui-button>
+    <ui-button type="success">Success</ui-button>
+    <ui-button type="danger">Danger</ui-button>
+    <ui-button type="warning">Warning</ui-button>
+    <ui-button type="info">Info</ui-button>
+    <ui-button type="light">Light</ui-button>
+    <ui-button type="dark">Dark</ui-button>
+    <ui-button type="link">Link</ui-button>
+
+```rpose 300px
+    <ui-button>Default</ui-button>
+    <ui-button type="primary">Primary</ui-button>
+    <ui-button type="secondary">Secondary</ui-button>
+    <ui-button type="success">Success</ui-button>
+    <ui-button type="danger">Danger</ui-button>
+    <ui-button type="warning">Warning</ui-button>
+    <ui-button type="info">Info</ui-button>
+    <ui-button type="light">Light</ui-button>
+    <ui-button type="dark">Dark</ui-button>
+
+    <ui-button type="link">Link</ui-button>
+```
+<br>
+<br>
+
+    <ui-button type="primary large">Primary</ui-button>
+    <ui-button type="secondary small">Secondary</ui-button>
+
+```rpose 300px
+    <ui-button type="primary large">Primary</ui-button>
+    <ui-button type="secondary small">Secondary</ui-button>
+```
+<br>
+<br>
+
+    <ui-button type="primary block">Block level button</ui-button>
+    <ui-button type="secondary block">Block level button</ui-button>
+
+```rpose 300px
+    <ui-button type="primary block">Block level button</ui-button>
+    <ui-button type="secondary block">Block level button</ui-button>
+```
+
+</div>
+
+[mount]
+body
+
+[css]
+.demo button{
+    margin:2px
+}

@@ -1,0 +1,7 @@
+[view]
+<div>
+    <ui-breadcrumb></ui-breadcrumb>
+</div>
+
+[mount]
+body

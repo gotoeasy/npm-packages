@@ -12,7 +12,7 @@ module.exports = bus.on('查找页面依赖组件', function(){
 			let oSetAllRequires = new Set(), oStatus = {};
 			let oCompile = await bus.at('编译源文件', srcFile);
 			let requires = oCompile.requires || [];
-//console.error(MODULE, '------------requires------------', requires);
+//console.info(MODULE, '------------requires------------', requires);
 			for ( let i=0,tagpkg; tagpkg=requires[i++]; ) {
 				await addRefComponent(tagpkg, oSetAllRequires, oStatus);
 			}
@@ -23,12 +23,12 @@ module.exports = bus.on('查找页面依赖组件', function(){
 			let tag = bus.at('默认标签名', srcFile);
 			!allrequires.includes(tag) && allrequires.push( tag ); // 最后加入本页面标签
 			
-			console.debug(MODULE, srcFile, '\n    allrequires', allrequires);
+//console.info(MODULE, srcFile, '\n    allrequires', allrequires);
 
 	
 			// 等待关联组件全部编译完成
 			let ary = [];
-			allrequires.forEach( tagpkg => ary.push( bus.at('编译组件', tagpkg) ) );
+			allrequires.forEach( tagpkg => ary.push( bus.at('编译组件', tagpkg )) );
 			await Promise.all( ary );
 
 			resolve( allrequires );

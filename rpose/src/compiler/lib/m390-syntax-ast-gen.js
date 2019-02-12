@@ -101,6 +101,17 @@ console.debug(MODULE, src);
                         node.attrs.src = '%imagepath%' + imgname;
                     }
 
+                    // ----- 支持@import -----
+					let imp = node.attrs && node.attrs['@import'] || '';
+                    if ( imp ) {
+                        let pkgname = imp.split(':');    // TODO
+                        let pkg = pkgname[0];
+                        bus.at('自动安装', pkg);
+                        delete node.attrs['@import'];
+                        bus.at('编译模块组件', pkg);
+                    }
+                    // -------------------
+
                     // ----- 支持@if -----
                     let hasIf = node.attrs && node.attrs['@if'] != undefined;
                     if ( hasIf ) {
@@ -114,16 +125,21 @@ console.debug(MODULE, src);
 
 					let events = getDomEvents(node.attrs, isStdTag, this.$actionsKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
 					let attrs = attrsStringify(node, this.doc);							// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
-					let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
+				//	let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
 					let cnt = ++this.$counter;
 
 
-					let tagpkg = npmPkg ? (tag + ':' + npmPkg) : tag;					// 标签全名
+                    let tagpkg = imp ? (imp.indexOf(':') > 0 ? imp : (imp + ':' + tag)) : tag; // 标签全名
+                    if ( !isStdTag && !imp && this.doc.file.indexOf('/node_modules/') > 0 ) {        // 引用模块内部组件
+                        let ary = bus.at('标签全名', this.doc.file).split(':');
+                        ary[1] = tag;
+                        tagpkg = ary.join(':');
+                    }
 					!isStdTag && tagSet.add( tagpkg );
 
 					let childSrc = node.children && node.children.length ? this.parseChildren(node.children, tagSet, false, isSvgTag, slotNmaes) : null;
 
-					let str = `${aryNm}.push( {t: '${tag}'`;							// 一定有标签名，其他可以没有
+					let str = `${aryNm}.push( {t: '${tagpkg}'`;							// 一定有标签名，其他可以没有
 					events && (str += `, e: ${events}` );
 					attrs && (str += `, a: ${attrs}` );
 					childSrc && (str += `, c: ${childSrc}` );
@@ -259,17 +275,8 @@ function attrsStringify(node, doc){
 	let staticAttrs = true;
 
     // 含ref属性时，自动添加$context属性，避免组件对象上下文混乱，深度slot内的标签含ref属性时特需
+    attrs['@ref'] && ((attrs.ref = attrs['@ref']) > delete attrs['@ref'] );     // 支持@ref属性，转换为ref
     attrs.ref && (attrs.$context = '{=$this}');
-
-    // ----- TODO支持@show -----
-    let hasShow = node.attrs && node.attrs['@show'] != undefined;
-    let showExpr;
-    if ( hasShow ) {
-        showExpr = node.attrs['@show'];
-        delete node.attrs['@show'];
-    }
-    // -------------------
-    let hasClass = node.attrs && node.attrs['class'] != undefined;
 
 	for ( let k in attrs ) {
 		if ( (k.startsWith(options.ExpressionStart) && k.endsWith(options.ExpressionEnd)) || (k.startsWith(options.ExpressionUnescapeStart) && k.endsWith(options.ExpressionUnescapeEnd)) ) {

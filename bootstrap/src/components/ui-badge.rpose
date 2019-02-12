@@ -1,0 +1,23 @@
+[api]
+optionkeys = type, text, style
+
+[view]
+<span class="badge {
+    'badge-primary': /^primary$/i.test(type),
+    'badge-secondary': /^secondary$/i.test(type),
+    'badge-success': /^success$/i.test(type),
+    'badge-danger': /^danger$/i.test(type),
+    'badge-warning': /^warning$/i.test(type),
+    'badge-info': /^info$/i.test(type),
+    'badge-dark': /^dark$/i.test(type)
+    }" style="{style}">{text}</span>
+
+[options]
+{
+    text: '',
+    type: 'primary'
+}
+
+[scss]
+@import "node_modules/bootstrap/scss/bootstrap-reboot";
+@import "node_modules/bootstrap/scss/badge";

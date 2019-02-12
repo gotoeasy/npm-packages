@@ -1,0 +1,10 @@
+[path]
+src                 : src
+build               : build
+
+[theme] // 样式风格包
+rpose-theme-demo
+
+[prerender] // 预渲染包
+@gotoeasy/pre-render
+

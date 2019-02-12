@@ -1,0 +1,39 @@
+[api]
+optionkeys = onclick, type, style
+statekeys  = disabled
+
+[view]
+<button type="button" class="btn {
+    'btn-primary': /primary/i.test(type),
+    'btn-secondary': /secondary/i.test(type),
+    'btn-success': /success/i.test(type),
+    'btn-danger': /danger/i.test(type),
+    'btn-warning': /warning/i.test(type),
+    'btn-info': /info/i.test(type),
+    'btn-dark': /dark/i.test(type),
+    'btn-link': /link/i.test(type),
+
+    'btn-lg': /large/i.test(type),
+    'btn-sm': /small/i.test(type),
+
+    'btn-block': /block/i.test(type),
+
+    'dropdown-toggle': /dropdown/i.test(type)
+    }"
+    style={style}
+    disabled={disabled}
+    onclick={onclick}><slot/></button>
+
+[options]
+{
+    type: 'primary'
+}
+
+[scss]
+@import "node_modules/bootstrap/scss/bootstrap-reboot";
+@import "node_modules/bootstrap/scss/buttons";
+
+.dropdown-toggle {
+  // 下拉按钮效果使用
+  @include caret;
+}

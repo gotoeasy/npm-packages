@@ -16,32 +16,20 @@ bus.on('是否页面源文件', function(){
 }());
 
 
-
-
-
-bus.on('组件目标JS文件名', function(){
+bus.on('组件目标文件名', function(){
 
 	return function(srcFile){
 		let env = bus.at('编译环境');
 		if ( srcFile.startsWith(env.path.src_buildin) ) {
-			return srcFile.substring(0, srcFile.length-6) + '.js';  // buildin
+			return '$buildin/' + File.name(srcFile);  // buildin
 		}
-		return env.path.build_temp + srcFile.substring(env.path.src.length, srcFile.length-6) + '.js'; 
+
+        let tagpkg = bus.at('标签全名', srcFile);   // @aaa/bbb:ui-btn
+        return tagpkg.replace(':', '/');
 	};
 
 }());
 
-bus.on('组件目标CSS文件名', function(){
-
-	return function(srcFile){
-		let env = bus.at('编译环境');
-		if ( srcFile.startsWith(env.path.src_buildin) ) {
-			return srcFile.substring(0, srcFile.length-6) + '.css';  // buildin
-		}
-		return env.path.build_temp + srcFile.substring(env.path.src.length, srcFile.length-6) + '.css'; 
-	};
-
-}());
 
 bus.on('页面目标JS文件名', function(){
 
@@ -91,57 +79,88 @@ bus.on('标签源文件', function(){
         if ( tag.endsWith('.rpose') ) {
             return tag; // 已经是文件
         }
+        
+        if ( tag.indexOf(':') > 0 ) {
+            // TODO imp含版本号或标签
+            let ary = tag.split(':');
+            let oPkg = bus.at('模块组件信息', ary[0]);
+            let files = oPkg.files;
+            let name = '/' + ary[1] + '.rpose';
+            for ( let i=0,file; file=files[i++]; ) {
+                if ( file.endsWith(name) ) {
+                    return file;
+                }
+            }
 
-		let files = bus.at('源文件清单');
-		let name = '/' + tag + '.rpose';
-		for ( let i=0,file; file=files[i++]; ) {
-			if ( file.endsWith(name) ) {
-				return file;
-			}
-		}
+        }else{
+            let files = bus.at('源文件清单');
+            let name = '/' + tag + '.rpose';
+            for ( let i=0,file; file=files[i++]; ) {
+                if ( file.endsWith(name) ) {
+                    return file;
+                }
+            }
+        }
 	};
 
 }());
 
 bus.on('标签全名', function(){
 
-	return (tag, pkg) => {
-		return pkg ? (tag + ':' + pkg) : tag;
-	};
+	return file => {
+
+		if ( file.endsWith('```.rpose') ) {
+			return '$BuildIn$_' + hash(File.name(file));  // 内置的【```.rpose】特殊处理
+		}
+
+        let tagpkg = '';
+        let idx = file.indexOf('/node_modules/');
+        if ( idx > 0 ) {
+            let tmp = file.substring(idx + 14);                                     // xxx/node_modules/@aaa/bbb/xxxxxx => @aaa/bbb/xxxxxx
+            let npmpkg;
+            if ( tmp.startsWith('@') ) {
+                npmpkg = tmp.substring(0, tmp.indexOf('/', tmp.indexOf('/')+1));    // @aaa/bbb/xxxxxx => @aaa/bbb
+            }else{
+                npmpkg = tmp.substring(0, tmp.indexOf('/'));                        // bbb/xxxxxx => bbb
+            }
+            tagpkg = npmpkg + ':' + File.name(file);
+        }else{
+            tagpkg = File.name(file);
+        }
+
+        return tagpkg;
+    };
 
 }());
 
 
 bus.on('组件类名', function(){
 
-	return (tag, pkg='') => {
+	return file => {
 
-		if ( tag === '```' ) {
-			return '$BuildIn$_' + hash(tag);  // buildin 特殊处理
-		}
-
-		// ui-tag
-		// ui-tag:def-gh.xyz@1.2.3
-		// ui-tag:@abc/def-gh.xyz@1.2.3
-		let tagpkg = bus.at('标签全名', tag, pkg);
-
-		let ary = tagpkg.split(':');
-		let sTag = ('-' + ary[0]).split('-').map( s => s.substring(0,1).toUpperCase()+s.substring(1) ).join(''); // abc-def => AbcDef
-		if ( tagpkg.indexOf(':') < 0 ) {
-			// (ui-tag) => UiTag
-			return sTag;
-		}
-
-
-		let sPkg = ary[1].replace(/@/g, '$').replace(/\//g, '_-').replace(/\./g, '_');
-		sPkg && ( sPkg = ('-'+sPkg).split('-').map( s => s.substring(0,1).toUpperCase()+s.substring(1) ).join('') ); // @abc/def-gh.xyz@1.2.3 => $abc_DefGh_xyz$1_2_3
-		// (ui-tag, abc-def@0.1.2) => UiTag__AbcDef$0_1_2
-		// (ui-tag, @abc/def-gh.xyz@1.2.3) => UiTag__$abc_DefGh_xyz$1_2_3
-		return sTag + '__' + sPkg;
-	}
+        let tagpkg = bus.at('标签全名', file);  // xxx/node_modules/@aaa/bbb/ui-abc.rpose => @aaa/bbb:ui-abc
+        tagpkg = tagpkg.replace(/[@\/]/g, '$').replace(/\./g, '_').replace(':', '__-');     // @aaa/bbb:ui-abc => $aaa$bbb__-ui-abc
+		tagpkg = ('-'+tagpkg).split('-').map( s => s.substring(0,1).toUpperCase()+s.substring(1) ).join('');  // @abc/def-gh.xyz@1.2.3 => $abc_DefGh_xyz$1_2_3
+        return tagpkg;
+    };
 
 }());
 
+
+bus.on('源文件所在模块', function(){
+
+	return file => {
+
+        let name = '';
+        if ( file.indexOf('/node_modules/') > 0 ) {
+            let tmp = file.substring(file.indexOf('/node_modules/') + 14);    // xxx/node_modules/@aaa/bbb/xxxxxx => @aaa/bbb/xxxxxx
+            let ary = tmp.split('/');
+            name = tmp.startsWith('@') ? (ary[0] + '/' + ary[1]) : ary[0];
+        }
+        return name;
+    };
+
+}());
 
 
 bus.on('页面编译状态', function(){
@@ -157,8 +176,14 @@ bus.on('页面图片相对路径', function(){
 
 	return (srcFile) => {
 		let env = bus.at('编译环境');
-        
+
         let pathLen = srcFile.startsWith(env.path.src) ? env.path.src.length : env.path.src_buildin.length;
+        if ( srcFile.indexOf('/node_modules/') > 0 ) {
+            let tmp = srcFile.substring(srcFile.indexOf('/node_modules/') + 14);    // xxx/node_modules/@aaa/bbb/xxxxxx => @aaa/bbb/xxxxxx
+            tmp.startsWith('@') && (tmp = tmp.substring(tmp.indexOf('/') + 1));     // @aaa/bbb/xxxxxx => bbb/xxxxxx
+            tmp = tmp.substring(tmp.indexOf('/'));                                  // bbb/xxxxxx => xxxxxx
+            pathLen = srcFile.length - tmp.length;
+        }
         let ary = srcFile.substring(pathLen).split('/');
         return '../'.repeat(ary.length-2) + 'images/';
 	};
@@ -194,7 +219,13 @@ bus.on('计算页面哈希', function(){
         // 页面关联的全部组件文件，去除重复后排序
         let fileSet = new Set();
         fileSet.add(file);
-        allrequires.forEach(tag => fileSet.add( bus.at('标签源文件', tag) ));
+        for ( let i=0,tag,file; tag=allrequires[i++]; ) {
+            file = bus.at('标签源文件', tag);
+            if ( !File.exists(file) ) {
+                throw new Err('component not found (tag = ' + tag + ')');
+            }
+            fileSet.add( file );
+        }
         let files = [...fileSet];
         files.sort();
 

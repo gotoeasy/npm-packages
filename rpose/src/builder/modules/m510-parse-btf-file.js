@@ -95,7 +95,7 @@ function editBtfDocument(doc, file, fileContent){
 
 	// API块特殊处理
 	let oApi			= getApiObject( doc.getMap('api') );
-	oApi.rposepkg		= oApi.rposepkg || oApi['rpose-pkg'];
+//	oApi.rposepkg		= oApi.rposepkg || oApi['rpose-pkg'];
 	oApi.optionkeys		= oApi.optionkeys || oApi['option-keys'];
 	oApi.statekeys		= oApi.statekeys || oApi['state-keys'];
 	oApi.prerender		= oApi.prerender || oApi['pre-render'] || '';
@@ -110,9 +110,8 @@ function editBtfDocument(doc, file, fileContent){
 
     //doc.singleton		= toBoolean(oApi.singleton)						// 单例组件
 
-	doc.$componentName	= bus.at('组件类名', doc.tag, doc.rposepkg);		// 组件类名
-    doc.tagpkg			= bus.at('标签全名', doc.tag, doc.rposepkg);
-
+	doc.$componentName	= bus.at('组件类名', file);		                // 组件类名
+    doc.tagpkg			= bus.at('标签全名', file);
 	return doc;
 }
 
