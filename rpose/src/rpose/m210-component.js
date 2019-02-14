@@ -75,6 +75,10 @@ function domVnode(el, vnode){
 
 // 本方法调用的起点是组件的render方法
 function createDom(vnode, $thisContext) {
+
+    if ( !vnode ) {
+        return; // 不显示的家伙
+    }
 	
 	let el, $$el;
 	if (vnode.t) {
@@ -104,7 +108,12 @@ function createDom(vnode, $thisContext) {
 
 				// 组件有ref属性时，建立关联关系 【refs:{ c:{组件}， e:{节点} }】
 				cls && $$el.addClass(vnode.r = cls);			// r=cls. 查找时，通过引用名查得cls，由cls查得DOM，由DOM查得单个或复合虚拟节点，再遍历比较虚拟节点的r可找到对应的组件虚拟节点，最后拿到组件对象
-			}
+
+                // 组件创建初期，根据@show设定hidden样式
+                if ( vnode.a && vnode.a['@show'] !== undefined ) {
+                    vnode.a['@show'] ? $$el.removeClass('hidden') : $$el.addClass('hidden');
+                }            
+            }
 
 		} else {
 			// <script>标签特殊处理，创建<script>标签直接加到head中
@@ -132,7 +141,7 @@ function createDom(vnode, $thisContext) {
 						$$el.addClass(vnode.r = cls);	// r=cls，查找时，通过引用名查得cls，由cls查得DOM
 
                         // TODO 挂载前也能取。。。
-					}
+                    }
 					$$el.attr(k, vnode.a[k]);
 				}
 			}

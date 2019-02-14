@@ -24,6 +24,9 @@ module.exports = bus.on('编译页面CSS', function(){
 				removeComments: true
 			};
 
+            // 页面总是添加样式 hidden
+            css += ' .hidden{display: none !important;}';   // TODO 配置文件管理
+
 			if ( env.release ) {
 				rs = await csjs.miniCss(css, opt);
 			}else{

@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.0.25
+0.0.26
 
 
 
@@ -20,7 +20,6 @@ uglify-es = *
 
 find-node-modules = *
 less = *
-lesshat = *
 node-sass = *
 
 browserslist = *

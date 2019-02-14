@@ -1,5 +1,6 @@
 const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
+const hash = require('@gotoeasy/hash');
 const File = require('@gotoeasy/file');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + '] ';
@@ -16,9 +17,13 @@ module.exports = bus.on('编译组件', function(){
 //console.info(MODULE, '----------compile componennt--------------', fileOrTag);
 //console.info(MODULE, '----------file--------------', file);
         
-        let pkgname = bus.at('源文件所在模块', file).replace('/', '#');
-        let name = pkgname ? ('compile-component_' + pkgname) : 'compile-component';
-        let cache = bus.at('缓存', name);      // 指定名的缓存对象
+        let cachename = 'compile-component_' + hash(JSON.stringify(bus.at('项目组件引用配置')));
+        let pkg = bus.at('所属包名', file);
+        if ( pkg ) {
+            let oPkg = bus.at('模块组件信息', pkg);
+            cachename = 'compile-component_' + oPkg.pkg.replace(/\//g, '#');
+        }
+        let cache = bus.at('缓存', cachename);      // 指定名(模块时含包名和版本)的缓存对象
         let oResult = cache.get(file);
         let oSrc = bus.at('源文件内容', file);
         if ( oResult && oResult.hashcode === oSrc.hashcode ) {     // TODO 考虑配置因素

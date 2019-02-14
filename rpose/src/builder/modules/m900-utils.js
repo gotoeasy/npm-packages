@@ -147,13 +147,13 @@ bus.on('组件类名', function(){
 }());
 
 
-bus.on('源文件所在模块', function(){
+bus.on('所属包名', function(){
 
 	return file => {
 
         let name = '';
         if ( file.indexOf('/node_modules/') > 0 ) {
-            let tmp = file.substring(file.indexOf('/node_modules/') + 14);    // xxx/node_modules/@aaa/bbb/xxxxxx => @aaa/bbb/xxxxxx
+            let tmp = file.substring(file.lastIndexOf('/node_modules/') + 14);    // xxx/node_modules/@aaa/bbb/xxxxxx => @aaa/bbb/xxxxxx
             let ary = tmp.split('/');
             name = tmp.startsWith('@') ? (ary[0] + '/' + ary[1]) : ary[0];
         }

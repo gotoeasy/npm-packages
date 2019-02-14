@@ -5,19 +5,17 @@
 // 最终将生成LESS、SASS、CSS三套变量代码，供程序直接使用
 // ------------------------------------------------------------------------------------
 [theme] // 自定义风格变量，继承中已存在则覆盖，否则添加
+
+// 页面
 theme-font-size             : 14px                                          /* 默认字体大小 */
 theme-color                 : #333333                                       /* 默认颜色 */
-theme-bg-color              : #fbfbfb                                       /* 默认背景颜色 */
+theme-bgcolor               : #f6f8fa                                       /* 默认背景颜色 */
 
-theme-button-width          : 80px                                          /* 按钮默认宽度 */
-theme-button-min-width      : 80px                                          /* 按钮最小宽度 */
-theme-button-height         : 30px                                          /* 按钮默认高度 */
-theme-button-min-height     : 30px                                          /* 按钮最小高度 */
-theme-button-bg             : linear-gradient(#fbfbfb 0%, #c8c8c8 100%)     /* 按钮默认线性渐变背景 */
-theme-button-bg-hover       : linear-gradient(#c8c8c8 0%, #fbfbfb 100%)     /* 按钮鼠标经过时的线性渐变背景 */
-theme-button-bg-focus       : linear-gradient(#c8c8c8 0%, #fbfbfb 100%)     /* 按钮获得焦点时的线性渐变背景 */
-theme-button-bg-active      : linear-gradient(#aaaaaa 0%, #eeeeee 100%)     /* 按钮点击时的线性渐变背景 */
-theme-button-bg-disabled    : #fbfbfb                                       /* 按钮禁用时的线性渐变背景 */
+// 布局
+theme-layout-header-height  : 50px
+theme-layout-header-bgcolor : #24292e
+theme-layout-footer-height  : 30px
+theme-layout-footer-bgcolor : #f6f8fa
 
 
 

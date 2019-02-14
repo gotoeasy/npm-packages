@@ -33,12 +33,14 @@ const DomAttrHandle = (function(){
 		}
 		if ( isPlainObject(val) ) {
 			for ( let key in val ) {
-				val[key] ? $$(el).addClass(key) : $$(el).removeClass(key); // {'class-name': true}
+				toBoolean(val[key]) ? $$(el).addClass(key) : $$(el).removeClass(key); // {'class-name': true}
 			}
 		}else{
 			$$(el).addClass(val);
 		}
 	} );
+
+	on('@show', (el, prop, val) => val ? $$(el).removeClass('hidden') : $$(el).addClass('hidden') );
 
 	// style .... 有必要支持?
 	on('style', (el, prop, val) => {
@@ -163,7 +165,10 @@ function Dom(queryResult){
 	// ---------------------------
 	// 事件绑定 $$('.xxxx').on('click', fn)
 	this.on = function (name, fn){
-		els.forEach(el => addDomEventListener(el, name, fn));
+		els.forEach(el => {
+            el.addEventListener ? el.addEventListener(name, fn, false) : el.attachEvent ? el.attachEvent("on" + name, fn) : el["on" + name] = fn;
+            // addDomEventListener(el, name, fn); // 有缺点待解决
+        });
 		return this;
 	}
 
@@ -267,6 +272,7 @@ function Dom(queryResult){
 }
 
 
+/*
 // DOM事件
 function addDomEventListener(el, name, fn){
     domEventListener(el, name, fn);
@@ -299,3 +305,4 @@ function addDocumentEventListener(name){
 
 	}
 }
+*/

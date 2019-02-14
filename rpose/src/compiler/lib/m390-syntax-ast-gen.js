@@ -104,11 +104,8 @@ console.debug(MODULE, src);
                     // ----- 支持@import -----
 					let imp = node.attrs && node.attrs['@import'] || '';
                     if ( imp ) {
-                        let pkgname = imp.split(':');    // TODO
-                        let pkg = pkgname[0];
-                        bus.at('自动安装', pkg);
+                        bus.at('编译模块组件', imp);             // 取出包名编译包中组件(自动判断安装)
                         delete node.attrs['@import'];
-                        bus.at('编译模块组件', pkg);
                     }
                     // -------------------
 
@@ -123,17 +120,26 @@ console.debug(MODULE, src);
                     }
                     // -------------------
 
+                    // ----- 支持@show ----- 
+                    let hasShow = node.attrs && node.attrs['@show'] != undefined;
+                    if ( hasShow ) {
+                        // 重新整理为布尔表达式，标准标签设定属性时转化为样式类hidden的添加删除，组件标签在创建和差异显示时设定根节点样式
+                        let expr = node.attrs['@show'].trim();
+                        expr.startsWith('{') && expr.endsWith('}') && (expr = expr.substring(1,expr.length-1));
+                        expr.startsWith('=') && (expr = expr.substring(1));
+                        node.attrs['@show'] = '{=!!(' + expr + ')}';
+                    }
+                    // -------------------
+
 					let events = getDomEvents(node.attrs, isStdTag, this.$actionsKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
 					let attrs = attrsStringify(node, this.doc);							// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
 				//	let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
 					let cnt = ++this.$counter;
 
 
-                    let tagpkg = imp ? (imp.indexOf(':') > 0 ? imp : (imp + ':' + tag)) : tag; // 标签全名
-                    if ( !isStdTag && !imp && this.doc.file.indexOf('/node_modules/') > 0 ) {        // 引用模块内部组件
-                        let ary = bus.at('标签全名', this.doc.file).split(':');
-                        ary[1] = tag;
-                        tagpkg = ary.join(':');
+                    let tagpkg = tag;                                                   // 标签全名
+                    if ( !isStdTag ) {
+                        tagpkg = bus.at('自动安装引用组件', tag, imp);                   // 返回组件标签名，或组件标签全名
                     }
 					!isStdTag && tagSet.add( tagpkg );
 

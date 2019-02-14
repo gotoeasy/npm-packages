@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/csjs",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "*",
@@ -11,7 +11,6 @@
     "uglify-es": "*",
     "find-node-modules": "*",
     "less": "*",
-    "lesshat": "*",
     "node-sass": "*",
     "browserslist": "*",
     "postcss": "*",

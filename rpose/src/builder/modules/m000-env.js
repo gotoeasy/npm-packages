@@ -35,7 +35,12 @@ module.exports = bus.on('编译环境', function(result){
 			let conf = root + '/rpose.config.btf';
 			let btf = File.exists(conf) ? new Btf(conf) : new Btf(defaultConf);
 			let mapPath = btf.getMap('path');
-			let mapCommon = btf.getMap('common');
+            mapPath.forEach((v,k) => mapPath.set(k, v.split('//')[0].trim()));
+
+            let mapImport = btf.getMap('import');
+            let imports = {};
+            mapImport.forEach( (v,k) => imports[k] = v.split('//')[0].trim() );
+            result.imports = imports;
 
 			// 目录
 			result.path.root = root;
