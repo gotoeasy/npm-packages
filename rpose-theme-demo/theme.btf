@@ -3,6 +3,7 @@
 
 [theme]
 // theme of button
+theme-button-width          : 80px                                          /* 按钮宽度 */
 theme-button-min-width      : 5rem                                          /* 按钮最小宽度 */
 theme-button-height         : 1.6rem                                        /* 按钮默认高度 */
 theme-button-bg             : linear-gradient(#fafafa 0%, #c9c9c9 100%)     /* 按钮默认线性渐变背景 */

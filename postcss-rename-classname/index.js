@@ -1,6 +1,6 @@
 
 const postcss = require('postcss');
-const BREAKS = '#, +>:\r\n\t[()';
+const BREAKS = '#, +>:\r\n\t[()~';
 
 // ---------------------------------------------------
 // 一个CSS改类名的postcss插件

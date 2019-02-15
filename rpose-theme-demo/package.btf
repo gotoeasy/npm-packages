@@ -2,7 +2,7 @@
 rpose-theme-demo
 
 [version] // 版本号 （必填）
-0.0.6
+0.0.7
 
 [dependencies] // 依赖库
 
