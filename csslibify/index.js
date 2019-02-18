@@ -2,7 +2,7 @@ const os = require('@gotoeasy/os');
 const File = require('@gotoeasy/file');
 const hash = require('@gotoeasy/hash');
 const PTask = require('@gotoeasy/p-task');
-const csc = require('@gotoeasy/css-selector-classes');
+const cssSelectorClasses = require('@gotoeasy/css-selector-classes');
 const postcss = require('postcss');
 const postcssUrl = require('postcss-url');
 
@@ -12,19 +12,18 @@ const postcssUrl = require('postcss-url');
 // ---------------------------------------------------
 module.exports = (function (){
 
-    let ptask = new PTask((resolve, reject, isBroken) => async function(fileOrCss, pkg, nocache){
+    let ptask = new PTask((resolve, reject, isBroken) => async function(fileOrCss, opt){
 
         let isCssFile = File.existsFile(fileOrCss);
         let css = isCssFile ? File.read(fileOrCss) : fileOrCss;
-        pkg = pkg || (isCssFile ? File.name(fileOrCss) : 'default');
+        let pkg = opt.pkg || (isCssFile ? File.name(fileOrCss) : '');
         let oVer = JSON.parse(File.read(File.resolve(__dirname, 'package.json')));
-        let filename = `${pkg}-${hash(css)}-${oVer.version}.json`;
+        let filename = `${pkg?(pkg+'-'):''}${hash(css)}-${oVer.version}.json`;
         let datafile = File.resolve(os.homedir(), `.cache/csslibify/${oVer.version}/${filename}`);
 
         // 有缓存则使用
-        if ( !nocache && File.exists(datafile) ) {
+        if ( opt.usecache && File.exists(datafile) ) {
             let oResult = JSON.parse(File.read(datafile));
-            oResult.get = getCss;
             return resolve( oResult );
         }
 
@@ -45,14 +44,14 @@ module.exports = (function (){
         let lines = css.split('\n');
         let nodes = [];
     	let plugin = function (root, result) {
-            root.walkRules( rule => nodes.push(...getClasses(lines, rule)) );
+            root.walkRules( rule => nodes.push(...getRulrTemplateNodes(lines, rule)) );
         };
 
         postcss([plugin]).process(css, {from}).then( (rs, err) => {
             if ( err ) {
                 reject(err);
             }else{
-                let oResult = {pkg, nodes, get: getCss};
+                let oResult = {pkg, nodes};
                 File.write(datafile, JSON.stringify(oResult));
                 resolve( oResult );
             }
@@ -60,28 +59,47 @@ module.exports = (function (){
 
     });
 
-    return (fileOrCss, pkg='', nocache=false) => ptask.start(fileOrCss, pkg, nocache);
+    return async (fileOrCss, opt={usecache:true}) => {
+        let oRs = await ptask.start(fileOrCss, opt);    // 仅数据
+        // 添加处理函数
+        oRs.get = getCss;                           // 传入多个类名取得相关样式
+        oRs.rename = opt.rename || defaultRename;   // 传入包名和类名用于修改类名，默认策略：pkgname---classname
+        return oRs;
+    };
 
 })();
 
+// 默认类名修改策略：pkgname---classname
+function defaultRename(pkgname, cls) {
+    return `.${pkgname?(pkgname+'---'):''}${cls.substring(1)}`;
+}
+
+
 // 按需引用CSS
-function getCss(...clsnames){
+function getCss(...requirenames){
     let rs = [];
     for ( let i=0,node; node=this.nodes[i++]; ) {
         let match = true;
         for ( let j=0,name; name=node.classes[j++]; ) {
-            if ( !clsnames.includes(name) ) {
+            if ( !requirenames.includes(name) ) {
                 match = false;
                 break;
             }
         }
-        match && rs.push(node.css)
+        if ( match ) {
+            let newSelector = node.selectortemplate;
+            let csstemplate = node.csstemplate;
+            for ( let i=0,cls; cls=node.classes[i++]; ) {
+                newSelector = newSelector.replace(`.___---${cls.substring(1)}---___`, `${this.rename(this.pkg, cls)}`);   // 改类名
+            }
+            rs.push( node.csstemplate.replace('##selector##', newSelector) );                               // 更新选择器
+        }
     }
     return rs.join('\n');
 }
 
 // 拆解样式
-function getClasses(lines, rule){
+function getRulrTemplateNodes(lines, rule){
 
     // 分解出selector和样式内容
     let startLine = rule.source.start.line, startColumn = rule.source.start.column;
@@ -115,12 +133,12 @@ function getClasses(lines, rule){
 
     // 找出全部类名封装成对象返回
     let rs = [];
-    rule.selectors.forEach(sel => {
-        let css = atruleCss.replace('##css##', `${sel}${body}`);
-        let classes = csc(sel);
-        classes.forEach(clsname => {
-            rs.push({selector: sel, classes: classes, css});
-        });
+    rule.selectors.forEach(selector => {
+        let csstemplate = atruleCss.replace('##css##', `##selector##${body}`);  // 样式模板，##selector##待替换
+        let oSel = cssSelectorClasses(selector);
+        let selectortemplate = oSel.template;                                     // 选择器模板，各##类名##待替换
+        let classes = oSel.classes;
+        rs.push({selector, body, selectortemplate, csstemplate, classes});
     });
     
     return rs;
