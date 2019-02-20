@@ -35,16 +35,18 @@ class AstGen{
 
 	toJavaScript (){
 		let tagSet = new Set();
+		let clsSet = new Set();
 		//tagSet.add(this.doc.tag);
-		let src = this.parseChildren(this.ast, tagSet);
+		let src = this.parseChildren(this.ast, tagSet, clsSet);
 		this.doc.requires = [...tagSet]; // 本组件所直接依赖的其他组件
+		this.doc.cssclasses = [...clsSet]; // 本组件所直接使用的样式名
 //console.info(MODULE, this.doc.tag, JSON.stringify([...tagSet]));
 console.debug(MODULE, src);
 		return checkAndInitVars(this.doc, src, this.$dataKeys, this.$optsKeys);
 	}
 
 	// TODO 自动判断子节点是否需要diff
-	parseChildren (astNodes, tagSet, isFn=true, isSVG=false, slotNmaes = []){	// slotNmaes 占位标签名称数组，名称不应重复
+	parseChildren (astNodes, tagSet, clsSet, isFn=true, isSVG=false, slotNmaes = []){	// slotNmaes 占位标签名称数组，名称不应重复
 		let aryNm = 'v_Array'; // 模板内部变量，尽量避免和自定义代码冲突
 
 		//keys.push('');
@@ -132,7 +134,7 @@ console.debug(MODULE, src);
                     // -------------------
 
 					let events = getDomEvents(node.attrs, isStdTag, this.$actionsKeys);	// 标准标签有事件绑定声明时会修改node.attrs，组件标签不处理
-					let attrs = attrsStringify(node, this.doc);							// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
+					let attrs = attrsStringify(node, this.doc, clsSet);	    			// 属性全静态时会被增加属性x=1 【需events解析完后再做，不然事件绑定会被当属性继续用】
 				//	let npmPkg = attrs && attrs['npm-pkg'] || '';						// npm包名
 					let cnt = ++this.$counter;
 
@@ -143,7 +145,7 @@ console.debug(MODULE, src);
                     }
 					!isStdTag && tagSet.add( tagpkg );
 
-					let childSrc = node.children && node.children.length ? this.parseChildren(node.children, tagSet, false, isSvgTag, slotNmaes) : null;
+					let childSrc = node.children && node.children.length ? this.parseChildren(node.children, tagSet, clsSet, false, isSvgTag, slotNmaes) : null;
 
 					let str = `${aryNm}.push( {t: '${tagpkg}'`;							// 一定有标签名，其他可以没有
 					events && (str += `, e: ${events}` );
@@ -268,7 +270,7 @@ function radom(min, max){
 
 
 // JSON对象转字符串形式，值含函数调用
-function attrsStringify(node, doc){
+function attrsStringify(node, doc, clsSet){
 	let attrs = node.attrs;
 	if ( !attrs ) {
 		node.x = 1;
@@ -302,7 +304,7 @@ function attrsStringify(node, doc){
 				let expr = '(' + unescapeAttrExpr(ary.join(' + ')) + ')';	// 把【\{】和【\}】替换回来
 
 				if ( k == 'class' ) {
-					kvs.push('"' + k + '": ' + classStrToObjectString(attrs[k], doc) );  // class="abc def {bar:!bar}" => {class:{abc:1, def:1, bar:!bar}}
+					kvs.push('"' + k + '": ' + classStrToObjectString(attrs[k], doc, clsSet) );  // class="abc def {bar:!bar}" => {class:{abc:1, def:1, bar:!bar}}
 				}else{
 					kvs.push('"' + k + '": ' + expr);
 				}
@@ -412,7 +414,7 @@ function parseExpression(ary, val){
 }
 
 
-function classStrToObjectString(clas, doc){
+function classStrToObjectString(clas, doc, clsSet){
 	if ( !clas.trim()) {
 		return '{}';
 	}
@@ -437,6 +439,8 @@ function classStrToObjectString(clas, doc){
                 str = '';
             }
             oRs[bus.at('哈希样式类名', doc.file, key.trim())] = '@(' + val + ')@';
+
+            clsSet.add(key.trim());  // 添加改名前的类名
         }
 
         return '';
@@ -446,6 +450,7 @@ function classStrToObjectString(clas, doc){
 	let ary = clas.split(/\s/);
 	for ( let i=0; i<ary.length; i++) {
 		ary[i].trim() && (oRs[bus.at('哈希样式类名', doc.file, ary[i].trim())] = 1);
+        clsSet.add(ary[i].trim());  // 添加改名前的类名
 	}
 
 	return JSON.stringify(oRs).replace(/('@|@'|"@|@")/g, '');

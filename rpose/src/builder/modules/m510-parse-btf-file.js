@@ -49,7 +49,7 @@ function parseBtf(file, src){
     editBtfDocument(doc, file, src);
 
 
-    let api, view, options, state, actions, methods, css, less, scss, mount, tag, tagpkg, rposepkg, optionkeys, statekeys, actionskeys, methodskeys, prerender, $componentName, _hash;
+    let api, view, options, state, actions, methods, css, less, scss, mount, tag, tagpkg, rposepkg, optionkeys, statekeys, actionskeys, methodskeys, prerender, $componentName, _hash, csslib;
     api = doc.api;
     view = doc.view;
     options = doc.options;
@@ -69,9 +69,20 @@ function parseBtf(file, src){
     methodskeys = doc.methodskeys;
     prerender = doc.prerender;
     $componentName = doc.$componentName;
+    csslib = doc.csslib;
+
+    // 样式库导入
+    if ( csslib ) {
+        let map = btf.getMap('csslib');
+        map.forEach( (v, k) => {
+            let pkg = k;
+            let imps = v.split('//')[0].trim();
+            bus.at('样式库', pkg, imps);
+        });
+    }
 
     _hash = hash(src);
-    return {file, api, view, options, state, actions, methods, css, less, scss, mount, tag, tagpkg, rposepkg, optionkeys, statekeys, actionskeys, methodskeys, prerender, $componentName, _hash};
+    return {file, api, view, options, state, actions, methods, css, less, scss, mount, tag, tagpkg, rposepkg, optionkeys, statekeys, actionskeys, methodskeys, prerender, $componentName, _hash, csslib};
 }
 
 
@@ -87,6 +98,7 @@ function editBtfDocument(doc, file, fileContent){
 	doc.less			= (doc.getText('less') || '').trim();
 	doc.scss			= (doc.getText('scss') || '').trim();
 	doc.mount			= (doc.getText('mount') || '').trim();
+	doc.csslib			= (doc.getText('csslib') || '').trim();
 
 	let oActions		= generateActions2(doc, fileContent);
 	let oMethods		= generateMethods(doc, fileContent);

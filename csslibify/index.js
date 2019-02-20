@@ -89,7 +89,7 @@ module.exports = (function (){
     // result.get               : 按指定样式类取得相关的样式，参数为1~n个样式类名
     // result.basePath          ： 样式所在目录
     // -----------------------------------------------------------------------------------------------
-    return async (pkg, fileOrCss, opt={usecache:true, includeElementRule: true}) => {
+    return async (pkg, fileOrCss, opt={usecache:true, includeElementRule: false}) => {
         let oRs = await ptask.start(pkg, fileOrCss, !!opt.usecache, opt.basePath, opt.assetsPath);    // 仅数据
 
         // 样式类名修改函数
@@ -145,15 +145,18 @@ module.exports = (function (){
             }
 
             // 添加关联标签的样式定义
-            opt.includeElementRule && [...oSetElements].forEach(elname => {
-                oRs.nodes.forEach(node => {
-                    if ( !node.classes.length && node.elements.length === 1 && node.elements[0] === elname ) {
-                        rs.push(node.selector + node.body);
-                    }else if ( node.selector === '*' ) {
-                        rs.push(node.selector + node.body); // 虽然不是标签，但对全体标签生效，也要
-                    }
-                });
-            })
+            if ( opt.includeElementRule && oSetElements.size ) {
+                oSetElements.add('html') > oSetElements.add('body');  // 自动添加全局关联的两个标签
+                [...oSetElements].forEach(elname => {
+                    oRs.nodes.forEach(node => {
+                        if ( !node.classes.length && node.elements.length === 1 && node.elements[0] === elname ) {
+                            rs.push(node.selector + node.body);
+                        }else if ( node.selector === '*') {
+                            rs.push(node.selector + node.body); // 虽然不是标签，但对全体标签生效的特殊规则，也要
+                        }
+                    });
+                })
+            }
 
             rs.push(...oSetKeyframes);
             return [...new Set(rs)].join('\n');
