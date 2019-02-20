@@ -103,11 +103,11 @@ console.debug(MODULE, src);
                         node.attrs.src = '%imagepath%' + imgname;
                     }
 
-                    // ----- 支持@import -----
-					let imp = node.attrs && node.attrs['@import'] || '';
+                    // ----- 支持@taglib -----
+					let imp = node.attrs && node.attrs['@taglib'] || '';
                     if ( imp ) {
                         bus.at('编译模块组件', imp);             // 取出包名编译包中组件(自动判断安装)
-                        delete node.attrs['@import'];
+                        delete node.attrs['@taglib'];
                     }
                     // -------------------
 

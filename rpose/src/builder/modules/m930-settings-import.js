@@ -14,19 +14,19 @@ module.exports = bus.on('项目组件引用配置', function(rs={}){
             let oPkg = bus.at('模块组件信息', pkg);
             let name = oPkg.name;
 
-            let cachename = 'imports_' + oPkg.pkg.replace(/\//g, '#');
+            let cachename = 'taglib_' + oPkg.pkg.replace(/\//g, '#');
             let cache = bus.at('缓存', cachename);      // 指定名(模块时含包名和版本)的缓存对象
-            if ( !cache.get('import') ) {
+            if ( !cache.get('taglib') ) {
                 let imports = {};
                 if ( File.existsFile(oPkg.config) ) {
                     let btf = new Btf(oPkg.config);
-                    let mapImport = btf.getMap('import');
+                    let mapImport = btf.getMap('taglib');
                     mapImport.forEach( (v,k) => imports[k] = v.split('//')[0].trim() );
                 }
-                cache.put('import', imports);
+                cache.put('taglib', imports);
             }
 
-            return cache.get('import');
+            return cache.get('taglib');
         }
 
         // 当前项目
@@ -79,7 +79,7 @@ module.exports = bus.on('自动安装引用组件', function(){
             return bus.at('自动安装引用组件', null, impconf);
         }
 
-        // 没有设定@import，也没有在[import]中配置引用，直接返回该标签
+        // 没有设定@taglib，也没有在[taglib]中配置引用，直接返回该标签
         return tag;
     }
 

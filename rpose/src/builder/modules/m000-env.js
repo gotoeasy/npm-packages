@@ -37,7 +37,7 @@ module.exports = bus.on('编译环境', function(result){
 			let mapPath = btf.getMap('path');
             mapPath.forEach((v,k) => mapPath.set(k, v.split('//')[0].trim()));
 
-            let mapImport = btf.getMap('import');
+            let mapImport = btf.getMap('taglib');
             let imports = {};
             mapImport.forEach( (v,k) => imports[k] = v.split('//')[0].trim() );
             result.imports = imports;
