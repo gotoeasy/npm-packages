@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/csjs",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "*",
@@ -36,6 +36,8 @@
     "postcss-discard-duplicates": "*",
     "postcss-merge-rules": "*",
     "postcss-url": "*",
+    "postcss-nested": "*",
+    "postcss-css-variables": "*",
     "postcss-rename-classname": "*",
     "stylefmt": "*"
   },

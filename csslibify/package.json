@@ -1,6 +1,6 @@
 {
   "name": "csslibify",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/os": "*",
@@ -8,8 +8,13 @@
     "@gotoeasy/hash": "*",
     "@gotoeasy/p-task": "*",
     "@gotoeasy/css-selector-classes": "*",
+    "@gotoeasy/css-selector-elements": "*",
     "postcss": "*",
-    "postcss-url": "*"
+    "postcss-url": "*",
+    "postcss-discard-comments": "*",
+    "postcss-remove-prefixes": "*",
+    "postcss-nested": "*",
+    "postcss-css-variables": "*"
   },
   "devDependencies": {
     "ava": "*",

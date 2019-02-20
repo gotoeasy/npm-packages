@@ -8,32 +8,47 @@ test('样式库化按需引用测试', async t => {
 
 	// 没有传选项的时候
 	css = '.a {} .a .b{}';
-	lib = await csslibify(css);
+	lib = await csslibify('', css);
     rs = lib.get('.a');
-	t.is(rs, '.a {}');
-	lib = await csslibify(css, 'default');
+	t.is(rs, '.a{}');
+	lib = await csslibify('', css);
     rs = lib.get('.a');
-	t.is(rs, '.a {}');
-	lib = await csslibify(css, 'default', true);
+	t.is(rs, '.a{}');
+	lib = await csslibify('', css);
     rs = lib.get('.a');
-	t.is(rs, '.a {}');
+	t.is(rs, '.a{}');
 
     // 指定pkg
 	css = '.a {} .a .b{}';
-	lib = await csslibify(css, {pkg: 'mypkg'});
+	lib = await csslibify('mypkg', css);
     rs = lib.get('.a');
-	t.is(rs, '.mypkg---a {}');
-    let rename = (pkgname, cls) => `.${pkgname?(pkgname+'-----'):''}${cls.substring(1)}`;
-	lib = await csslibify(css, {pkg: 'mypkg', rename});
+	t.is(rs, '.mypkg---a{}');
+    let rename = (pkgname, cls) => `${pkgname?(pkgname+'-----'):''}${cls}`;
+	lib = await csslibify('mypkg', css, {rename});
     rs = lib.get('.a');
-	t.is(rs, '.mypkg-----a {}');
+	t.is(rs, '.mypkg-----a{}');
 
 	css = '.a {} .a   .b{}';
-    rename = (pkgname, cls) => `.${pkgname?(pkgname+'___'):''}${cls.substring(1)}`;
-	let lib2 = await csslibify(css, {pkg: 'mypkg', rename});
-    let rs2 = lib2.get('.a');
-	t.is(rs2, '.mypkg___a {}');
+    rename = (pkgname, cls) => `${pkgname?(pkgname+'___'):''}${cls}`;
+	lib = await csslibify('mypkg', css, {rename});
     rs = lib.get('.a');
-	t.is(rs, '.mypkg-----a {}');
+	t.is(rs, '.mypkg___a{}');
+
+
+	css = '.a {} .b{color:var(--theme-color)} :root{--theme-font-size:14px;--theme-color:#333333;--theme-bgcolor:#f6f8fa;}';
+	lib = await csslibify('mypkg', css);
+    rs = lib.get('.b');
+	t.is(rs, '.mypkg---b{color:#333333}');
+
+	css = './testdata/bootstrap.css';
+	lib = await csslibify('mypkg', css);
+    rs = lib.get('order-first');
+	t.is(rs.replace(/\s/g, ''), '.mypkg---order-first{order:-1;}');
+
+//    rs = lib.get('progress-bar-animated');
+//console.info(rs)
+
+//    rs = lib.get('navbar-light', 'navbar-text');
+//console.info(rs)
 
 });

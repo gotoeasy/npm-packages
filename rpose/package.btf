@@ -20,6 +20,7 @@ index.js
 @gotoeasy/theme = *
 @gotoeasy/pre-render = *
 @gotoeasy/npm = *
+csslibify = *
 acorn-globals = *
 astring = *
 chokidar = *

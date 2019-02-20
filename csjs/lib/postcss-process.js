@@ -53,6 +53,8 @@ module.exports = async function (src, opts={}){
 	opts.normalize && plugins.push( require('postcss-normalize') );								// 按需引用normalize.css内容
 	plugins.push( require('postcss-import')() );												// 导入@import文件内容
 	opts.removeComments && plugins.push( require('postcss-discard-comments')({remove:x=>1}) );	// 删除所有注释
+	plugins.push( require('postcss-nested') );									                // 支持嵌套写法
+	plugins.push( require('postcss-css-variables') );									        // 删除css变量，使用变量的地方直接静态输出变量值
 	plugins.push( require('postcss-normalize-whitespace') );									// 压缩删除换行空格
 	plugins.push( require('postcss-minify-selectors') );										// 压缩删除选择器空白（h1 + p, h2, h3, h2{color:blue} => h1+p,h2,h3{color:blue}）
 	plugins.push( require('postcss-minify-params') );											// 压缩删除参数空白（@media only screen   and ( min-width: 400px, min-height: 500px    ){} => @media only screen and (min-width:400px,min-height:500px){}）

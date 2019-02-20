@@ -1,6 +1,6 @@
 {
-  "name": "@gotoeasy/css-selector-classes",
-  "version": "0.0.5",
+  "name": "@gotoeasy/css-selector-elements",
+  "version": "0.0.4",
   "main": "index.js",
   "dependencies": {
     "css-selector-tokenizer": "*"
@@ -12,17 +12,17 @@
   "scripts": {
     "test": "nyc ava"
   },
-  "description": "get classes from css selector",
+  "description": "get elements from css selector",
   "keywords": [
     "gotoeasy",
     "css tool",
-    "css-selector-classes"
+    "css-selector-elements"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gotoeasy/npm-packages.git"
   },
-  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/css-selector-classes/README.md",
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/css-selector-elements/README.md",
   "bugs": {
     "url": "https://github.com/gotoeasy/npm-packages/issues"
   },

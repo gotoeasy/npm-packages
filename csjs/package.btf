@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.0.26
+0.0.27
 
 
 
@@ -46,6 +46,8 @@ postcss-combine-duplicated-selectors = *
 postcss-discard-duplicates = *
 postcss-merge-rules = *
 postcss-url = *
+postcss-nested = *
+postcss-css-variables = *
 postcss-rename-classname = *
 stylefmt = *
 

@@ -1,8 +1,8 @@
 [name] // 项目名 （必填）
-@gotoeasy/css-selector-classes
+@gotoeasy/css-selector-elements
 
 [version] // 版本号 （必填）
-0.0.5
+0.0.4
 
 
 
@@ -22,17 +22,17 @@ nyc = *
 test = nyc ava
 
 [description] // 描述
-get classes from css selector
+get elements from css selector
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-gotoeasy, css tool, css-selector-classes
+gotoeasy, css tool, css-selector-elements
 
 [repository] // 仓库
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
 [homepage] // 主页，github项目会自动识别设定
-https://github.com/gotoeasy/npm-packages/blob/master/css-selector-classes/README.md
+https://github.com/gotoeasy/npm-packages/blob/master/css-selector-elements/README.md
 
 [bugs] // BUG提交地址，github项目会自动识别设定
 url = https://github.com/gotoeasy/npm-packages/issues

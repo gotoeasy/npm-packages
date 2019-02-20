@@ -17,8 +17,7 @@ npm i @gotoeasy/css-selector-classes
 ```js
 const csc = require('@gotoeasy/css-selector-classes');
 let selector = ".foo .bar > .baz";
-let rs = csc(selector);
-// result = ['.foo', '.bar', '.baz']
+let rs = csc(selector); // => rs.classes = ['foo', 'bar', 'baz']
 ```
 
 
