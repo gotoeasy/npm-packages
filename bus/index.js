@@ -16,8 +16,11 @@ function Bus(){
 				map.set(key, setFn);
 			}
 			setFn.add(fn);
-		}
-		return fn;
+		    return fn;
+		}else{
+		    let setFn = map.get(key);
+            return setFn ? [...setFn] : []; // 返回函数数组
+        }
 	};
 
 	// 卸载事件函数

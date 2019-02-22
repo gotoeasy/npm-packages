@@ -5,6 +5,8 @@ module.exports = {
     install: require('./lib/npm-install'),
     uninstall: require('./lib/npm-uninstall'),
 
+    requireAll: require('./lib/require-all'),
+
     download: require('./lib/download'),
 	getRegistryInfo: require('./lib/get-npm-registry-info'),
 	getLatestVersion: require('./lib/get-npm-latest-version'),

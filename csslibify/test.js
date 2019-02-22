@@ -1,54 +1,44 @@
-
 const test = require('ava');
+const postcss = require('postcss');
 const csslibify = require('.');
 
 test('样式库化按需引用测试', async t => {
 
-	let css, pkg, lib, rs;
+	let css, pkg, csslib, rs;
 
-	// 没有传选项的时候
-	css = '.a {} .a .b{}';
-	lib = await csslibify('', css);
-    rs = lib.get('.a');
-	t.is(rs, '.a{}');
-	lib = await csslibify('', css);
-    rs = lib.get('.a');
-	t.is(rs, '.a{}');
-	lib = await csslibify('', css);
-    rs = lib.get('.a');
-	t.is(rs, '.a{}');
+    pkg = 'thepkg';
+	css = '.foo{color:#001} .bar{color:#002} input{color:#003}';
+	csslib = await csslibify.imp(pkg, css);
 
-    // 指定pkg
-	css = '.a {} .a .b{}';
-	lib = await csslibify('mypkg', css);
-    rs = lib.get('.a');
-	t.is(rs, '.mypkg---a{}');
-    let rename = (pkgname, cls) => `${pkgname?(pkgname+'-----'):''}${cls}`;
-	lib = await csslibify('mypkg', css, {rename});
-    rs = lib.get('.a');
-	t.is(rs, '.mypkg-----a{}');
-
-	css = '.a {} .a   .b{}';
-    rename = (pkgname, cls) => `${pkgname?(pkgname+'___'):''}${cls}`;
-	lib = await csslibify('mypkg', css, {rename});
-    rs = lib.get('.a');
-	t.is(rs, '.mypkg___a{}');
+    rs = csslib.get( {classes:['foo']} );
+console.info('------------------', rs)
+//	t.is(rs, await formatCss('.thepkg---foo{color:#001;}') );
+//	t.is(await formatCss(rs), await formatCss('.thepkg---foo{color:#001}') );
 
 
-	css = '.a {} .b{color:var(--theme-color)} :root{--theme-font-size:14px;--theme-color:#333333;--theme-bgcolor:#f6f8fa;}';
-	lib = await csslibify('mypkg', css);
-    rs = lib.get('.b');
-	t.is(rs, '.mypkg---b{color:#333333}');
-
+/*
+	css = '.a  ,   div.show    > span    {color:#00a} @-webkit-keyframes sssss{ 0%{color : #00b ;size:12} } @supports ((position: -webkit-sticky) or (position: sticky)) {}';
+	css = 'abbr[title]  {color:#00a} a[sasa="dd"]  {color:#00a}';
+	css = '* {color:#00a} [sasa="dd"]  {color:#00a}';
+	css = '.a .b {color:#00a}';
+	css = '::-webkit-file-upload-button  {color:#00a}';
+	css = ':focus {color:#00a}';
 	css = './testdata/bootstrap.css';
-	lib = await csslibify('mypkg', css);
-    rs = lib.get('order-first');
-	t.is(rs.replace(/\s/g, ''), '.mypkg---order-first{order:-1;}');
 
-//    rs = lib.get('progress-bar-animated');
-//console.info(rs)
+	lib = await csslibify.imp('skope', css);
+//console.info('-----------lib.get-------', lib.get)
+    rs = lib.get({pkg: 'bs', classes:['btn', 'btn-primary', 'disabled']});
+	t.is('', '');
 
-//    rs = lib.get('navbar-light', 'navbar-text');
-//console.info(rs)
+
+console.info('------------------', rs)
+*/
+
 
 });
+
+
+async function formatCss(css){
+    let rs = await postcss([require('stylefmt')]).process(css, {from:'from.css'});
+    return rs.css
+}

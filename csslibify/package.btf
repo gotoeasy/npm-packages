@@ -13,17 +13,19 @@ index.js
 
 [dependencies] // 依赖库
 @gotoeasy/os = *
-@gotoeasy/file = *
+@gotoeasy/bus = *
+@gotoeasy/npm = *
 @gotoeasy/hash = *
 @gotoeasy/p-task = *
 @gotoeasy/css-selector-classes = *
 @gotoeasy/css-selector-elements = *
 postcss = *
-postcss-url = *
 postcss-discard-comments = *
-postcss-remove-prefixes = *
+postcss-unprefix = *
+postcss-url = *
 postcss-nested = *
 postcss-css-variables = *
+stylefmt = *
 
 [devDependencies] // 开发依赖库
 ava = *

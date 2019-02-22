@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/bus",
-  "version": "0.0.10",
+  "version": "0.0.14",
   "main": "index.js",
   "devDependencies": {
     "ava": "*",

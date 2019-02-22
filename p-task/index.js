@@ -9,7 +9,7 @@ module.exports = function PTask(fnTaskGetter){
 		let rs = pResult.get(hashCode);
 		if ( !rs ) {
 			// 首次调用优先（后面调用返回首次结果）
-			rs = { state: 0, isBroken: ()=>!!rs.state };
+			rs = { state: 0, isBroken: ()=>!!rs.state, hashcode: ()=>hashCode };
 			rs.promise = new Promise((resolve, reject) => {
 				rs.resolve = resolve;
 				rs.reject = reject;
@@ -19,7 +19,7 @@ module.exports = function PTask(fnTaskGetter){
 			// 延后执行，尽量只调用一次
 			setTimeout(async ()=>{
 				if ( !rs.isBroken() ) {
-					let fnTask = fnTaskGetter(rs.resolve, rs.reject, rs.isBroken);
+					let fnTask = fnTaskGetter(rs.resolve, rs.reject, rs.isBroken, rs.hashcode);
 					try{
 						await fnTask(...args);	// 执行
 						rs.resolve();			// 避免执行函数漏调用resolve
