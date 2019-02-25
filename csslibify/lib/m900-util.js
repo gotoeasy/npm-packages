@@ -12,16 +12,11 @@ bus.on('parseSingleSelector', function(){
         nodes = ast.nodes[0].nodes;
         if ( !nodes || !nodes.length ) return rs;
 
-//console.info(JSON.stringify(ast,null,4))
-//console.info(nodes==null)
-
         nodes.forEach(node => {
             if ( node.type === 'class' ) {
                 (rs.classes=rs.classes||[]).push(node.name);
                 node.name = '<%' + node.name + '%>';
                 rs.selectorTemplate = tokenizer.stringify(ast).replace(/\\<\\%/g, '<%').replace(/\\%\\>/g, '%>');
-//console.info('-----selectorTemplate------',  rs.selectorTemplate)
-
             }else if ( node.type === 'element' ) {
                 (rs.elements=rs.elements||[]).push(node.name);
             }else if ( node.type === 'attribute' ) {
@@ -34,12 +29,10 @@ bus.on('parseSingleSelector', function(){
                 rs.pseudo = true;                   // 冒号和双冒号的伪类伪元素，仅做个标记
             }else{
                 // 貌似无关了，暂且忽略
-                // console.info('-----todo------type/name---',  node.type, node.name)
+// console.info('-----todo------type/name---',  node.type, node.name)
             }
         })
 
-
-// console.info('-----rs------',  rs)
        return rs;
     };
 
@@ -68,7 +61,7 @@ bus.on('template-to-tostring', function(){
             template = template.replace(new RegExp(regstr, 'ig'), `'+rename(pkg,'${name}')+'`);
         }
         template = `return '${template}'`;
-        return new Function('pkg=""', 'rename=(p,n)=>`${p}---${n}`', template);
+        return new Function('pkg=""', 'rename=(p,n)=>`${p?(p+"---"):""}${n}`', template);
     };
 
 }());

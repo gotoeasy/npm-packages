@@ -1,43 +1,43 @@
 const bus = require('@gotoeasy/bus');
-const os = require('@gotoeasy/os');
-const File = require('@gotoeasy/file');
-const hash = require('@gotoeasy/hash');
-const PTask = require('@gotoeasy/p-task');
-const cssSelectorClasses = require('@gotoeasy/css-selector-classes');
-const cssSelectorElements = require('@gotoeasy/css-selector-elements');
-const postcss = require('postcss');
-
-
 
 // 按需引用样式
 module.exports = bus.on('get-relative-css', function(){
 
-    return function (opt={}) {
+    return function (...args) {
+        let requireClasses = [];
+        let tags = [];
+        let pkg = this.pkg;
+        let rename = this.rename;
+        let includesElements = false;
 
-        let pkg = opt.pkg || this.pkg;
-        let requireClasses = opt.classes || [];
+        // 整理输入
+        args.forEach(v => {
+            if ( typeof v === 'string' ) {
+                v.startsWith('.') ? requireClasses.push(v.trim().toLowerCase().substring(1)) : tags.push(v.trim().toLowerCase());
+            }else if ( Object.prototype.toString.call(v) === '[object Object]' ){
+                v.pkg && (pkg = v.pkg);
+                v.rename && (rename = v.rename);
+                includesElements = !!v.includesElements;
+            }
+        });
+
+        // 按需查找引用
         if ( !requireClasses.length ) {
-            return '';  // 当前仅实现通过类名按需引用
+            return '';  // 暂时仅实现通过类名按需引用
         }
 
-        let rs = '';
+        let rs = [];
         for ( let i=0,node,match; node=this.nodes[i++]; ) {
             if ( !node.classes ) {
                 continue;
             }
-            
-            match = true;
-            for ( let j=0,cls; cls=node.classes[j++]; ) {
-                if ( !requireClasses.includes(cls) ) {
-                    match = false;
-                    break;
-                }
-            }
 
-            match && (rs += node.toString(pkg, opt.rename) + '\n' );
+            if ( node.classes.every(cls => requireClasses.includes(cls.toLowerCase())) ) {
+                rs.push(node.toString(pkg, rename));
+            }
         }
 
-        return rs;
+        return rs.join('\n');
     }
 
 }());

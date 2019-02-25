@@ -3,8 +3,7 @@ const bus = require('@gotoeasy/bus');
 // 拆解普通的标签样式，不包含类选择器，非嵌套样式
 bus.on('split-plugins', function fnPlugin(root, result) {
 
-    let csslib = result.csslib = result.csslib || {};
-    let nodes = csslib.nodes = csslib.nodes || [];
+    let nodes = bus.at('process-result-of-split-postcss-plugins').nodes; // 处理结果节点数组
 
     root.walkRules( rule => {
 

@@ -2,7 +2,7 @@
 csslibify
 
 [version] // 版本号 （必填）
-0.0.8
+0.0.11
 
 
 
@@ -16,16 +16,26 @@ index.js
 @gotoeasy/bus = *
 @gotoeasy/npm = *
 @gotoeasy/hash = *
-@gotoeasy/p-task = *
-@gotoeasy/css-selector-classes = *
-@gotoeasy/css-selector-elements = *
+@gotoeasy/file = *
+css-selector-tokenizer = *
 postcss = *
-postcss-discard-comments = *
 postcss-unprefix = *
+postcss-discard-comments = *
 postcss-url = *
 postcss-nested = *
 postcss-css-variables = *
-stylefmt = *
+postcss-normalize-whitespace = *
+postcss-minify-selectors = *
+postcss-minify-params = *
+postcss-normalize-string = *
+postcss-normalize-display-values = *
+postcss-normalize-positions = *
+postcss-normalize-repeat-style = *
+postcss-minify-font-values = *
+postcss-minify-gradients = *
+postcss-color-hex-alpha = *
+postcss-merge-longhand = *
+postcss-discard-empty = *
 
 [devDependencies] // 开发依赖库
 ava = *
