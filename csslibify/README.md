@@ -28,13 +28,17 @@ let csslibify = require('csslibify');
 let csslib = csslibify('thepkg');
 csslib.imp('.foo{size:11} .bar{size:12} .foo > .bar{color:red}');
 csslib.imp('.baz{size:13}');
-let css = csslib.get('.bar', '.baz'); //=>  .thepkg---bar{size:12} .thepkg---baz{size:13}
-css = csslib.get('.foo', '.bar');     //=>  .thepkg---foo{size:11} .thepkg---bar{size:12} .thepkg---foo > .thepkg---bar{color:red}
+let css = csslib.get('.bar', '.baz');
+//=>  .thepkg---bar{size:12} .thepkg---baz{size:13}
+
+css = csslib.get('.foo', '.bar');
+//=>  .thepkg---foo{size:11} .thepkg---bar{size:12} .thepkg---foo > .thepkg---bar{color:red}
 ```
 
 ## 测试结果示例
 <details>
 <summary><strong>新建样式库并指定库名，可有效避免类名冲突，也便于复用</strong></summary>
+
 ```js
 let csslibify = require('csslibify');
 let csslib = csslibify('pkg');
@@ -55,6 +59,7 @@ let result = csslib.get( '.foo', '.bar' );
 
 <details>
 <summary><strong>新建样式库不指定库名，便于直接使用样式</strong></summary>
+
 ```js
 let csslibify = require('csslibify');
 let csslib = csslibify();
@@ -75,6 +80,7 @@ let result = csslib.get( '.foo', '.bar' );
 
 <details>
 <summary><strong>自动识别重复导入</strong></summary>
+
 ```js
 let csslibify = require('csslibify');
 let csslib = csslibify();
@@ -95,6 +101,7 @@ let result = csslib.get( '.foo' );
 
 <details>
 <summary><strong>样式类按需引用-例子1</strong></summary>
+
 ```js
 let csslibify = require('csslibify');
 let csslib = csslibify();
@@ -115,6 +122,7 @@ let result = csslib.get( '.baz' );
 
 <details>
 <summary><strong>样式类按需引用-例子2</strong></summary>
+
 ```js
 let csslibify = require('csslibify');
 let csslib = csslibify();
@@ -135,6 +143,7 @@ let result = csslib.get( '.baz' );
 
 <details>
 <summary><strong>样式类按需引用-例子3</strong></summary>
+
 ```js
 let csslibify = require('csslibify');
 let csslib = csslibify();
@@ -156,6 +165,7 @@ let result = csslib.get( '.bar', '.baz' );
 
 <details>
 <summary><strong>TODO</strong></summary>
+
 ```js
 ```
 </details>
