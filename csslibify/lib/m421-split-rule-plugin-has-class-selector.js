@@ -15,6 +15,7 @@ bus.on('split-plugins', function fnPlugin(root, result) {
         let oNode = {};
         oSelector.elements && (oNode.elements = oSelector.elements);
         oSelector.classes && (oNode.classes = oSelector.classes);
+        oSelector.notclasses && (oNode.notclasses = oSelector.notclasses);
         oSelector.attributes && (oNode.attributes = oSelector.attributes);
         oSelector.universal && (oNode.universal = oSelector.universal);
 

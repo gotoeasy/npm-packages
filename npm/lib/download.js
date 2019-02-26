@@ -10,7 +10,7 @@ const proxy = process.env.http_proxy || npmrc.proxy || '';
 const agent = new HttpsProxyAgent(proxy);
 
 const tmpdir = require('./homedir')() + '/.temp';
-File.mkdir(tmpdir);
+File.mkdir(tmpdir, true);
 
 // url： 下载地址，不支持重定向
 // dist: 指定时保存为该路径文件名，未指定时使用临时目录随机文件名

@@ -27,14 +27,19 @@ module.exports = bus.on('get-relative-css', function(){
         }
 
         let rs = [];
-        for ( let i=0,node,match; node=this.nodes[i++]; ) {
-            if ( !node.classes ) {
-                continue;
-            }
+        for ( let i=0,node,match,classes; node=this.nodes[i++]; ) {
+            classes = node.classes;
+            if ( !classes ) continue;
 
-            if ( node.classes.every(cls => requireClasses.includes(cls.toLowerCase())) ) {
-                rs.push(node.toString(pkg, rename));
+            // 含not条件时，去除not中的类名后再比较
+            if ( node.notclasses ) {
+                let oSet = new Set(node.classes);
+                node.notclasses.forEach(cls => oSet.delete(cls));
+                classes = [...oSet];
             }
+            
+            // 类名全在应用范围内才算
+            classes.every(cls => requireClasses.includes(cls.toLowerCase())) && rs.push(node.toString(pkg, rename));
         }
 
         return rs.join('\n');

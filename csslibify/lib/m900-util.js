@@ -12,32 +12,49 @@ bus.on('parseSingleSelector', function(){
         nodes = ast.nodes[0].nodes;
         if ( !nodes || !nodes.length ) return rs;
 
-        nodes.forEach(node => {
-            if ( node.type === 'class' ) {
-                (rs.classes=rs.classes||[]).push(node.name);
-                node.name = '<%' + node.name + '%>';
-                rs.selectorTemplate = tokenizer.stringify(ast).replace(/\\<\\%/g, '<%').replace(/\\%\\>/g, '%>');
-            }else if ( node.type === 'element' ) {
-                (rs.elements=rs.elements||[]).push(node.name);
-            }else if ( node.type === 'attribute' ) {
-                (rs.attributes=rs.attributes||[]).push( node.content.split(/[~\|\^\$\*]?=/)[0] );    // 取出属性名
-            }else if ( node.type === 'universal' ) {
-                rs.universal = true;                // 星号*通配符选择器，仅做个标记
-            }else if ( node.type === 'spacing' ) {
-                // 嵌套空白符，忽略
-            }else if ( node.type === 'pseudo-class' || node.type === 'pseudo-element'  ) {
-                rs.pseudo = true;                   // 冒号和双冒号的伪类伪元素，仅做个标记
-            }else{
-                // 貌似无关了，暂且忽略
-// console.info('-----todo------type/name---',  node.type, node.name)
-            }
-        })
-
-       return rs;
+        parseNodes(ast, nodes, rs);
+// console.info('-----rs-----',  rs)
+        return rs;
     };
 
 }());
 
+function parseNodes(ast, nodes, rs){
+    nodes.forEach(node => {
+        if ( node.type === 'class' ) {
+            (rs.classes=rs.classes||[]).push(node.name);
+            node.name = '<%' + node.name + '%>';
+            rs.selectorTemplate = tokenizer.stringify(ast).replace(/\\<\\%/g, '<%').replace(/\\%\\>/g, '%>');
+        }else if ( node.type === 'element' ) {
+            (rs.elements=rs.elements||[]).push(node.name);
+        }else if ( node.type === 'attribute' ) {
+            (rs.attributes=rs.attributes||[]).push( node.content.split(/[~\|\^\$\*]?=/)[0] );    // 取出属性名
+        }else if ( node.type === 'universal' ) {
+            rs.universal = true;                // 星号*通配符选择器，仅做个标记
+        }else if ( node.type === 'spacing' || node.type === 'spacing' ) {
+            // 嵌套空白符，忽略
+        }else if ( node.type === 'pseudo-class' || node.type === 'pseudo-element'  ) {
+            rs.pseudo = true;                   // 冒号和双冒号的伪类伪元素，仅做个标记
+        }else if ( node.type === 'nested-pseudo-class'  ) {
+            // .foo:not(.bar){}  =>  把not中的bar找出来，放到notclasses中
+            rs.pseudo = true;
+            if ( node.name === 'not' && node.nodes ) {
+                node.nodes.forEach(nd => {
+                    nd.nodes && nd.nodes.forEach(n => {
+                        n.type === 'class' && (rs.notclasses = rs.notclasses || []).push(n.name);
+                    });
+                });
+            }
+        }else if ( node.type === 'selector' ) {
+            // 嵌套选择器，忽略
+        }else{
+            // 貌似无关了，暂且忽略
+ //console.info('-----todo------type/name---',  node.type, node.name)
+        }
+
+        node.nodes && parseNodes(ast, node.nodes, rs);
+    })
+}
 
 /*
 [attribute]	用于选取带有指定属性的元素。

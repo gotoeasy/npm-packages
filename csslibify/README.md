@@ -164,9 +164,140 @@ let result = csslib.get( '.bar', '.baz' );
 
 
 <details>
-<summary><strong>TODO</strong></summary>
+<summary><strong>样式类按需引用(含not条件)-例子1</strong></summary>
 
 ```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('.foo{size:1} .bar{size:2} .foo:not(.bar){size:3}');
+
+let result = csslib.get( '.foo' );
+
+/*
+// result:
+
+.pkg---foo{size:1}
+.pkg---foo:not(.pkg---bar){size:3}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>样式类按需引用(含not条件)-例子2</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('.foo{size:1} .bar{size:2} .foo:not(.bar){size:3}');
+
+let result = csslib.get( '.bar' );
+
+/*
+// result:
+
+.pkg---bar{size:2}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>样式类按需引用(含not条件)-例子3</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('.foo{size:1} .bar{size:2} .foo:not(.bar){size:3}');
+
+let result = csslib.get( '.foo', '.bar' );
+
+/*
+// result:
+
+.pkg---foo{size:1}
+.pkg---bar{size:2}
+.pkg---foo:not(.pkg---bar){size:3}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>多选择器自动拆分引用-例子1</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('.foo,.bar{size:1} .bar,.baz{color:red}');
+
+let result = csslib.get( '.foo' );
+
+/*
+// result:
+
+.pkg---foo{size:1}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>多选择器自动拆分引用-例子2</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('.foo,.bar{size:1} .bar,.baz{color:red}');
+
+let result = csslib.get( '.foo', '.bar' );
+
+/*
+// result:
+
+.pkg---bar{size:1}
+.pkg---foo{size:1}
+.pkg---bar{color:red}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>多选择器自动拆分引用（@media）-例子1</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('@media (min-width: 768px) { .foo,.bar{margin: 0} }');
+
+let result = csslib.get( '.foo' );
+
+/*
+// result:
+
+@media (min-width: 768px) { .pkg---foo{margin: 0} }
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>多选择器自动拆分引用（@media）-例子2</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp('@media (min-width: 768px) { .foo,.bar{margin: 0} }');
+
+let result = csslib.get( '.foo', '.bar' );
+
+/*
+// result:
+
+@media (min-width: 768px) { .pkg---bar{margin: 0} }
+@media (min-width: 768px) { .pkg---foo{margin: 0} }
+*/
 ```
 </details>
 

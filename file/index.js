@@ -24,12 +24,12 @@ function mkdir(file, ignorePoint) {
 		dirs.length = dirs.length -1;
 	}
 
-	let path;
+	let path = '';
 	for(let i = 0; i < dirs.length; i++){
 		if (i==0) {
-			path = dirs[i] ;
+			path = dirs[i] + '/' ;
 		}else{
-			path += '/' + dirs[i] ;
+			path += dirs[i] + '/';
 		}
 
 		if (!fs.existsSync(path)) {

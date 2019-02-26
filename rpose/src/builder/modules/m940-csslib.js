@@ -37,9 +37,10 @@ module.exports = bus.on('样式库', function(rs={}){
         cssfiles.forEach( f => aryTxt.push(File.read(f)) );
 
         let css = aryTxt.join('\n');
-        let lib = csslibify(name, css, {includeElementRule: true});
-        rs[name] = lib;
-		return lib;
+        let csslib = csslibify(name);
+        csslib.imp(css);
+        rs[name] = csslib;
+		return csslib;
     }
 
 }());
