@@ -1,6 +1,191 @@
 const test = require('ava');
 const csslibify = require('.');
 
+
+test('22 含动画keyframes，@supports中使用动画-例子2', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      @supports (position: sticky) {
+        .bar {
+            animation-name:foo;
+            animation-duration: 5s;
+        }
+     }
+     .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.bar' );
+    isSameCss(t, rs, '@supports (position: sticky) { .pkg---bar{animation-name:pkg---foo;animation-duration:5s} } @keyframes pkg---foo { 0% {background: red;} to {background: yellow;} }');
+
+});
+
+
+test('21 含动画keyframes，@supports中使用动画-例子1', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      @supports (position: sticky) {
+        .bar {
+          animation:foo 5s;
+        }
+     }
+     .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.bar' );
+    isSameCss(t, rs, '@supports (position: sticky) { .pkg---bar{animation:pkg---foo 5s} } @keyframes pkg---foo { 0% {background: red;} to {background: yellow;} }');
+
+});
+
+
+
+test('20 含动画keyframes，用不到则不会取动画样式', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      .bar {
+        animation:foo 5s;
+      }
+      @media (min-width: 768px) {
+          .bar-baz {
+            animation-name:foo;
+            animation-duration: 5s;
+          }
+      }
+     .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.baz' );
+    isSameCss(t, rs, '.pkg---baz{size:14}');
+
+});
+
+
+test('19 动画@keyframes，动画名一起修改-例子4', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      @media (min-width: 768px) {
+          .bar {
+            animation-name:foo;
+            animation-duration: 5s;
+          }
+      }
+      .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.bar', '.baz' );
+    isSameCss(t, rs, ' .pkg---baz{size:14} @media (min-width: 768px) {.pkg---bar { animation-name: pkg---foo;animation-duration: 5s}} @keyframes pkg---foo { 0% {background: red;} to {background: yellow;} }');
+
+});
+
+test('18 动画@keyframes，动画名一起修改-例子3', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      @media (min-width: 768px) {
+          .bar {
+            animation:foo 5s;
+          }
+      }
+      .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.bar' );
+    isSameCss(t, rs, '@media (min-width: 768px) {.pkg---bar { animation: pkg---foo 5s;}} @keyframes pkg---foo { 0% {background: red;} to {background: yellow;} }');
+
+});
+
+
+test('17 动画@keyframes，动画名一起修改-例子2', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      .bar {
+        animation-name:foo;
+        animation-duration: 5s;
+      }
+      .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.bar', '.baz' );
+    isSameCss(t, rs, '.pkg---bar { animation-name: pkg---foo;animation-duration: 5s} @keyframes pkg---foo { 0% {background: red;} to {background: yellow;} } .pkg---baz{size:14}');
+
+});
+
+
+test('16 动画@keyframes，动画名一起修改-例子1', t => {
+	let css, pkg, csslib, rs;
+
+    pkg = 'pkg';
+	csslib = csslibify(pkg);
+    csslib.imp(`
+      @keyframes foo{
+        0% {background:red}
+        to {background:yellow}
+      }
+      .bar {
+        animation:foo 5s;
+      }
+      .baz {
+        size:14;
+      }
+    `);
+
+    rs = csslib.get( '.bar' );
+    isSameCss(t, rs, '.pkg---bar { animation: pkg---foo 5s;} @keyframes pkg---foo { 0% {background: red;} to {background: yellow;} }');
+
+});
+
 test('15 多选择器自动拆分引用（@media），重复，使用缓存，增加覆盖率', t => {
 	let css, pkg, csslib, rs;
 
@@ -228,7 +413,6 @@ test('01 导入样式库，指定库名，多次导入自动合并', t => {
 
 
 
-
 function isSameCss(t, css1, css2){
     let rs = hashCss(css1.toLowerCase()) === hashCss(css2.toLowerCase());
     if ( rs ) return t.is(true, true);
@@ -240,7 +424,7 @@ function hashCss(str){
 	let rs = 0, i = (str == null ? 0 : str.length), ch;
 	while ( i ) {
         ch = str.charCodeAt(--i);
-        if (  ch > 32 || ch < 9 || (ch !== 9 && ch !== 10 && ch !== 13 && ch !== 32 )  ) {    // 忽略回车换行tab空格(9/10/13/32)
+        if (  (ch > 59) || (ch !== 59 && ch !== 32 && ch && 9 && ch !== 10 && ch !== 13)  ) {    // 忽略回车换行tab空格分号(9/10/13/32/59)
             rs = (rs * 33) ^ ch;
         }
 	}

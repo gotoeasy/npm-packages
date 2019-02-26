@@ -3,7 +3,8 @@ const bus = require('@gotoeasy/bus');
 // 拆解含类选择器的普通标签样式，非嵌套样式
 bus.on('split-plugins', function fnPlugin(root, result) {
 
-    let nodes = bus.at('process-result-of-split-postcss-plugins').nodes; // 处理结果节点数组
+    let rs = bus.at('process-result-of-split-postcss-plugins');
+    let keyframes = (rs.keyframes = rs.keyframes || []); // 处理结果节点数组
 
     root.walkAtRules('keyframes', rule => {
 
@@ -17,7 +18,7 @@ bus.on('split-plugins', function fnPlugin(root, result) {
         oNode.template = rule.toString();
         oNode.toString = bus.at('template-to-tostring', oNode.template, name);
 
-        nodes.push(oNode)
+        keyframes.push(oNode);
 
         rule.remove();
     });

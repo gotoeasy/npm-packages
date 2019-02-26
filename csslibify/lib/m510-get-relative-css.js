@@ -10,6 +10,17 @@ module.exports = bus.on('get-relative-css', function(){
         let rename = this.rename;
         let includesElements = false;
 
+        // 按动画名取@keyframes样式
+        let getKeyframes = animationName => {
+            let keyframes = this.keyframes || [];
+            for ( let i=0,node; node=keyframes[i++]; ) {
+                if ( node.animation === animationName ) {
+                    return node.toString(pkg, rename);
+                }
+            }
+            return '';
+        }
+
         // 整理输入
         args.forEach(v => {
             if ( typeof v === 'string' ) {
@@ -39,11 +50,15 @@ module.exports = bus.on('get-relative-css', function(){
             }
             
             // 类名全在应用范围内才算
-            classes.every(cls => requireClasses.includes(cls.toLowerCase())) && rs.push(node.toString(pkg, rename));
+            if ( classes.every(cls => requireClasses.includes(cls.toLowerCase())) ) {
+                rs.push(node.toString(pkg, rename));
+                node.animation && rs.push(getKeyframes(node.animation));    // 有动画属性时查找动画样式
+            }
         }
 
         return rs.join('\n');
     }
 
 }());
+
 

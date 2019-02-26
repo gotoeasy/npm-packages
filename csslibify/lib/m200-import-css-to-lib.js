@@ -9,7 +9,7 @@ const postcss = require('postcss');
 // opt.assetsPath       : 修改后的url资源目录 （默认复制资源后使用该资源的绝对路径）
 module.exports = bus.on('import-css-to-lib', function(){
 
-	return function(fileOrCss, opt={}){
+	return function imp(fileOrCss, opt={}){
 
         let inputCss = File.existsFile(fileOrCss) ? File.read(fileOrCss) : fileOrCss;
         let hashcode = hash( inputCss + 'basePath:' + (opt.basePath || '') + 'assetsPath:' + (opt.assetsPath || '') );
@@ -18,7 +18,7 @@ module.exports = bus.on('import-css-to-lib', function(){
         let nodes;
         if ( File.existsFile(csslibfile) ) {
             // 直接读取缓存
-            nodes = JSON.parse(File.read(csslibfile));
+            nodes = JSON.parse(File.read(csslibfile)).nodes;
             nodes.forEach(node => node.toString = bus.at('template-to-tostring', node.template, ...(node.classes||[])));   // 添加toString方法
             mergeNodes(this.nodes, nodes);  // 导入的nodes加到当前库nodes中，重复则不加
             return this;
@@ -35,6 +35,7 @@ module.exports = bus.on('import-css-to-lib', function(){
         let processResult = {nodes:[]};
         bus.at('process-result-of-split-postcss-plugins', processResult); // 重置处理结果
         let rs = postcss( bus.at('get-split-postcss-plugins') ).process(css, {from: File.resolve(toPath, 'from.css')}).root.toResult();
+        processResult.keyframes && (this.keyframes = processResult.keyframes);
         nodes = processResult.nodes;
         mergeNodes(this.nodes, nodes);  // 导入的nodes加到当前库nodes中，重复则不加
 
@@ -45,7 +46,7 @@ module.exports = bus.on('import-css-to-lib', function(){
             File.write(csslibfile.replace('.json','-finish.css'), tmp.join('\n'));
             File.write(csslibfile.replace('.json','-todo.css'), rs.css);
         }
-        File.write(csslibfile, JSON.stringify(this.nodes, null, 2));
+        File.write(csslibfile, JSON.stringify(processResult, null, 2));
         // ----------------------------------
 
         return this;

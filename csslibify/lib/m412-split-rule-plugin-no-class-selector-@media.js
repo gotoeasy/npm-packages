@@ -14,17 +14,14 @@ bus.on('split-plugins', function fnPlugin(root, result) {
         let oSelector = bus.at('parseSingleSelector', rule.selector);
         if ( oSelector.classes ) return;
 
-        let oNode = {};
-        oSelector.elements && (oNode.elements = oSelector.elements);
-        oSelector.classes && (oNode.classes = oSelector.classes);
-        oSelector.attributes && (oNode.attributes = oSelector.attributes);
-        oSelector.universal && (oNode.universal = oSelector.universal);
+        let oNode = Object.assign({}, oSelector);
 
         let curRule = rule.clone();
         let mediaRule = rule.parent.clone();
         mediaRule.removeAll();
         mediaRule.append(curRule);
 
+        rule.animation && (oNode.template = rule.animation);
         oNode.template = mediaRule.toString();
         oNode.toString = () => oNode.template;
 

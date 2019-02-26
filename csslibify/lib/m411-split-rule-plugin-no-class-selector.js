@@ -12,13 +12,9 @@ bus.on('split-plugins', function fnPlugin(root, result) {
         let oSelector = bus.at('parseSingleSelector', rule.selector);
         if ( oSelector.classes ) return;
 
-        let oNode = {};
-        oSelector.elements && (oNode.elements = oSelector.elements);
-        oSelector.classes && (oNode.classes = oSelector.classes);
-        oSelector.attributes && (oNode.attributes = oSelector.attributes);
-        oSelector.universal && (oNode.universal = oSelector.universal);
-        oSelector.pseudo && (oNode.pseudo = oSelector.pseudo);
+        let oNode = Object.assign({}, oSelector);
 
+        rule.animation && (oNode.template = rule.animation);
         oNode.template = rule.toString();
         oNode.toString = () => oNode.template;
 

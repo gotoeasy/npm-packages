@@ -71,11 +71,13 @@ function parseNodes(ast, nodes, rs){
 bus.on('template-to-tostring', function(){
 
     return function(template, ...names){
-        
         template = lineString(template);
-        for ( let i=0,name,regstr; name=names[i++]; ) {
-            regstr = '<%' + name + '%>';    // TODO 名称通常没有正则冲突，暂不考虑
-            template = template.replace(new RegExp(regstr, 'ig'), `'+rename(pkg,'${name}')+'`);
+        for ( let i=0,name,reg; i<names.length; i++ ) {
+            name = names[i];
+            if ( name ) {
+                reg = new RegExp('<%' + name + '%>', 'ig');                     // TODO 名称通常没有正则冲突，暂不考虑
+                template = template.replace(reg, `'+rename(pkg,'${name}')+'`);
+            }
         }
         template = `return '${template}'`;
         return new Function('pkg=""', 'rename=(p,n)=>`${p?(p+"---"):""}${n}`', template);

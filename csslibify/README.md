@@ -302,6 +302,236 @@ let result = csslib.get( '.foo', '.bar' );
 </details>
 
 
+<details>
+<summary><strong>含动画keyframes时动画名一起修改-例子1</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp(`
+  @keyframes foo{
+    0% {background:red}
+    to {background:yellow}
+  }
+  .bar {
+    animation:foo 5s;
+  }
+  .baz {
+    size:14;
+  }
+`);
+
+let result = csslib.get( '.bar' );
+
+/*
+// result:
+
+.pkg---bar{animation:pkg---foo 5s}
+@keyframes pkg---foo{
+  0% {background:red}
+  to {background:yellow}
+}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>含动画keyframes时动画名一起修改-例子2</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp(`
+  @keyframes foo{
+    0% {background:red}
+    to {background:yellow}
+  }
+  .bar {
+    animation-name:foo;
+    animation-duration: 5s;
+  }
+  .baz {
+    size:14;
+  }
+`);
+
+let result = csslib.get( '.bar', '.baz' );
+
+/*
+// result:
+
+.pkg---bar{
+  animation:pkg---foo;
+  animation-duration: 5s
+}
+@keyframes pkg---foo{
+  0% {background:red}
+  to {background:yellow}
+}
+.baz{size:14}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>含动画keyframes时动画名一起修改-例子3</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp(`
+  @keyframes foo{
+    0% {background:red}
+    to {background:yellow}
+  }
+  @media (min-width: 768px) {
+    .bar {
+      animation:foo 5s;
+    }
+  }
+  .baz {
+    size:14;
+  }
+`);
+
+let result = csslib.get( '.bar' );
+
+/*
+// result:
+
+@media (min-width: 768px) {
+  .pkg---bar{animation:pkg---foo 5s}
+}
+@keyframes pkg---foo{
+  0% {background:red}
+  to {background:yellow}
+}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>含动画keyframes时动画名一起修改-例子4</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp(`
+  @keyframes foo{
+    0% {background:red}
+    to {background:yellow}
+  }
+  @media (min-width: 768px) {
+    .bar {
+      animation-name:foo;
+      animation-duration: 5s;
+    }
+  }
+  .baz {
+    size:14;
+  }
+`);
+
+let result = csslib.get( '.bar', '.baz' );
+
+/*
+// result:
+
+.baz{size:14}
+@media (min-width: 768px) {
+  .pkg---bar{
+    animation:pkg---foo;
+    animation-duration: 5s
+  }
+}
+@keyframes pkg---foo{
+  0% {background:red}
+  to {background:yellow}
+}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>含动画keyframes，用不到则不会取动画样式</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp(`
+  @keyframes foo{
+    0% {background:red}
+    to {background:yellow}
+  }
+  .bar {
+    animation-name:foo;
+    animation-duration: 5s;
+  }
+  .baz {
+    size:14;
+  }
+`);
+
+let result = csslib.get( '.baz' );
+
+/*
+// result:
+
+.baz{size:14}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>含动画keyframes，@supports嵌套规则使用动画</strong></summary>
+
+```js
+let csslibify = require('csslibify');
+let csslib = csslibify('pkg');
+csslib.imp(`
+  @keyframes foo{
+    0% {background:red}
+    to {background:yellow}
+  }
+  @supports (position: sticky) {
+    .bar {
+      animation:foo 5s;
+    }
+  }
+  .baz {
+    size:14;
+  }
+`);
+
+let result = csslib.get( '.baz' );
+
+/*
+// result:
+
+@supports (position: sticky) {
+  .pkg---bar{animation:pkg---foo 5s}
+}
+@keyframes pkg---foo {
+  0% {background: red}
+  to {background: yellow}
+}
+*/
+```
+</details>
+
+
+<details>
+<summary><strong>TODO </strong></summary>
+
+```js
+```
+</details>
+
 
 
 

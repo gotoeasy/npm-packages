@@ -17,7 +17,7 @@ module.exports = bus.on('normalize-input-css', function(){
     // -------------------------------------------------------------
 	return (css, fromPath, toPath, assetsPath) => {
 
-        let hashcode = JSON.stringify([css, fromPath, toPath, assetsPath]);
+        let hashcode = hash(JSON.stringify([css, fromPath, toPath, assetsPath]));
         let cachefile = File.resolve(bus.at('get-cache-path'), 'normalized-' + hashcode + '.css');
         if ( File.existsFile(cachefile) ) return File.read(cachefile);
 
@@ -52,6 +52,7 @@ module.exports = bus.on('normalize-input-css', function(){
 
 
         let rs = postcss(plugins).process(css, {from}).root.toResult();
+        File.write(cachefile, rs.css);
         return rs.css;
     }
 

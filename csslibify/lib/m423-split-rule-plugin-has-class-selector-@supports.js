@@ -14,11 +14,7 @@ bus.on('split-plugins', function fnPlugin(root, result) {
         let oSelector = bus.at('parseSingleSelector', rule.selector);
         if ( !oSelector.classes ) return;
 
-        let oNode = {};
-        oSelector.elements && (oNode.elements = oSelector.elements);
-        oSelector.classes && (oNode.classes = oSelector.classes);
-        oSelector.attributes && (oNode.attributes = oSelector.attributes);
-        oSelector.universal && (oNode.universal = oSelector.universal);
+        let oNode = Object.assign({}, oSelector);
 
         let curRule = rule.clone();
         curRule.selector = oSelector.selectorTemplate; // .foo > .bar => .<%foo%> > .<%bar%>
@@ -26,8 +22,21 @@ bus.on('split-plugins', function fnPlugin(root, result) {
         mediaRule.removeAll();
         mediaRule.append(curRule);
 
+        curRule.animation && (oNode.animation = curRule.animation);       // foo ------ animation: foo 5s; 或 animation-name: foo;
+        if ( curRule.animation ) {
+            curRule.nodes.forEach(node => {
+                if ( /^animation$/i.test(node.prop) ) {
+                    let ary = node.value.split(' ');
+                    ary[0] = '<%' + ary[0] + '%>'                   // animation: foo 5s; => animation: <%foo%> 5s;
+                    node.value = ary.join(' ');
+                }else if ( /^animation-name$/i.test(node.prop) ) {
+                    node.value = '<%' + node.value + '%>';          // animation-name: foo; => animation: <%foo%>;
+                }
+            })
+        }
+
         oNode.template = mediaRule.toString();
-        oNode.toString = bus.at('template-to-tostring', oNode.template, ...oSelector.classes);
+        oNode.toString = bus.at('template-to-tostring', oNode.template, ...oNode.classes, oNode.animation);
 
         nodes.push(oNode)
 
