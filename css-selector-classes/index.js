@@ -1,22 +1,20 @@
-const CssSelectorTokenizer = require('css-selector-tokenizer');
+const tokenizer = require('css-selector-tokenizer');
 
-module.exports = function cssSelectorClasses(selector=''){
+module.exports = function (selector=''){
+    let nodes, oSet = new Set();
+    let ast = tokenizer.parse(selector);
 
-    let ast = CssSelectorTokenizer.parse(selector);
-    let classes = [];
-//console.info(JSON.stringify(ast, null,4))
-    // 样式类名
-    ast.nodes.forEach(node => resolveClass(node, classes));
+    if ( !ast.nodes || !ast.nodes.length ) return [];
+    nodes = ast.nodes[0].nodes;
+    if ( !nodes ) return [];
 
-    let template = CssSelectorTokenizer.stringify(ast);
-    return {classes, template};
-}
+    parseNodes(nodes, oSet);
+    return [...oSet];
+};
 
-function resolveClass(node, classes){
-    if ( node.type === 'class' ) {
-        classes.push(node.name);
-        node.name = '___---' + node.name + '---___';
-    }
-
-    node.nodes && node.nodes.forEach(nd => resolveClass(nd, classes));
+function parseNodes(nodes, oSet){
+    nodes.forEach(node => {
+        node.type === 'class' && oSet.add(node.name.toLowerCase());
+        node.nodes && parseNodes(node.nodes, oSet);
+    })
 }
