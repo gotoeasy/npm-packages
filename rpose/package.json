@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.65",
+  "version": "0.0.67",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "*",
@@ -13,6 +13,7 @@
     "@gotoeasy/theme": "*",
     "@gotoeasy/pre-render": "*",
     "@gotoeasy/npm": "*",
+    "@gotoeasy/postobject": "*",
     "csslibify": "*",
     "acorn-globals": "*",
     "astring": "*",

@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.65
+0.0.67
 
 
 
@@ -20,6 +20,7 @@ index.js
 @gotoeasy/theme = *
 @gotoeasy/pre-render = *
 @gotoeasy/npm = *
+@gotoeasy/postobject = *
 csslibify = *
 acorn-globals = *
 astring = *

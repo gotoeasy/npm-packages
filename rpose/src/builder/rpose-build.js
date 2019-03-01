@@ -1,5 +1,6 @@
 const Err = require('@gotoeasy/err');
 const bus = require('@gotoeasy/bus');
+const npm = require('@gotoeasy/npm');
 
 const MODULE = '[' + __filename.substring(__filename.replace(/\\/g, '/').lastIndexOf('/')+1, __filename.length-3) + ']';
 
@@ -7,7 +8,7 @@ module.exports = function build(opts){
 	(async function(){
 
 console.time('load');
-			require('./loadModules')();
+			npm.requireAll(__dirname, 'modules/m*.js');
 console.timeEnd('load');
 
 

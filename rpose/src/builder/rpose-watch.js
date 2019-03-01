@@ -1,6 +1,7 @@
 const Btf = require('@gotoeasy/btf');
 const File = require('@gotoeasy/file');
 const bus = require('@gotoeasy/bus');
+const npm = require('@gotoeasy/npm');
 const Err = require('@gotoeasy/err');
 const hash = require('@gotoeasy/hash');
 const chokidar = require('chokidar');
@@ -14,7 +15,7 @@ module.exports = function (opts){
 
 		// 初始化
 console.time('load');
-		require('./loadModules')();
+		npm.requireAll(__dirname, 'modules/m*.js');
 console.timeEnd('load');
 
 
