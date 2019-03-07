@@ -598,7 +598,7 @@ test('13 空白缩进整理 - 文本 + 单一位置 codeframe({text, start})', t
 
 });
 
-test('10 特长转省略号 - 文本 + 单一位置 codeframe({text, start})', t => {
+test('14 特长转省略号 - 文本 + 单一位置 codeframe({text, start})', t => {
 
 	let rs, exp, text, start, end;
 

@@ -2,7 +2,7 @@
 @gotoeasy/postobject
 
 [version] // 版本号 （必填）
-0.0.1
+0.0.5
 
 
 
@@ -24,7 +24,7 @@ postobject
 postobject
 
 [scripts] // 脚本命令
-test = echo "Error: no test specified" && exit 1
+test = nyc ava
 
 [repository] // 仓库
 type= git

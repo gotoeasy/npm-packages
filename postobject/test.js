@@ -1,19 +1,66 @@
 import test from 'ava';
 import postobject from '.';
 
+test('11 3层节点的toJson', t => {
+
+    let plugin0 = function(root, result){
+        result.json = root.toJson();
+    };
+
+    let pluginlog = function(root, result){
+//        console.info('-----------root----------', root);
+//        console.info('-----------JSON----------');
+//        console.info(JSON.stringify(root.toJson(),null,4));
+    };
+
+
+    let rs = postobject([plugin0, pluginlog]).process({lay:1,nodes:[{lay:2,nodes:[{lay:3}]}]})
+    t.is(JSON.stringify(rs.json), '{"type":"root","nodes":[{"type":"Unknown","object":{"lay":1},"nodes":[{"type":"Unknown","object":{"lay":2},"nodes":[{"type":"Unknown","object":{"lay":3}}]}]}]}');
+
+});
+
+test('10 单节点的toJson', t => {
+
+    let plugin0 = function(root, result){
+    };
+
+    let plugin1 = function(root, result){
+        result.json = root.toJson();
+    };
+
+    let rs = postobject([plugin0, plugin1]).process({})
+    t.is(JSON.stringify(rs.json), '{"type":"root","nodes":[{"type":"Unknown","object":{}}]}');
+
+});
+
+test('09 单纯根节点的toJson', t => {
+
+    let plugin0 = function(root, result){
+    };
+
+    let plugin1 = function(root, result){
+        result.json = root.toJson();
+    };
+
+    let rs = postobject([plugin0, plugin1]).process()
+    t.is(JSON.stringify(rs.json), '{"type":"root"}');
+
+});
+
+
 
 test('08 三个插件，一个添加节点和删除指定子节点，一个替换指定节点，一个计算总和', t => {
 
     let plugin0 = function(root, result){
-        root.walk(/num/, node => {
-            if ( node.value === 1 ) {
+        root.walk(/num/, (node, object) => {
+            if ( object.value === 1 ) {
                 let oNode = node.clone();
-                oNode.value = 10;
+                oNode.object.value = 10;
                 oNode.removeAll();
                 node.before(oNode);
                 
                 oNode = oNode.clone();
-                oNode.value = 20;
+                oNode.object.value = 20;
                 node.after(oNode);
 
                 let child = node.getFirstChild();
@@ -22,10 +69,10 @@ test('08 三个插件，一个添加节点和删除指定子节点，一个替�
         });
     };
     let plugin1 = function(root, result){
-        root.walk(node => {
-            if ( node.value === 10 ) {
+        root.walk((node, object) => {
+            if ( object.value === 10 ) {
                 let oNode = node.clone();
-                oNode.value = 100;
+                oNode.object.value = 100;
                 oNode.removeAll();
                 node.replaceWith(oNode);
             }
@@ -33,8 +80,8 @@ test('08 三个插件，一个添加节点和删除指定子节点，一个替�
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 
@@ -47,15 +94,15 @@ test('08 三个插件，一个添加节点和删除指定子节点，一个替�
 test('07 三个插件，一个添加节点和删除指定子节点，一个删除指定节点，一个计算总和', t => {
 
     let plugin0 = function(root, result){
-        root.walk(/num/, node => {
-            if ( node.value === 1 ) {
+        root.walk(/num/, (node, object) => {
+            if ( object.value === 1 ) {
                 let oNode = node.clone();
-                oNode.value = 10;
+                oNode.object.value = 10;
                 oNode.removeAll();
                 node.before(oNode);
                 
                 oNode = oNode.clone();
-                oNode.value = 20;
+                oNode.object.value = 20;
                 node.after(oNode);
 
                 let child = node.getFirstChild();
@@ -64,14 +111,14 @@ test('07 三个插件，一个添加节点和删除指定子节点，一个删�
         });
     };
     let plugin1 = function(root, result){
-        root.walk(node => {
-            node.value === 10 && node.remove();
+        root.walk((node, object) => {
+            object.value === 10 && node.remove();
         });
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 
@@ -85,15 +132,15 @@ test('07 三个插件，一个添加节点和删除指定子节点，一个删�
 test('06 三个插件，一个添加节点和删除指定子节点，一个删除指定节点，一个计算总和', t => {
 
     let plugin0 = function(root, result){
-        root.walk(/num/, node => {
-            if ( node.value === 1 ) {
+        root.walk(/num/, (node, object) => {
+            if ( object.value === 1 ) {
                 let oNode = node.clone();
-                oNode.value = 10;
+                oNode.object.value = 10;
                 oNode.removeAll();
                 node.before(oNode);
                 
                 oNode = oNode.clone();
-                oNode.value = 20;
+                oNode.object.value = 20;
                 node.after(oNode);
 
                 node.removeChild(node.getLastChild());
@@ -101,14 +148,14 @@ test('06 三个插件，一个添加节点和删除指定子节点，一个删�
         });
     };
     let plugin1 = function(root, result){
-        root.walk(node => {
-            node.value === 10 && node.remove();
+        root.walk((node, object) => {
+            object.value === 10 && node.remove();
         });
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 
@@ -122,15 +169,15 @@ test('06 三个插件，一个添加节点和删除指定子节点，一个删�
 test('05 三个插件，一个添加节点，一个删除子节点，一个计算总和', t => {
 
     let plugin0 = function(root, result){
-        root.walk(/num/, node => {
-            if ( node.value === 1 ) {
+        root.walk(/num/, (node, object) => {
+            if ( object.value === 1 ) {
                 let oNode = node.clone();
-                oNode.value = 10;
+                oNode.object.value = 10;
                 oNode.removeAll();
                 node.before(oNode);
                 
                 oNode = oNode.clone();
-                oNode.value = 20;
+                oNode.object.value = 20;
                 node.after(oNode);
 
                 node.removeAll();
@@ -138,14 +185,14 @@ test('05 三个插件，一个添加节点，一个删除子节点，一个计�
         });
     };
     let plugin1 = function(root, result){
-        root.walk(node => {
-            node.value === 3 && node.remove();
+        root.walk((node, object) => {
+            object.value === 3 && node.remove();
         });
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 
@@ -158,44 +205,45 @@ test('05 三个插件，一个添加节点，一个删除子节点，一个计�
 test('04 四个插件，一个添加节点，一个删除节点，一个计算总和，最后一个注释空转', t => {
 
     let plugin0 = function(root, result){
-        root.walk(/num/, node => {
-            if ( node.value === 1 ) {
+        root.walk(/num/, (node, object) => {
+            if ( object.value === 1 ) {
                 let oNode = node.clone();
-                oNode.value = 10;
+                oNode.object.value = 10;
                 oNode.removeAll();
                 node.before(oNode);
                 
                 oNode = oNode.clone();
-                oNode.value = 20;
+                oNode.object.value = 20;
                 node.after(oNode);
             }
-            if ( node.value === 3 ) {
+            if ( object.value === 3 ) {
                 let oNode = node.clone();
                 oNode.type = 'comment';
-                oNode.value = 'first comment';
+                oNode.object.value = 'first comment';
                 oNode.removeAll();
                 node.first(oNode);
                 
                 oNode = oNode.clone();
-                oNode.value = 'last comment';
+                oNode.object.value = 'last comment';
                 node.last(oNode);
             }
         });
     };
     let plugin1 = function(root, result){
-        root.walk(node => {
-            node.value === 3 && node.remove();
+        root.walk((node, object) => {
+            object.value === 3 && node.remove();
         });
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
     let pluginlog = function(root, result){
-       // console.info('-----------JSON----------');
-       // console.info(JSON.stringify(root.toJson(),null,4));
+  //      console.info('-----------root----------', root);
+  //      console.info('-----------JSON----------');
+  //      console.info(JSON.stringify(root.toJson(),null,4));
     };
 
     let rs = postobject([plugin0,plugin1, plugin2,pluginlog]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
@@ -208,14 +256,14 @@ test('04 四个插件，一个添加节点，一个删除节点，一个计算�
 test('03 两个插件，一个删除节点，最后计算总和', t => {
 
     let plugin1 = function(root, result){
-        root.walk(node => {
-            node.value > 2 && node.remove();
+        root.walk((node, object) => {
+            object.value > 2 && node.remove();
         });
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 
@@ -228,14 +276,14 @@ test('03 两个插件，一个删除节点，最后计算总和', t => {
 test('02 两个插件，一个乘2，最后计算总和', t => {
 
     let plugin1 = function(root, result){
-        root.walk('num', node => {
-            node.value *= 2;
+        root.walk('num', (node, object) => {
+            object.value *= 2;
         });
     };
     let plugin2 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 
@@ -245,13 +293,12 @@ test('02 两个插件，一个乘2，最后计算总和', t => {
 
 });
 
-
 test('01 一个插件，计算总和', t => {
 
     let plugin1 = function(root, result){
         result.total = result.total || 0;
-        root.walk('num', node => {
-            result.total += node.value;
+        root.walk('num', (node, object) => {
+            result.total += object.value;
         });
     };
 

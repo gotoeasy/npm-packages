@@ -51,7 +51,17 @@ module.exports = (function(){
 		opts.plugins = opts.plugins || [];
 		opts.paths = [...new Set([...new Set(opts.paths || []), ...paths])];    // 添加node_modules目录，去重复
 
-		return require('less').render(src, opts); // 返回Promise对象
+        let err, css;
+		require('less').render(src, opts, function(error, output) {
+            error && (err = error);
+            css = output.css;
+        });
+
+        if ( err ) {
+            throw err;
+        }
+
+        return css;
 	}
 
 })();

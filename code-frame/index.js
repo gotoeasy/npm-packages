@@ -34,8 +34,8 @@ const File = require('@gotoeasy/file');
 // ------------------------------------------
 const defaultOptions = {tab:'    ', linesAbove:3, linesBelow:3, maxLength:120};
 
-function getCodefrmaeByTextPos(opts){
-
+function getCodefrmaeByTextPos(options){
+    let opts = Object.assign({}, options);
 	// 检查及适当修复参数
 	opts.start = parseInt(opts.start);
 	opts.end = (opts.end == null ? opts.start : parseInt(opts.end));
@@ -64,13 +64,18 @@ function getCodefrmaeByTextPos(opts){
 	opts.startLine = tmpLines.length;
 	opts.startColumn = tmpLines[tmpLines.length-1].length;
 
+    if ( opts.startColumn === 0 && options.start) {
+        options.start++;
+        return getCodefrmaeByTextPos(options);
+    }
+
 	// 计算结束行列
 	tmpLines = text.substring(0, opts.end).split(/\r?\n/);
 	lines = text.split(/\r?\n/);
 	opts.endLine = tmpLines.length;
 	opts.endColumn = tmpLines[tmpLines.length-1].length;
 
-	return getCodefrmae(lines, opts);
+    return getCodefrmae(lines, opts);
 }
 
 function getCodefrmaeByFileLineCloumn(opts){
@@ -163,7 +168,7 @@ function getFocusRight(code, fromPos, toPos, opts){
 	let startColumn = code.substring(0, fromPos).replace(/\t/g, opts.tab).length;
 	let endColumn = code.substring(0, toPos).replace(/\t/g, opts.tab).length;
 	// TODO 有必要全角长度换算?
-	return ' '.repeat(startColumn-1) + '^'.repeat(endColumn-startColumn+1);
+    return ' '.repeat(startColumn-1) + '^'.repeat(endColumn-startColumn+1);
 }
 function getCodeLeft(lineNo, numLen, isFocus){
 	return (isFocus ? ' > ' : '   ') + lpad(lineNo, numLen) + ' | ';
@@ -211,6 +216,7 @@ module.exports = function (options){
 		opts.startColumn = parseInt(opts.startColumn);
 		opts.endLine = parseInt(opts.endLine);
 		opts.endColumn = parseInt(opts.endColumn);
+
 		if ( isNaN(opts.startLine) || isNaN(opts.startColumn) || isNaN(opts.endLine) || isNaN(opts.endColumn)
 			|| opts.startLine < 1 || opts.startColumn < 1 || opts.endLine < 1 || opts.endColumn < 1
 			|| opts.endLine < opts.startLine

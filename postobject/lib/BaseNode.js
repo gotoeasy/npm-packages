@@ -1,36 +1,44 @@
 // 树节点基类
 class BaseNode{
 
-    constructor(obj={}, dataField=false) {
-        if ( isPlainObject(obj) ) {
-            for ( let k in obj ) {
-                k !== 'parent' && k !== 'nodes' && (this[k] = obj[k]);
-            }
-        }
+    constructor(object) {
+        object && (this.object = object);
+        Object.defineProperty(this, "parent", {
+            value : undefined,
+            configurable : true,
+            writable : true
+        });
     }
 
-    walk(typeOrRegexpOrCallback, callback) {
+    walk(typeOrRegexpOrCallback, callback, opts) {
         if ( !this.nodes ) return;
 
         // 整理参数
-        let type, regexp, fnCallback;
+        let type, regexp, fnCallback, readonly = false;
         if ( isFunction(typeOrRegexpOrCallback) ) {
             fnCallback = typeOrRegexpOrCallback;
+            if ( isPlainObject(callback) ) {
+                readonly = !!callback.readonly;
+            }
         }else{
             isString(typeOrRegexpOrCallback) && (type = typeOrRegexpOrCallback);
             isRegExp(typeOrRegexpOrCallback) && (regexp = typeOrRegexpOrCallback);
             isFunction(callback) && (fnCallback = callback);
+            if ( isPlainObject(opts) ) {
+                readonly = !!opts.readonly;
+            }
         }
 
-        if ( !fnCallback ) return;
-        let nodes = [ ...this.nodes ];                                  // 确保遍历原节点，且不受回调函数编辑影响
+        if ( !fnCallback || !this.nodes) return;                        // 没有回调函数或没有子节点则不处理
+
+        let nodes = readonly ? this.nodes : [ ...this.nodes ];          // 默认复制后安全的遍历，如果指定为只读则直接遍历
 
         // 遍历子节点
         for ( let i=0,node,rs; node=nodes[i++]; ) {
             if ( type !== undefined && type !== node.type ) continue;
             if ( regexp && !regexp.test(node.type) ) continue;
 
-            rs = fnCallback(node);
+            rs = fnCallback(node, node.object);
             if ( rs === false ) return rs;                              // 回调函数返回false时停止遍历
         }
 
@@ -44,22 +52,21 @@ class BaseNode{
     }
 
     clone(){
-        let oClone = new this.constructor(Object.assign({}, this));     // TODO 深度克隆
-        oClone.parent = this.parent;
-        delete oClone.nodes;
-        this.nodes && (oClone.nodes = []) && this.nodes.forEach( node => oClone.addChild(node.clone()) );
-        return oClone;
+        let cloneNode = new this.constructor(Object.assign({}, this.object));     // TODO 深度克隆数据？
+        cloneNode.type = this.type;
+        cloneNode.parent = this.parent;
+        this.nodes && this.nodes.length && (cloneNode.nodes = []) && this.nodes.forEach( node => cloneNode.addChild(node.clone()) );
+        return cloneNode;
     }
 
     remove(){
-        if ( !this.parent ) return;
-        this.parent.removeChild(this);
+        this.parent && this.parent.removeChild(this);
     }
 
     replaceWith(...nodes){
         let parent = this.parent;
         if ( !parent ) return;
-        let index = parent.getIndex(this);
+        let index = parent.getChildIndex(this);
         nodes.forEach(node => parent.addChild(node, index++));
         parent.removeChild(this);
     }
@@ -71,7 +78,7 @@ class BaseNode{
         node.parent = this;
     }
 
-    getIndex(node){
+    getChildIndex(node){
         return this.nodes ? this.nodes.indexOf(node) : undefined;
     }
 
@@ -91,8 +98,9 @@ class BaseNode{
         if ( this.nodes ){
             let index = this.nodes.indexOf(node);
             index >= 0 && this.nodes.splice(index, 1);
+            !this.nodes.length && delete this.nodes;
         }
-        delete node.parent;
+        node.parent && delete node.parent;
     }
 
     removeAll(){
@@ -100,21 +108,8 @@ class BaseNode{
         while(this.nodes.length){
             delete this.nodes.pop().parent;
         }
+        delete this.nodes;
     }
-
-    toJson() {
-        let rs = Object.assign({}, this);
-        delete rs.parent;
-        delete rs.nodes;
-
-        if ( this.nodes ){
-            rs.nodes = [];
-            this.nodes.forEach(node => rs.nodes.push(node.toJson()));
-        }
-        
-        return rs;
-    }
-
 
 }
 
