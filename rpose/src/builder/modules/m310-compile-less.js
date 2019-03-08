@@ -22,9 +22,9 @@ module.exports = bus.on('编译LESS', function(lessIndexText){
 			}
 
             let includePaths = [File.path(srcFile), ...paths];  // 加入node-modules的上级目录作为查找路径，便于在代码中直接使用node-modules相对路径
-			let rs = await csjs.lessToCss(lessIndexText + less, {paths: includePaths});
+			let css = await csjs.lessToCss( less, {paths: includePaths});
 			console.debug(MODULE, 'less compile ok');
-			resolve( rs.css );
+			resolve( css );
 		}catch(e){
 			// TODO 友好的出错信息提示
 			reject( Err.cat(MODULE + 'compile less failed', e.message, srcFile, e.extract, e) );
