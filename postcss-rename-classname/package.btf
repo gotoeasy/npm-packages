@@ -2,7 +2,7 @@
 postcss-rename-classname
 
 [version] // 版本号 （必填）
-0.0.3
+0.0.4
 
 
 
@@ -12,10 +12,9 @@ index.js
 [bin] // cli命令
 
 [dependencies] // 依赖库
-postcss = *
+postcss = ~7.0
 
 [devDependencies] // 开发依赖库
-postcss = *
 ava = *
 nyc = *
 

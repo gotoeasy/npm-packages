@@ -1,10 +1,10 @@
 {
   "name": "@gotoeasy/cache",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/os": "*",
-    "flat-cache": "*"
+    "@gotoeasy/os": "~0.0",
+    "flat-cache": "~2.0"
   },
   "devDependencies": {
     "ava": "*",

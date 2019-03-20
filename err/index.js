@@ -33,7 +33,12 @@ class Err extends Error{
 		if ( opts.text || opts.file ) {
 			// 按指定行列或位置设定codeframe
 			this.codeframe = opts.line ? codeframe({file: opts.file, text: opts.text, line: opts.line, column: opts.column}) : codeframe({file: opts.file, text: opts.text, start: opts.start, end: opts.end});
-			this.codeframe && msgs.push(this.codeframe);
+            if ( this.codeframe ) {
+                if ( opts.file ) {
+                    msgs.push('file = ' + opts.file);
+                }
+                msgs.push(this.codeframe);
+            }
 		}else{
 			// 按自身异常抛出位置设定codeframe
 			setCodeframe(this);

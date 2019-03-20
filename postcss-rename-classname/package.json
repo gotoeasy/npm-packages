@@ -1,12 +1,11 @@
 {
   "name": "postcss-rename-classname",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
   "dependencies": {
-    "postcss": "*"
+    "postcss": "~7.0"
   },
   "devDependencies": {
-    "postcss": "*",
     "ava": "*",
     "nyc": "*"
   },

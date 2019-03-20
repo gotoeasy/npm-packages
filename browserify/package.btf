@@ -2,7 +2,7 @@
 @gotoeasy/browserify
 
 [version] // 版本号 （必填）
-0.0.4
+0.2.1
 
 
 
@@ -10,9 +10,9 @@
 index.js
 
 [dependencies] // 依赖库
-browserify = *
-into-stream = *
-stream-to-string = *
+browserify = ~16.2
+into-stream = ~5.0
+stream-to-string = ~1.2
 
 [description] // 描述
 使用固定配置让browserify转译代码，简化满足特定需求：把含require的代码转成能在浏览器上运行的代码

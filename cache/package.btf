@@ -2,14 +2,14 @@
 @gotoeasy/cache
 
 [version] // 版本号 （必填）
-0.0.3
+0.0.4
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/os = *
-flat-cache = *
+@gotoeasy/os = ~0.0
+flat-cache = ~2.0
 
 [devDependencies] // 开发依赖库
 ava = *
