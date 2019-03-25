@@ -4,6 +4,7 @@ module.exports = {
     isInstalled: require('./lib/is-installed'),
     install: require('./lib/npm-install'),
     uninstall: require('./lib/npm-uninstall'),
+    search: require('./lib/npm-search'),
 
     requireAll: require('./lib/require-all'),
 

@@ -5,7 +5,7 @@ module.exports = function(name){
     if ( !name ) return;
 
     let sCmd = 'npm uninstall ' + name
-	console.log('execute command: ' + sCmd);
+	console.log('$> ' + sCmd);
 	let rs = syncExec(sCmd);
 	if ( rs.stderr ) {
 		console.error( rs.stderr );
