@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.73
+0.0.74
 
 
 
@@ -12,7 +12,7 @@ index.js
 [dependencies] // 依赖库
 @gotoeasy/btf = ~1.1
 @gotoeasy/bus = ~0.0
-@gotoeasy/csjs = ~0.0
+@gotoeasy/csjs = ~0.1
 @gotoeasy/util = ~0.0
 @gotoeasy/err = ~0.0
 @gotoeasy/cache = ~0.0

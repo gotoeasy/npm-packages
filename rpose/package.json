@@ -1,11 +1,11 @@
 {
   "name": "@gotoeasy/rpose",
-  "version": "0.0.73",
+  "version": "0.0.74",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "~1.1",
     "@gotoeasy/bus": "~0.0",
-    "@gotoeasy/csjs": "~0.0",
+    "@gotoeasy/csjs": "~0.1",
     "@gotoeasy/util": "~0.0",
     "@gotoeasy/err": "~0.0",
     "@gotoeasy/cache": "~0.0",
