@@ -49,16 +49,16 @@ module.exports = async function (src, opts={}){
 	let postcssUrlOpt = {url: 'copy', from, to, basePath:File.path(from), assetsPath, useHash: true, hashOptions: {method: contents => hash({contents})} };
 	let plugins = [];
 	opts.debug && plugins.push( require('postcss-devtools') );									// 输出各插件处理时间
-	plugins.push( require('postcss-preset-env')({stage: 3}) );									// 默认支持使用stage3新特性，已含autoprefixer处理
-	opts.normalize && plugins.push( require('postcss-normalize') );								// 按需引用normalize.css内容
-	plugins.push( require('postcss-import')() );												// 导入@import文件内容
+	plugins.push( require('postcss-preset-env')({stage: 3}) );									// [异步]默认支持使用stage3新特性，已含autoprefixer处理
+	opts.normalize && plugins.push( require('postcss-normalize') );								// [异步]按需引用normalize.css内容
+	plugins.push( require('postcss-import')() );												// [异步]导入@import文件内容
 	opts.removeComments && plugins.push( require('postcss-discard-comments')({remove:x=>1}) );	// 删除所有注释
 	plugins.push( require('postcss-nested') );									                // 支持嵌套写法
 	plugins.push( require('postcss-css-variables') );									        // 删除css变量，使用变量的地方直接静态输出变量值
 	plugins.push( require('postcss-normalize-whitespace') );									// 压缩删除换行空格
 	plugins.push( require('postcss-minify-selectors') );										// 压缩删除选择器空白（h1 + p, h2, h3, h2{color:blue} => h1+p,h2,h3{color:blue}）
 	plugins.push( require('postcss-minify-params') );											// 压缩删除参数空白（@media only screen   and ( min-width: 400px, min-height: 500px    ){} => @media only screen and (min-width:400px,min-height:500px){}）
-	plugins.push( require('postcss-svgo') );													// 压缩svg
+	plugins.push( require('postcss-svgo') );													// [异步]压缩svg
 	plugins.push( require('postcss-discard-empty') );											// 删除空样式（@font-face;h1{}{color:blue}h2{color:}h3{color:red} => h3{color:red}）
 	plugins.push( require('postcss-normalize-string') );										// 统一写法（'\\'abc\\'' => "'abc'"）
 	plugins.push( require('postcss-normalize-display-values') );								// 统一写法（{display:inline flow-root} => {display:inline-block}）

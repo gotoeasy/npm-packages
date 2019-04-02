@@ -1,9 +1,15 @@
+const prettier = require("prettier");
+
+const optPrettier = { parser: "css", printWidth: 150, tabWidth: 4 };
 
 // CSS美化
-module.exports = function (css, opts={}){
+module.exports = function (css){
 
-	opts.format = (opts.format === undefined ? true : opts.format ); // 默认格式化
+	try{
+		return prettier.format(css, optPrettier);
+	}catch(e){
+		throw new Error('prettier format css failed\n' + e);
+	}
 
-	return require('./postcss-process')(css, opts);
 };
 
