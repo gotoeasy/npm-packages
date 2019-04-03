@@ -17,17 +17,16 @@ function postobject(plugins=[], opts={}){
 
 function process(object, opts={}){
 
-opts.log && console.time('---postobject process total---');
+    let sTime, time;
     let root = new Root();
     object && root.addChild(createNode.bind(this)(object));
     
     let result = {};
     for ( let i=0,plugin; plugin=this.plugins[i++]; ) {
-  opts.log && console.time(weakmap.get(plugin));
+        opts.log && (sTime = new Date().getTime());
         plugin.bind(this)(root, result);
-  opts.log && console.timeEnd(weakmap.get(plugin));
+        opts.log && ((time = new Date().getTime() - sTime) > 30) && console.info(`${weakmap.get(plugin)} : ${time}ms`);
     }
-opts.log && console.timeEnd('---postobject process total---');
     return result;
 }
 
