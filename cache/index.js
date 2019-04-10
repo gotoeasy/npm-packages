@@ -9,6 +9,10 @@ class Cache extends Map {
 		this.max = opts.max;
 	}
 
+	has(key) {
+        return this.peek(key) !== undefined;
+	}
+
 	peek(key) {
         let oData = super.get(key);
         if ( !oData ) {

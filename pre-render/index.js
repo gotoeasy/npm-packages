@@ -5,6 +5,7 @@
 //   - srcPath，如 c:/test/project/src
 //   - file，绝对路径，如 c:/test/project/src/pages/demo-page.rpose
 //   - name，单纯文件名，如 demo-page
+//   - nocss，没有外部css文件时为true，默认false
 //   - type，源文件中声明的预渲染类型，字符串如空白串''、loader、loader-section等
 //
 // 【注】
@@ -23,6 +24,9 @@ module.exports = function defaultPreRender(opts){
         preRender = getLoaderHtml(true);    // 旋转图+芝麻开门
     }
 
+    let refs = [`<script src="./${opts.name}.js" defer></script>`, `<link href="./${opts.name}.css" rel="stylesheet">`];
+    opts.nocss && refs.pop();
+
     return `<!doctype html>
 <html lang="en">
 <head>
@@ -30,8 +34,7 @@ module.exports = function defaultPreRender(opts){
 <meta http-equiv="Cache-Control" content="max-age=18000"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="./${opts.name}.js" defer></script>
-<link href="./${opts.name}.css" rel="stylesheet">
+${refs.join('\n')}
 </head>
 <body>${preRender}</body>
 </html>`;
