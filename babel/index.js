@@ -8,6 +8,7 @@
 // ----------------------------------------------
 const options = {
 	cwd: __dirname,						// 让babel在当前node_modules中查找依赖模块，避免全局安装时本地却找不到
+	compact: false,                     // 避免此警告 【The code generator has deoptimised the styling of undefined as it exceeds the max of 500KB.】
 	presets: [
 		['@babel/env', {
 			useBuiltIns: 'usage',		// 按需添加兼容补丁
