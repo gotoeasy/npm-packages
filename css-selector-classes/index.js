@@ -14,7 +14,7 @@ module.exports = function (selector=''){
 
 function parseNodes(nodes, oSet){
     nodes.forEach(node => {
-        node.type === 'class' && oSet.add(node.name.toLowerCase());
+        node.type === 'class' && oSet.add(node.name);
         node.nodes && parseNodes(node.nodes, oSet);
     })
 }
