@@ -78,11 +78,10 @@ function hashKey(key, path){
     rs2 = rs2 >>> 0;
     rs3 = rs3 >>> 0;
 
-    let p1 = rs1 & 0b11111111;
-    let p2 = (rs1 & 0b1111111100000000) >>> 8;
-    let p3 = (rs1 & 0b111111110000000000000000) >>> 16;
+    let p1 =  rs1 & 0b111111111;
+    let p2 = (rs1 & 0b111111111000000000) >>> 9;
     
-    let file = require('path').resolve(path, `${p3}/${p2}/${p1}/${rs1.toString(36)}-${rs2.toString(36)}-${rs3.toString(36)}.json`);
+    let file = require('path').resolve(path, `${p2}/${p1}/${rs1.toString(36)}-${rs2.toString(36)}-${rs3.toString(36)}.json`);
 	return {file};
 }
 

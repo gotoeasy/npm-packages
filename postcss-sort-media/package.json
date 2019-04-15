@@ -1,0 +1,26 @@
+{
+  "name": "postcss-sort-media",
+  "version": "0.0.3",
+  "main": "index.js",
+  "dependencies": {
+    "postcss": "7.*"
+  },
+  "description": "sort media",
+  "keywords": [
+    "postcss-plugin",
+    "sort media"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/postcss-sort-media/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "Apache-2.0"
+}
