@@ -9,11 +9,11 @@ const postcss = require('postcss');
 // ----------------------------------------
 // 对@media进行排序，默认为移动优先
 // ----------------------------------------
-module.exports = postcss.plugin('postcss-sort-media', function () {
+module.exports = postcss.plugin('postcss-sort-media', function (options={desktopFirst: false}) {
 
-    return function (opts={desktopFirst: false}) {
-        let sort = opts && opts.desktopFirst ? sortCssMediaQueries.desktopFirst : sortCssMediaQueries;
-        return cssMqpacker({sort});
+    return function (root, result) {
+        let sort = options && options.desktopFirst ? sortCssMediaQueries.desktopFirst : sortCssMediaQueries;
+        return cssMqpacker({sort})(root);
     };
 
 });
