@@ -1,0 +1,107 @@
+.flexbox {
+    margin: 0;
+    padding: 0;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;                    /* 行内元素按水平方向，从左到右排列 */
+
+    &.right {
+        justify-content: flex-end;
+    }
+    &.between {
+        justify-content: space-between;
+    }
+    &.around {
+        justify-content: space-around;
+    }
+    &.center {
+        justify-content: center;
+    }
+    &.left {
+        justify-content: flex-start;
+    }
+
+    &.bottom {
+        align-items: flex-end;
+    }
+    &.middle {
+        align-items: center;
+    }
+    &.top {
+        align-items: flex-start;
+    }
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;                 /* 列内元素按垂直方向，从上到下排列 */
+
+    &.right {
+        align-items: flex-end;
+    }
+    &.center {
+        align-items: center;
+    }
+    &.left {
+        align-items: flex-start;
+    }
+
+    &.bottom {
+        justify-content: flex-end;
+    }
+    &.between {
+        justify-content: space-between;
+    }
+    &.around {
+        justify-content: space-around;
+    }
+    &.middle {
+        justify-content: center;
+    }
+    &.top {
+        justify-content: flex-start;
+    }
+}
+
+.align-self-left,
+.align-self-top {
+    align-self: flex-start;
+}
+.align-self-center,
+.align-self-middle {
+    align-self: center;
+}
+.align-self-right,
+.align-self-bottom {
+    align-self: flex-end;
+}
+
+@for $i from 1 through 12 {
+    .col-#{$i} {
+        flex-basis: ($i / 12) * 100%;
+        max-width: ($i / 12) * 100%;
+    }
+}
+
+@for $m from 2 through 12 {
+    @for $i from 1 through ($m - 1) {
+        .col-#{$i}of#{$m} {
+            flex-basis: ($i / $m) * 100%;
+            max-width: ($i / $m) * 100%;
+        }
+    }
+}
+
+.col-all, .col-full {
+    flex-basis: 100%;
+    max-width: 100%;
+}
+
+
+@for $i from 1 through 24 {
+    .order-#{$i} {
+        order: $i;
+    }
+}

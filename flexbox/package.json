@@ -1,0 +1,30 @@
+{
+  "name": "@gotoeasy/flexbox",
+  "version": "0.0.1",
+  "devDependencies": {
+    "@gotoeasy/csjs": "*",
+    "@gotoeasy/file": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "flex布局样式",
+  "keywords": [
+    "gotoeasy",
+    "flex",
+    "flexbox"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/npm/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "MIT"
+}

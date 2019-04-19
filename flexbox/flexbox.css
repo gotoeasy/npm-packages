@@ -1,0 +1,346 @@
+@charset "UTF-8";
+.flexbox {
+    display: flex;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    /* 行内元素按水平方向，从左到右排列 */
+}
+.flex-row.right {
+    justify-content: flex-end;
+}
+.flex-row.between {
+    justify-content: space-between;
+}
+.flex-row.around {
+    justify-content: space-around;
+}
+.flex-row.center {
+    justify-content: center;
+}
+.flex-row.left {
+    justify-content: flex-start;
+}
+.flex-row.bottom {
+    align-items: flex-end;
+}
+.flex-row.middle {
+    align-items: center;
+}
+.flex-row.top {
+    align-items: flex-start;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    /* 列内元素按垂直方向，从上到下排列 */
+}
+.flex-column.right {
+    align-items: flex-end;
+}
+.flex-column.center {
+    align-items: center;
+}
+.flex-column.left {
+    align-items: flex-start;
+}
+.flex-column.bottom {
+    justify-content: flex-end;
+}
+.flex-column.between {
+    justify-content: space-between;
+}
+.flex-column.around {
+    justify-content: space-around;
+}
+.flex-column.middle {
+    justify-content: center;
+}
+.flex-column.top {
+    justify-content: flex-start;
+}
+
+.align-self-left,
+.align-self-top {
+    align-self: flex-start;
+}
+
+.align-self-center,
+.align-self-middle {
+    align-self: center;
+}
+
+.align-self-right,
+.align-self-bottom {
+    align-self: flex-end;
+}
+
+.col-1-of-24 {
+    flex-basis: 4.16667%;
+    max-width: 4.16667%;
+}
+
+.col-2-of-24 {
+    flex-basis: 8.33333%;
+    max-width: 8.33333%;
+}
+
+.col-3-of-24 {
+    flex-basis: 12.5%;
+    max-width: 12.5%;
+}
+
+.col-4-of-24 {
+    flex-basis: 16.66667%;
+    max-width: 16.66667%;
+}
+
+.col-5-of-24 {
+    flex-basis: 20.83333%;
+    max-width: 20.83333%;
+}
+
+.col-6-of-24 {
+    flex-basis: 25%;
+    max-width: 25%;
+}
+
+.col-7-of-24 {
+    flex-basis: 29.16667%;
+    max-width: 29.16667%;
+}
+
+.col-8-of-24 {
+    flex-basis: 33.33333%;
+    max-width: 33.33333%;
+}
+
+.col-9-of-24 {
+    flex-basis: 37.5%;
+    max-width: 37.5%;
+}
+
+.col-10-of-24 {
+    flex-basis: 41.66667%;
+    max-width: 41.66667%;
+}
+
+.col-11-of-24 {
+    flex-basis: 45.83333%;
+    max-width: 45.83333%;
+}
+
+.col-12-of-24 {
+    flex-basis: 50%;
+    max-width: 50%;
+}
+
+.col-13-of-24 {
+    flex-basis: 54.16667%;
+    max-width: 54.16667%;
+}
+
+.col-14-of-24 {
+    flex-basis: 58.33333%;
+    max-width: 58.33333%;
+}
+
+.col-15-of-24 {
+    flex-basis: 62.5%;
+    max-width: 62.5%;
+}
+
+.col-16-of-24 {
+    flex-basis: 66.66667%;
+    max-width: 66.66667%;
+}
+
+.col-17-of-24 {
+    flex-basis: 70.83333%;
+    max-width: 70.83333%;
+}
+
+.col-18-of-24 {
+    flex-basis: 75%;
+    max-width: 75%;
+}
+
+.col-19-of-24 {
+    flex-basis: 79.16667%;
+    max-width: 79.16667%;
+}
+
+.col-20-of-24 {
+    flex-basis: 83.33333%;
+    max-width: 83.33333%;
+}
+
+.col-21-of-24 {
+    flex-basis: 87.5%;
+    max-width: 87.5%;
+}
+
+.col-22-of-24 {
+    flex-basis: 91.66667%;
+    max-width: 91.66667%;
+}
+
+.col-23-of-24 {
+    flex-basis: 95.83333%;
+    max-width: 95.83333%;
+}
+
+.col-1-of-2 {
+    flex-basis: 50%;
+    max-width: 50%;
+}
+
+.col-1-of-3 {
+    flex-basis: 33.33333%;
+    max-width: 33.33333%;
+}
+
+.col-2-of-3 {
+    flex-basis: 66.66667%;
+    max-width: 66.66667%;
+}
+
+.col-1-of-4 {
+    flex-basis: 25%;
+    max-width: 25%;
+}
+
+.col-2-of-4 {
+    flex-basis: 50%;
+    max-width: 50%;
+}
+
+.col-3-of-4 {
+    flex-basis: 75%;
+    max-width: 75%;
+}
+
+.col-1-of-5 {
+    flex-basis: 20%;
+    max-width: 20%;
+}
+
+.col-2-of-5 {
+    flex-basis: 40%;
+    max-width: 40%;
+}
+
+.col-3-of-5 {
+    flex-basis: 60%;
+    max-width: 60%;
+}
+
+.col-4-of-5 {
+    flex-basis: 80%;
+    max-width: 80%;
+}
+
+.col-all,
+.col-full {
+    flex-basis: 100%;
+    max-width: 100%;
+}
+
+.order-1 {
+    order: 1;
+}
+
+.order-2 {
+    order: 2;
+}
+
+.order-3 {
+    order: 3;
+}
+
+.order-4 {
+    order: 4;
+}
+
+.order-5 {
+    order: 5;
+}
+
+.order-6 {
+    order: 6;
+}
+
+.order-7 {
+    order: 7;
+}
+
+.order-8 {
+    order: 8;
+}
+
+.order-9 {
+    order: 9;
+}
+
+.order-10 {
+    order: 10;
+}
+
+.order-11 {
+    order: 11;
+}
+
+.order-12 {
+    order: 12;
+}
+
+.order-13 {
+    order: 13;
+}
+
+.order-14 {
+    order: 14;
+}
+
+.order-15 {
+    order: 15;
+}
+
+.order-16 {
+    order: 16;
+}
+
+.order-17 {
+    order: 17;
+}
+
+.order-18 {
+    order: 18;
+}
+
+.order-19 {
+    order: 19;
+}
+
+.order-20 {
+    order: 20;
+}
+
+.order-21 {
+    order: 21;
+}
+
+.order-22 {
+    order: 22;
+}
+
+.order-23 {
+    order: 23;
+}
+
+.order-24 {
+    order: 24;
+}
