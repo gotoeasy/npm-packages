@@ -1,8 +1,8 @@
-[name] // 项目名 （必填）
+[name] // 项目名
 @gotoeasy/code-frame
 
-[version] // 版本号 （必填）
-0.0.5
+[version] // 版本号
+0.1.0
 
 
 [main] // 入口文件
@@ -30,10 +30,10 @@ coverage = nyc ava & nyc report --reporter=html & node coverage
 type= git
 url = git+https://github.com/gotoeasy/npm-packages.git
 
-[homepage] // 主页，github项目会自动识别设定
+[homepage] // 主页
 https://github.com/gotoeasy/npm-packages/blob/master/code-frame/README.md
 
-[bugs] // BUG提交地址，github项目会自动识别设定
+[bugs] // BUG提交地址
 url = https://github.com/gotoeasy/npm-packages/issues
 
 [author] // 作者信息
@@ -41,5 +41,5 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
+MIT
 

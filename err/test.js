@@ -94,7 +94,7 @@ test('5 new Err 指定opts参数', t => {
         try{
             return div(1, 0);
         }catch(e){
-            throw new Err('my error message', e, {text:'123\n456\n7890', start:7});
+            throw new Err('my error message', e, {text:'123\n456\n7890', start:6});
         }
     }
 
@@ -161,7 +161,8 @@ test('8 多次Err.cat', t => {
             throw new Error('err........')
         }catch(e){
             let xx = Err.cat('my error message', e, new Err());
-            throw Err.cat('my error message22222', new Error('err1'),new Error('err2'), xx);
+            let sss =  Err.cat('my error message22222', new Error('err1'),new Error('err2'), xx);
+            throw sss;
         }
     }
 

@@ -2,7 +2,7 @@
 @gotoeasy/err
 
 [version] // 版本号 （必填）
-0.0.11
+0.1.0
 
 
 
@@ -10,8 +10,8 @@
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/file = ~0.0
-@gotoeasy/code-frame = ~0.0
+@gotoeasy/file = 0.0.*
+@gotoeasy/code-frame = 0.1.*
 
 [devDependencies] // 开发依赖库
 ava = *
