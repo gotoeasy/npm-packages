@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+
+cmmd.usage('[options]')
+	.option('--debug', 'print debug log')
+	.option('-f, --fixversion', 'use the fixed version')
+	.parse(process.argv);
+
+let opts = {
+	workDir: cmmd.args.length ? cmmd.args[0] : process.cwd(),
+	fixversion: !!cmmd.fixversion,
+	nexttag: true,
+	debug: !!cmmd.debug
+};
+
+!opts.debug && (console.debug = x=>x);
+
+require('../lib/npm-publish')(opts);
+

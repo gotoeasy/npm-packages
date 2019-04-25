@@ -62,8 +62,10 @@ function publish(opts){
 
 	// npm publish [--access public]
 	let sCmd = oPackage.name.startsWith('@') ? "npm publish --access public" : "npm publish"; // 添加参数支持@scope的公有包发布（暂不考虑默认私有包的发布）
-	console.info('update version to:', newVersion);
-	console.debug('execute command: ' + sCmd);
+    if ( opts.nexttag ) {
+        sCmd += ' --tag next';  // 发布到 next tag
+    }
+	console.info('$> ' + sCmd);
 	let rs = syncExec(sCmd);
 	if ( rs.stderr ) {
 		console.error( rs.stderr );

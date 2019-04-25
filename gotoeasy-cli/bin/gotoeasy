@@ -8,4 +8,5 @@ commander
   .command('initpackage', 'copy sample file of package.btf')
   .command('publish', 'convert package.btf to package.js and publish')
   .command('p', 'same to publish')
+  .command('n', 'publish to tag "next"')
   .parse(process.argv);
