@@ -35,6 +35,7 @@ class BaseNode{
 
         // 遍历子节点
         for ( let i=0,node,rs; node=nodes[i++]; ) {
+            if ( !node.parent ) continue;                               // 忽略已被删除的节点
             if ( type !== undefined && type !== node.type ) continue;
             if ( regexp && !regexp.test(node.type) ) continue;
 
