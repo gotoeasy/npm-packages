@@ -1,8 +1,8 @@
-[name] // 项目名 （必填）
+[name] // 项目名
 @gotoeasy/pre-render
 
-[version] // 版本号 （必填）
-0.0.2
+[version] // 版本号
+0.0.3
 
 
 
@@ -34,5 +34,4 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
-
+MIT

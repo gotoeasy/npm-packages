@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/rpose-cli",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/rpose": "~0.0",
@@ -38,5 +38,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

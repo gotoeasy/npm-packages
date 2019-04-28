@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/os",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "index.js",
   "dependencies": {
     "os-locale": "~3.1"
@@ -26,5 +26,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

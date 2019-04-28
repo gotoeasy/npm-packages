@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/count-line-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/btf": "~1.1",
@@ -33,5 +33,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/postobject",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "index.js",
   "devDependencies": {
     "ava": "*",
@@ -25,5 +25,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

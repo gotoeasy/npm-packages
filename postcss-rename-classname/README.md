@@ -4,7 +4,7 @@
 <br>
 
 [![NPM version](https://img.shields.io/npm/v/postcss-rename-classname.svg)](https://www.npmjs.com/package/postcss-rename-classname)
-[![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/gotoeasy/npm-packages/blob/master/LICENSE)
 <br>
 <br>
 

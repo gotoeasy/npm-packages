@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/pre-render",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "description": "rpose用页面预渲染器",
   "keywords": [
@@ -20,5 +20,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

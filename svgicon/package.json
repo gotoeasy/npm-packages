@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/svgicon",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/bus": "~0.0",
@@ -44,5 +44,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

@@ -4,7 +4,7 @@ get classes from css selector
 <br>
 
 [![NPM version](https://img.shields.io/npm/v/@gotoeasy/css-selector-classes.svg)](https://www.npmjs.com/package/@gotoeasy/css-selector-classes)
-[![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/gotoeasy/npm-packages/blob/master/LICENSE)
 <br>
 <br>
 

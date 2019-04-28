@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.2.1
+0.2.2
 
 
 
@@ -79,5 +79,5 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
+MIT
 

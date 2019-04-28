@@ -5,7 +5,7 @@ sort @media
 <br>
 
 [![NPM version](https://img.shields.io/npm/v/postcss-sort-media.svg)](https://www.npmjs.com/package/postcss-sort-media)
-[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/gotoeasy/rpose/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/gotoeasy/npm-packages/blob/master/LICENSE)
 <br>
 <br>
 

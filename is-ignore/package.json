@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/is-ignore",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "dependencies": {
     "dotgitignore": "~2.1"
@@ -26,5 +26,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

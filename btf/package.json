@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/btf",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "index.js",
   "devDependencies": {
     "ava": "*",
@@ -33,5 +33,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

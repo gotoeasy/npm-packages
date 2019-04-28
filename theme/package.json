@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/theme",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "rpose theme",
   "keywords": [
     "gotoeasy",
@@ -19,5 +19,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

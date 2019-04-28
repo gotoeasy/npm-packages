@@ -2,7 +2,7 @@
 @gotoeasy/rpose
 
 [version] // 版本号 （必填）
-0.0.74
+0.0.75
 
 
 
@@ -57,5 +57,4 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
-
+MIT

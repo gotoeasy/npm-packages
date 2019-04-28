@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/npm",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "0.0.*",
@@ -28,5 +28,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

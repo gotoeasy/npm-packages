@@ -1,8 +1,8 @@
-[name] // 项目名 （必填）
+[name] // 项目名
 @gotoeasy/babel
 
-[version] // 版本号 （必填）
-0.2.2
+[version] // 版本号
+0.2.3
 
 
 
@@ -38,5 +38,4 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
-
+MIT

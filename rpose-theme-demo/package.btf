@@ -1,8 +1,8 @@
-[name] // 项目名 （必填）
+[name] // 项目名
 rpose-theme-demo
 
-[version] // 版本号 （必填）
-0.0.7
+[version] // 版本号
+0.0.8
 
 [dependencies] // 依赖库
 
@@ -27,5 +27,4 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
-
+MIT

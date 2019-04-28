@@ -2,7 +2,7 @@
 @gotoeasy/cache
 
 [version] // 版本号
-0.1.3
+0.1.4
 
 [main] // 入口文件
 index.js
@@ -41,5 +41,5 @@ name = 青松
 email= gotoeasy@163.com
 
 [license] // 协议
-Apache-2.0
+MIT
 

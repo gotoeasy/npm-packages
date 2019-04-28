@@ -1,6 +1,6 @@
 {
   "name": "postcss-rename-classname",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "dependencies": {
     "postcss": "~7.0"
@@ -30,5 +30,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

@@ -4,7 +4,7 @@ CSS、JS的编译、美化、压缩等常用操作封装
 <br>
 
 [![NPM version](https://img.shields.io/npm/v/@gotoeasy/csjs.svg)](https://www.npmjs.com/package/@gotoeasy/csjs)
-[![License](https://img.shields.io/badge/License-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/gotoeasy/npm-packages/blob/master/LICENSE)
 <br>
 <br>
 

@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/babel",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "index.js",
   "dependencies": {
     "@babel/core": "~7.4",
@@ -27,5 +27,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }

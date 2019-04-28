@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/csjs",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "0.0.*",
@@ -67,5 +67,5 @@
     "name": "青松",
     "email": "gotoeasy@163.com"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }
