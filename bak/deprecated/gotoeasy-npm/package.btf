@@ -2,8 +2,11 @@
 gotoeasy-npm
 
 [version] // 版本号 （必填）
-0.0.10
+0.0.11
 
+[deprecated]
+
+Use `@gotoeasy/npm` instead
 
 
 [main] // 入口文件 （必填）

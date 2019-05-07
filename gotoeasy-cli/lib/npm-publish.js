@@ -1,7 +1,7 @@
 const File = require('@gotoeasy/file');
 const Btf = require('@gotoeasy/btf');
 const util = require('@gotoeasy/util');
-const syncExec = require('sync-exec');
+const execa = require('execa');
 
 function publish(opts){
 
@@ -33,6 +33,7 @@ function publish(opts){
 		author : getJson(btf, 'author', ['name', 'email']),
 		license : getLineString(btf, 'license'),
 		engines : getJson(btf, 'engines'),
+		deprecated : getLineString(btf, 'deprecated'),
 	};
 
 	// 删除空属性
@@ -66,16 +67,16 @@ function publish(opts){
         sCmd += ' --tag next';  // 发布到 next tag
     }
 	console.info('$> ' + sCmd);
-	let rs = syncExec(sCmd);
-	if ( rs.stderr ) {
-		console.error( rs.stderr );
+    try{
+	    let rs = execa.shellSync(sCmd);
+        console.info( rs.stdout );
+    }catch(e){
+		console.error( e );
 
 		// rollback version to package.btf
 		File.write(filePackageBtf, btfText );
 		console.info('rollback file:', filePackageBtf);
-	}else{
-		console.info( rs.stdout );
-	}
+    }
 }
 
 function getNextVersion(btf, name, fix){

@@ -5,6 +5,7 @@ module.exports = {
     install: require('./lib/npm-install'),
     uninstall: require('./lib/npm-uninstall'),
     search: require('./lib/npm-search'),
+    exists: require('./lib/npm-view'),
 
     requireAll: require('./lib/require-all'),
 

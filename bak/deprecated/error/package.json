@@ -1,4 +1,5 @@
 {
   "name": "@gotoeasy/error",
-  "version": "0.0.3"
+  "deprecated": "Use `@gotoeasy/err` instead",
+  "version": "0.0.7"
 }

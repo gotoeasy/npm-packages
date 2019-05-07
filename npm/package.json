@@ -1,13 +1,13 @@
 {
   "name": "@gotoeasy/npm",
-  "version": "0.0.19",
+  "version": "0.0.24",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/file": "0.0.*",
     "compressing": "1.4.*",
     "https-proxy-agent": "2.2.*",
     "is-installed": "2.0.*",
-    "sync-exec": "0.6.*"
+    "execa": "1.0.*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

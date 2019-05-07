@@ -1,4 +1,4 @@
-const syncExec = require('sync-exec');
+const execa = require('execa');
 
 module.exports = function(name){
 
@@ -6,7 +6,7 @@ module.exports = function(name){
 
     let sCmd = 'npm uninstall ' + name
 	console.log('$> ' + sCmd);
-	let rs = syncExec(sCmd);
+    let rs = execa.shellSync(sCmd);
 	if ( rs.stderr ) {
 		console.error( rs.stderr );
 	}else{

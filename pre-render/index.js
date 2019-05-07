@@ -7,6 +7,7 @@
 //   - name，单纯文件名，如 demo-page
 //   - nocss，没有外部css文件时为true，默认false
 //   - type，源文件中声明的预渲染类型，字符串如空白串''、loader、loader-section等
+//   - inlinesymbols，内联svg-symbol代码
 //
 // 【注】
 // 触发window.onload事件时
@@ -36,7 +37,7 @@ module.exports = function defaultPreRender(opts){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 ${refs.join('\n')}
 </head>
-<body>${preRender}</body>
+<body>${preRender}${opts.inlinesymbols || ''}</body>
 </html>`;
 
 };

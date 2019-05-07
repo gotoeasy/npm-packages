@@ -1,15 +1,5 @@
 {
   "name": "gotoeasy-btf",
-  "version": "0.4.2",
-  "repository": {
-    "type": "",
-    "url": ""
-  },
-  "bugs": {
-    "url": ""
-  },
-  "author": {
-    "name": "",
-    "email": ""
-  }
+  "version": "0.4.3",
+  "deprecated": "Use `@gotoeasy/btf` instead"
 }
