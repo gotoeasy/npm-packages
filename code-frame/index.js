@@ -242,13 +242,13 @@ module.exports = function (options){
 	// 整体过长时，统一去除加省略号
 	for ( let i=0,rs; i<ary.length; i++ ) {
 		if ( ary[i].length > opts.maxLength ) {
-			ary[i] = ary[i].substring(0, opts.maxLength - 4) + ' ...';      // 代码行加省略号
+			ary[i] = ary[i].substring(0, opts.maxLength - 4) + ' ...';  // 代码行加省略号
 			i++;
-			ary[i] && (ary[i] = ary[i].substring(0, opts.maxLength - 4));   // 焦点行就算了吧
+			ary[i] && (ary[i] = ary[i].substring(0, opts.maxLength - 4));		    // 焦点行就算了吧
 		}
 	}
 
-    ary = ary.filter(v => v.trim() !== '|' );                               // 删除空白焦点行
+    ary = ary.filter(v => v.trim() !== '|' );                           // 删除空白焦点行
 
 	return ary.join('\n');
 }
