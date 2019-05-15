@@ -1,17 +1,37 @@
+const File = require('@gotoeasy/file');
 const execa = require('execa');
 
+const MaxSize = 300;
+const CacheFile = File.resolve(__dirname, '_valid-pkgs.json');
+
 // 查找指定包名，存在则返回包名，否则返回空串''
-module.exports = function(name, opts={}){
+module.exports = (function(map){
 
-    if ( !name ) return '';
+    return function(name, opts={}){
 
-    let sCmd = 'npm view ' + name + ' name';
-	console.log('$> ' + sCmd);
+        if ( !map ){
+            map = new Map();
+            if ( File.existsFile(CacheFile) ) {
+                let aryPkgs = JSON.parse(File.read(CacheFile));
+                aryPkgs.forEach(pkg => map.set(pkg, 1));
+            }
+        }
 
-    try{
-        let rs = execa.shellSync(sCmd);
-        return rs.stdout;
-    }catch(e){
-        return '';
-    }
-};
+        if ( !name ) return '';
+        if ( map.has(name) ) return name;
+
+        let sCmd = 'npm view ' + name + ' name';
+        console.log('$> ' + sCmd);
+
+        try{
+            let rs = execa.shellSync(sCmd);
+            map.size >= MaxSize && map.delete(map.keys().next().value);
+            map.set(name, 1);
+            File.write(CacheFile, JSON.stringify([...map.keys()]));
+            return rs.stdout;
+        }catch(e){
+            return '';
+        }
+    };
+
+})();
