@@ -1,8 +1,9 @@
 const File = require('@gotoeasy/file');
 const execa = require('execa');
+const homedir = require('./homedir');
 
 const MaxSize = 300;
-const CacheFile = File.resolve(__dirname, '_valid-pkgs.json');
+const CacheFile = homedir() + '/.gotoeasy/.npm/_valid-pkgs.json';
 
 // 查找指定包名，存在则返回包名，否则返回空串''
 module.exports = (function(map){
