@@ -1,9 +1,9 @@
 {
   "name": "@gotoeasy/css-selector-elements",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "main": "index.js",
   "dependencies": {
-    "css-selector-tokenizer": "~0.7"
+    "css-selector-tokenizer": "0.7.*"
   },
   "devDependencies": {
     "ava": "*",

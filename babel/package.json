@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/babel",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "main": "index.js",
   "dependencies": {
     "@babel/core": "~7.4",

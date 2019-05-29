@@ -1,9 +1,9 @@
 {
   "name": "@gotoeasy/is-ignore",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "main": "index.js",
   "dependencies": {
-    "dotgitignore": "~2.1"
+    "dotgitignore": "2.1.*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

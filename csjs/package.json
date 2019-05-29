@@ -1,12 +1,12 @@
 {
   "name": "@gotoeasy/csjs",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/file": "0.0.*",
-    "@gotoeasy/hash": "0.0.*",
-    "@gotoeasy/babel": "0.2.*",
-    "@gotoeasy/browserify": "0.2.*",
+    "@gotoeasy/file": "0.1.*",
+    "@gotoeasy/hash": "0.1.*",
+    "@gotoeasy/babel": "0.3.*",
+    "@gotoeasy/browserify": "0.3.*",
     "prettier": "*",
     "uglify-es": "*",
     "find-node-modules": "*",

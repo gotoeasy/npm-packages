@@ -2,7 +2,7 @@
 @gotoeasy/os
 
 [version] // 版本号
-0.0.7
+0.1.0
 
 
 
@@ -12,7 +12,7 @@ index.js
 [bin] // cli命令
 
 [dependencies] // 依赖库
-os-locale = ~3.1
+os-locale = 3.1.*
 
 [devDependencies] // 开发依赖库
 

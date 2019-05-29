@@ -2,14 +2,14 @@
 @gotoeasy/code-frame
 
 [version] // 版本号
-0.1.1
+0.2.0
 
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/file = ~0.0
+@gotoeasy/file = 0.1.*
 
 [devDependencies] // 开发依赖库
 ava = *

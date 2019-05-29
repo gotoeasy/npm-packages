@@ -1,9 +1,9 @@
 {
   "name": "@gotoeasy/p-task",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/hash": "~0.0"
+    "@gotoeasy/hash": "0.1.*"
   },
   "devDependencies": {
     "ava": "*",

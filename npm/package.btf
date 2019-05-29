@@ -2,7 +2,7 @@
 @gotoeasy/npm
 
 [version] // 版本号
-0.0.26
+0.1.0
 
 
 
@@ -10,7 +10,7 @@
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/file = 0.0.*
+@gotoeasy/file = 0.1.*
 compressing = 1.4.*
 https-proxy-agent = 2.2.*
 is-installed = 2.0.*

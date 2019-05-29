@@ -71,16 +71,14 @@ function setCodeframe(e){
 				// 从堆栈信息中查找出错文件，堆栈信息格式有所不同需判断处理
 				e.codeframe == null && str.replace(/^\s*at\s?([\s\S]*?)\:(\d+)\:(\d*)$/, function(match, file, line, column){				// 【    at file:line:col】
 					if ( File.exists(file) ) { // 格式满足也可能是不存在的内部模块文件，还要继续找
-						e.codeframe = codeframe({file, line, column});
+						e.codeframe = codeframe({file, line: Math.max(line-1, 0), column: Math.max(column-1, 0)});
 						e.codeframe && (e.stack = e.codeframe + '\n' + e.stack);
 					}
 				});
 
 				e.codeframe == null && str.replace(/^\s*at\s?[\s\S]*?\(([\s\S]*?)\:(\d+)\:(\d*)\)$/, function(match, file, line, column){	// 【    at *** (file:line:col)】
 					if ( File.exists(file) ) { // 格式满足也可能是不存在的内部模块文件，还要继续找
-                        line = line - 1;
-                        column = column - 1;
-						e.codeframe = codeframe({file, line, column});
+						e.codeframe = codeframe({file, line: Math.max(line-1, 0), column: Math.max(column-1, 0)});
 						e.codeframe && (e.stack = e.codeframe + '\n' + e.stack);
 					}
 				});

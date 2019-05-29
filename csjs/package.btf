@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.2.2
+0.3.0
 
 
 
@@ -10,10 +10,10 @@
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/file = 0.0.*
-@gotoeasy/hash = 0.0.*
-@gotoeasy/babel = 0.2.*
-@gotoeasy/browserify = 0.2.*
+@gotoeasy/file = 0.1.*
+@gotoeasy/hash = 0.1.*
+@gotoeasy/babel = 0.3.*
+@gotoeasy/browserify = 0.3.*
 
 prettier = *
 uglify-es = *

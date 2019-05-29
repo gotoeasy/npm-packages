@@ -2,7 +2,7 @@
 @gotoeasy/p-task
 
 [version] // 版本号
-0.0.10
+0.1.0
 
 
 
@@ -12,7 +12,7 @@ index.js
 [bin] // cli命令
 
 [dependencies] // 依赖库
-@gotoeasy/hash = ~0.0
+@gotoeasy/hash = 0.1.*
 
 [devDependencies] // 开发依赖库
 ava = *
