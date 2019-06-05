@@ -64,7 +64,8 @@ function publish(opts){
 	// npm publish [--access public]
 	let sCmd = oPackage.name.startsWith('@') ? "npm publish --access public" : "npm publish"; // 添加参数支持@scope的公有包发布（暂不考虑默认私有包的发布）
     if ( opts.nexttag ) {
-        sCmd += ' --tag next';  // 发布到 next tag
+        // 发布到 next tag
+        sCmd += ' --tag next';   // 使用命令 npm dist-tag add pkg@x.y.z next
     }
 	console.info('$> ' + sCmd);
     try{
