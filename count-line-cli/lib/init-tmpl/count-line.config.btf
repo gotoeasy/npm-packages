@@ -1,5 +1,5 @@
 [target-file]
-*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.tld, *.sh, *.sql, *.ts, *.less, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle
+*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.sass, *.scss, *.less, *.tld, *.sh, *.sql, *.ts, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle, *.btf, *.rpose
 
 [java]
 line-comment=//
@@ -21,6 +21,16 @@ block-comment-start=/*
 block-comment-end=*/
 
 [less]
+line-comment=//
+block-comment-start=/*
+block-comment-end=*/
+
+[sass]
+line-comment=//
+block-comment-start=/*
+block-comment-end=*/
+
+[scss]
 line-comment=//
 block-comment-start=/*
 block-comment-end=*/
@@ -97,4 +107,3 @@ line-comment=#
 line-comment=--
 block-comment-start=--[[
 block-comment-end=]]
-
