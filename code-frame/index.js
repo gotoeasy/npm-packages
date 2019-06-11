@@ -32,7 +32,7 @@ const File = require('@gotoeasy/file');
 // result = codeframe({text: '12345\n6789', startLine:1, startColumn:3, endLine:2, endColumn:4, tab:'    '});
 // result = codeframe({file: 'd:/file.txt', startLine:1, startColumn:3, endLine:2, endColumn:4, tab:'  '});
 // ------------------------------------------
-const defaultOptions = {tab:'    ', linesAbove:5, linesBelow:5, maxLength:120};
+const defaultOptions = {tab:'    ', linesAbove:3, linesBelow:3, maxLength:120};
 
 function getCodefrmaeByTextPos(options){
     let opts = Object.assign({}, options);
@@ -183,10 +183,10 @@ function getText(opts){
 // getCodefrmaeByTextPos(opts)
 // getCodefrmaeByFileLineCloumn(opts)
 // getCodefrmae(lines, opts)
-module.exports = function (options){
+function getSingleCodefrmae(options){
 	if ( !options || (!options.file && !options.text) || (options.start == null && options.line == null && options.startLine == null) ){
  //		console.debug('invalid arguments [07] - opts');
-		return '';
+		return [];
 	}
 
 	let opts = Object.assign({}, defaultOptions, options);
@@ -201,7 +201,7 @@ module.exports = function (options){
 		// 按行列范围
 		if ( typeof opts.text !== 'string' && typeof opts.file !== 'string' ) {
  //			console.debug('invalid arguments [08] - opts.text / opts.file');
-			return '';
+			return [];
 		}
 
 		let text = getText(opts);
@@ -218,37 +218,256 @@ module.exports = function (options){
 			|| opts.startLine >= lines.length || opts.startColumn >= lines[opts.startLine].length || opts.endLine >= lines.length || opts.endColumn >= lines[opts.endLine].length
 		) {
  //			console.debug('invalid arguments [09] - opts.startLine / opts.startColumn / opts.endLine / opts.endColumn');
-			return '';
+			return [];
 		}
 
 		ary = getCodefrmae(lines, opts);
 	}
 
+    return ary;
+}
+
+function adjustCodefrmae(ary, maxLength=defaultOptions.maxLength){
+
 	// 整理
 	// 代码左边整体缩进过长时，统一去除整理
 	let min = 999;
-	for ( let i=0,rs; i<ary.length; i++ ) {
-		rs = /\s{1,1}\|\s+/.exec(ary[i]);
-		rs && (rs[0].length < min) && (min = rs[0].length);
+	for ( let i=0,rs,sLine; sLine=ary[i++]; ) {
+        if ( sLine.startsWith(' ') && !sLine.startsWith('          .') ) {              // 特殊行除外
+            rs = /\s{1,1}\|\s+/.exec(sLine);
+            rs && (rs[0].length < min) && (min = rs[0].length);
+        }
 	}
 	if ( min > 6 ) {
 		for ( let i=0,rs; i<ary.length; i++ ) {
-			ary[i] = ary[i].replace(/\s{1,1}\|\s+/, function(match){
-				return ' |    ' + match.substring(min);
-			});
+            if ( ary[i].startsWith(' ') && !ary[i].startsWith('          .') ) {        // 特殊行除外
+                ary[i] = ary[i].replace(/\s{1,1}\|\s+/, function(match){
+                    return ' |    ' + match.substring(min);
+                });
+            }
 		}
 	}
 
 	// 整体过长时，统一去除加省略号
 	for ( let i=0,rs; i<ary.length; i++ ) {
-		if ( ary[i].length > opts.maxLength ) {
-			ary[i] = ary[i].substring(0, opts.maxLength - 4) + ' ...';  // 代码行加省略号
-			i++;
-			ary[i] && (ary[i] = ary[i].substring(0, opts.maxLength - 4));		    // 焦点行就算了吧
+        if ( ary[i].startsWith(' ') && !ary[i].startsWith('          .') ) {            // 特殊行除外
+            if ( ary[i].length > maxLength ) {
+                ary[i] = ary[i].substring(0, maxLength - 4) + ' ...';                   // 代码行加省略号
+                i++;
+                ary[i] && (ary[i] = ary[i].substring(0, maxLength - 4));		        // 焦点行就算了吧
+            }
 		}
 	}
 
-    ary = ary.filter(v => v.trim() !== '|' );                           // 删除空白焦点行
+    ary = ary.filter(v => v.trim() !== '|' );                                           // 删除空白焦点行
+}
 
-	return ary.join('\n');
+// 不同文件时的合并
+function mergeCodefrmae(ary1, ary2){
+
+    let ary = [];
+    ary.push('---------------------------------------------------------------------');
+    ary.push(ary1.file);
+
+    if ( !ary2.length ){
+        // 普通情况
+        ary.push(...ary1);
+    }else if ( ary1.file !== ary2.file ) {
+        // 不同文件
+        ary.push(...ary1);
+        ary.push('-------------------------------------------------');
+        ary.push(ary2.file);
+        ary.push(...ary2);
+    }else{
+        // 相同文件
+        ary1.startLine = getLineNo(ary1[0]);
+        ary1.endLine = getLineNo(ary1[ary1.length-1]);
+        !ary1.endLine && (ary1.endLine = getLineNo(ary1[ary1.length-2]));
+        ary2.startLine = getLineNo(ary2[0]);
+        ary2.endLine = getLineNo(ary2[ary2.length-1]);
+        !ary2.endLine && (ary2.endLine = getLineNo(ary2[ary2.length-2]));
+
+        adjustLeftLineNoSize(ary1, ary2);                   // 调整统一行号宽度
+
+        mergeSingleFileCodefrmae(ary, ary1, ary2);
+    }
+
+    ary.push('---------------------------------------------------------------------');
+    return ary;
+}
+
+function getLineNo(sLine=''){
+    let match = sLine.match(/^\s+>?\s+(\d+)\s+|/);
+    if ( match ) {
+        return match[1] - 0;
+    }
+    return null;
+}
+
+function adjustLeftLineNoSize(ary1, ary2){
+    if ( !ary1.length || !ary2.length ) {
+        return;
+    }
+
+    let size1 = ary1[0].split('|')[0].length;
+    let size2 = ary2[0].split('|')[0].length;
+
+    if ( size1 > size2 ) {
+        let space = ' '.repeat(size1-size2);
+        for ( let i=0; i<ary2.length; i++ ) {
+            if ( ary2[i].startsWith('  ') ) {
+                ary2[i] = space + ary2[i];
+            }else if ( ary2[i].startsWith(' >') ) {
+                ary2[i] = ' >' + space + ary2[i].substring(2);
+            }
+        }
+    }else if ( size2 > size1 ) {
+        let space = ' '.repeat(size2-size1);
+        for ( let i=0; i<ary1.length; i++ ) {
+            if ( ary1[i].startsWith('  ') ) {
+                ary1[i] = space + ary1[i];
+            }else if ( ary1[i].startsWith(' >') ) {
+                ary1[i] = ' >' + space + ary1[i].substring(2);
+            }
+        }
+    }
+
+}
+
+// 同一文件时的合并
+function mergeSingleFileCodefrmae(ary, ary1, ary2){
+
+    if ( ary1.endLine < ary2.startLine ) {
+        ary.push(...ary1);
+        ary.push('          .');
+        ary.push('          .');
+        ary.push('          .');
+        ary.push(...ary2);
+    }else{
+
+        let maxLen = Math.max(ary1.length, ary2.length);
+        let idx1 = 0, idx2 = 0;
+        let sLine1, sLine2;
+        let lineNo1, lineNo2;
+        for ( let i=0; i < maxLen; i++ ) {
+            sLine1 = ary1[idx1];
+            sLine2 = ary2[idx2];
+            if ( !sLine1 && !sLine2 ) {
+                break;
+            }
+            if ( !sLine1 ) {
+                for ( let j=idx2; j < ary2.length; j++ ) {
+                    ary.push(ary2[j]);
+                }
+                break;
+            }
+            if ( !sLine2 ) {
+                for ( let j=idx1; j < ary1.length; j++ ) {
+                    ary.push(ary1[j]);
+                }
+                break;
+            }
+
+            lineNo1 = getLineNo(sLine1);
+            lineNo2 = getLineNo(sLine2);
+
+            while ( lineNo1 < lineNo2  ) {
+                ary.push(sLine1);
+
+                sLine1 = ary1[++idx1];
+                if ( !sLine1 ) {
+                    break;
+                }
+                lineNo1 = getLineNo(sLine1);
+                if ( !lineNo1 ) {
+                    // 焦点行
+                    ary.push(sLine1);
+                    sLine1 = ary1[++idx1];
+                    lineNo1 = getLineNo(sLine1);
+                }
+                if ( !lineNo1 ) {
+                    break;
+                }
+            }
+            if ( !lineNo1 ) {
+                for ( let j=idx2; j < ary2.length; j++ ) {
+                    ary.push(ary2[j]);
+                }
+                break;
+            }
+
+            // 这里开始行号已相同
+
+            sLine2.startsWith(' >') ? ary.push(sLine2) : ary.push(sLine1);     // 代码行
+
+            sLine1 = ary1[++idx1];
+            sLine2 = ary2[++idx2];
+
+            if ( !sLine1 ) {
+                for ( let j=idx2-1; j < ary2.length; j++ ) {
+                    ary.push(ary2[j]);
+                }
+                break;
+            }
+            if ( !sLine2 ) {
+                for ( let j=idx1-1; j < ary1.length; j++ ) {
+                    ary.push(ary1[j]);
+                }
+                break;
+            }
+
+            lineNo1 = getLineNo(sLine1);
+            lineNo2 = getLineNo(sLine2);
+            if ( !lineNo1 && !lineNo2 ) {
+                // 都是焦点行，合并焦点
+                let chs1 = sLine1.split('');
+                let chs2 = sLine2.split('');
+                let str = '', max = Math.max(chs1.length, chs2.length);
+                for ( let idx=0,ch1,ch2; idx<max; idx++ ) {
+                    ch1 = chs1[idx] || ' ';
+                    ch2 = chs2[idx] || ' ';
+                    str += (ch1 === ' ' ? ch2 : ch1);
+                }
+                ary.push(str);
+
+                idx1++;
+                idx2++;
+            }else if ( !lineNo1 ) {
+                // 其一焦点行
+                ary.push(sLine1);
+                idx1++;
+            }else if ( !lineNo2 ) {
+                // 其二焦点行
+                ary.push(sLine2);
+                idx2++;
+            }else{
+                // 仍旧代码行，下个循环继续做
+            }
+        }
+    }
+
+}
+
+module.exports = function (opts1, opts2={}){
+    let ary1 = getSingleCodefrmae(opts1);
+    opts1 && opts1.file && (ary1.file = opts1.file);
+    let ary2 = getSingleCodefrmae(opts2);
+    opts2 && opts2.file && (ary2.file = opts2.file);
+
+    let ary;
+    let startNo1 = getLineNo(ary1[0]);
+    let startNo2 = getLineNo(ary2[0]);
+    if ( startNo1 && startNo2 && startNo1 > startNo2 ) {
+        ary = mergeCodefrmae(ary2, ary1);
+    }else{
+        ary = mergeCodefrmae(ary1, ary2);
+    }
+
+    let maxLength1 = (opts1 && opts1.maxLength) || defaultOptions.maxLength;
+    let maxLength2 = (opts2 && opts2.maxLength) || defaultOptions.maxLength;
+    let maxLength = Math.max(maxLength1, maxLength2);
+
+    adjustCodefrmae(ary, maxLength);	// 整理
+
+    return ary.join('\n')
 }
