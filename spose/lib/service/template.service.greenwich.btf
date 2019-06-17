@@ -6,14 +6,14 @@ package %package%;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@EnableEurekaServer
+@EnableDiscoveryClient
 @SpringBootApplication
-public class EurekaServerApplication {
+public class ServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EurekaServerApplication.class, args);
+        SpringApplication.run(ServiceApplication.class, args);
     }
 
 }
@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class EurekaServerApplicationTests {
+public class ServiceApplicationTests {
 
 	@Test
 	public void contextLoads() {
@@ -47,7 +47,10 @@ public class EurekaServerApplicationTests {
 management:
   security:  
     enabled: false  
-    
+  endpoint:
+    health:
+      enabled: true
+
 spring:
   application:
     name: %service-name%
@@ -59,15 +62,11 @@ eureka:
   instance:  
     hostname: %server-host%
   client:
-    # 实例是否在eureka服务器上注册自己的信息以供其他服务发现，默认为true
-    registerWithEureka: false
-    # 此客户端是否获取eureka服务器注册表上的注册信息，默认为true
-    fetchRegistry: false
-  server:
+    enabled: true
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
+      defaultZone: %register-center-url%
 
 
 ----------------------------------------

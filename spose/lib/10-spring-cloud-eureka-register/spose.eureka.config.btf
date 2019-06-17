@@ -18,3 +18,6 @@ spring-cloud.version = Greenwich.RELEASE            // default： Greenwich.RELE
 service-name         = spose-eureka-greenwich       // default： spose-eureka-greenwich
 server-host          = localhost                    // default： localhost
 server-port          = 8761                         // default： 8761
+
+// 包名
+package = top.gotoeasy.cloud.eureka                 // default： top.gotoeasy.cloud.eureka

@@ -5,5 +5,6 @@ const commander = require('commander')
 commander
   .version(require('../package').version)
   .usage('<command> [options]')
-  .command('eureka', 'generate jar for eureka registration server')
+  .command('eureka', 'generate eureka registration server')
+  .command('service', 'generate service')
   .parse(process.argv);

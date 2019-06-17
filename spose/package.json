@@ -1,6 +1,6 @@
 {
   "name": "@gotoeasy/spose",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "dependencies": {
     "@gotoeasy/file": "0.1.*",
     "@gotoeasy/btf": "1.2.*",

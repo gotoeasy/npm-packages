@@ -15,10 +15,6 @@ let opts = {
 !opts.debug && (console.debug = x=>x);
 
 
-console.info();
-console.info('generate jar for eureka registration server');
-console.info();
-
 inquirer.prompt([{
     type: 'list',
     message: 'select spring-cloud-dependencies version',
