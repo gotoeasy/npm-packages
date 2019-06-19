@@ -20,6 +20,28 @@ public class EurekaServerApplication {
 
 
 ----------------------------------------
+// WebSecurityConfigurer
+----------------------------------------
+[WebSecurityConfigurer]
+package %package%;
+
+
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+@EnableWebSecurity
+public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable(); // disable csrf
+        super.configure(http);
+    }
+}
+
+
+----------------------------------------
 // main test
 ----------------------------------------
 [SpringBootApplicationTests]
@@ -51,6 +73,10 @@ management:
 spring:
   application:
     name: %service-name%
+  security:
+    user:
+      name: %username%
+      password: %password%
 
 server:
   port: %server-port%
@@ -64,10 +90,8 @@ eureka:
     # 此客户端是否获取eureka服务器注册表上的注册信息，默认为true
     fetchRegistry: false
   server:
-    healthcheck:
-      enabled: true
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
 
 ----------------------------------------
@@ -90,6 +114,7 @@ eureka:
     </parent>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>%java.version%</java.version>
 		<spring-cloud.version>%spring-cloud.version%</spring-cloud.version>
     </properties>
@@ -137,3 +162,62 @@ eureka:
     </repositories>
 
 </project>
+
+----------------------------------------
+// gradle.properties
+----------------------------------------
+[gradle.properties]
+groupId    = %artifact.group-id%
+artifactId = %artifact.artifact-id%
+version    = %artifact.version%
+
+springBootVersion  = %spring-boot.version%
+springCloudVersion = %spring-cloud.version%
+
+----------------------------------------
+// settings.gradle
+----------------------------------------
+[settings.gradle]
+rootProject.name = artifactId
+
+----------------------------------------
+// build.gradle
+----------------------------------------
+[build.gradle]
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+group = groupId
+version = version
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+ 
+dependencies {
+	%dependencies%
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+	sourceCompatibility = %java.version%
+	targetCompatibility = %java.version%
+	options.encoding = 'UTF-8'
+}
+

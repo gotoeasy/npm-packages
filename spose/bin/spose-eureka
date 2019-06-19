@@ -25,7 +25,7 @@ inquirer.prompt([{
 }]).then(answers => {
 	Object.assign(opts, answers);
 
-	require('../lib/10-spring-cloud-eureka-register/index')(opts);
+	require('../lib/eureka/index')(opts);
 
 });
 

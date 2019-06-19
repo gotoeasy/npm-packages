@@ -20,6 +20,27 @@ public class ServiceApplication {
 
 
 ----------------------------------------
+// Controller
+----------------------------------------
+[Controller]
+package %package%;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloWorldController {
+
+    @RequestMapping("/hello/{name}")
+    public String helloworld(@PathVariable("name") String name) {
+        return "hello " + name;
+    }
+
+}
+
+
+----------------------------------------
 // main test
 ----------------------------------------
 [SpringBootApplicationTests]
@@ -136,3 +157,64 @@ eureka:
     </repositories>
 
 </project>
+
+----------------------------------------
+// gradle.properties
+----------------------------------------
+[gradle.properties]
+groupId    = %artifact.group-id%
+artifactId = %artifact.artifact-id%
+version    = %artifact.version%
+
+springBootVersion  = %spring-boot.version%
+springCloudVersion = %spring-cloud.version%
+
+----------------------------------------
+// settings.gradle
+----------------------------------------
+[settings.gradle]
+rootProject.name = artifactId
+
+----------------------------------------
+// build.gradle
+----------------------------------------
+[build.gradle]
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+group = groupId
+version = version
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+ 
+dependencies {
+	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+%dependencies%
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+	sourceCompatibility = %java.version%
+	targetCompatibility = %java.version%
+	options.encoding = 'UTF-8'
+}
+
