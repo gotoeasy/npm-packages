@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+const inquirer = require('inquirer')
+
+cmmd.usage('[options] [path]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+let opts = {
+	cwd: process.cwd(),
+	debug: !!cmmd.debug
+};
+
+!opts.debug && (console.debug = x=>x);
+
+
+inquirer.prompt([{
+    type: 'list',
+    message: 'select spring-cloud-dependencies version',
+    name: 'version',
+    choices: [
+        "Greenwich.RELEASE",
+    ]
+}]).then(answers => {
+	Object.assign(opts, answers);
+
+	require('../lib/redis/index')(opts);
+
+});
+
+
+

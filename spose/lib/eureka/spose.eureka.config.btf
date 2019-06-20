@@ -15,8 +15,8 @@ spring-boot.version  = 2.1.6.RELEASE                // default： 2.1.6.RELEASE
 spring-cloud.version = Greenwich.RELEASE            // default： Greenwich.RELEASE
 
 // 服务配置
-service-name         = spose-eureka-greenwich       // default： spose-eureka-greenwich
-server-host          = localhost                    // default： localhost
+service-name         = eureka-greenwich             // default： eureka-greenwich
+server-host          = eureka.server                // default： eureka.server
 server-port          = 8761                         // default： 8761
 
 // 用户认证
