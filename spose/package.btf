@@ -2,7 +2,7 @@
 @gotoeasy/spose
 
 [version] // 版本号
-0.0.8
+0.0.9
 
 
 
@@ -16,6 +16,7 @@ spose = bin/spose
 @gotoeasy/btf = 1.2.*
 commander = *
 inquirer = *
+execa = 1.0.*
 
 [devDependencies] // 开发依赖库
 

@@ -14,20 +14,5 @@ let opts = {
 
 !opts.debug && (console.debug = x=>x);
 
-
-inquirer.prompt([{
-    type: 'list',
-    message: 'select spring-cloud-dependencies version',
-    name: 'version',
-    choices: [
-        "Greenwich.RELEASE",
-    ]
-}]).then(answers => {
-	Object.assign(opts, answers);
-
-	require('../lib/eureka/index')(opts);
-
-});
-
-
+require('../generate/eureka')(opts);
 
