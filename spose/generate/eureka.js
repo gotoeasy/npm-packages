@@ -5,7 +5,7 @@ const execa = require('execa');
 module.exports = function (opts){
 
     console.info('------------------------------');
-    console.info('    build eureka-greenwich');
+    console.info('    build greenwich-eureka');
     console.info('------------------------------');
 
     let dir = File.resolve(__dirname, '../greenwich/eureka');
@@ -28,8 +28,8 @@ module.exports = function (opts){
     console.log(rs.stderr || rs.stdout);
 
     // 复制jar
-    let buildjarfile = opts.cwd + '/eureka/build/libs/eureka-greenwich-1.0.0.jar';
-    let jarfile = opts.cwd + '/eureka-greenwich-1.0.0.jar';
+    let buildjarfile = opts.cwd + '/eureka/build/libs/greenwich-eureka-1.0.0.jar';
+    let jarfile = opts.cwd + '/greenwich-eureka-1.0.0.jar';
     fs.copyFileSync(buildjarfile, jarfile);
 
     // 写配置文件
@@ -42,8 +42,8 @@ module.exports = function (opts){
     // 提示运行命令
     console.info('');
     console.info('etc.');
-    console.info('  java -jar eureka-greenwich-1.0.0.jar');
-    console.info('  java -jar eureka-greenwich-1.0.0.jar --spring.config.location=eureka-peer1.properties');
+    console.info('  java -jar greenwich-eureka-1.0.0.jar');
+    console.info('  java -jar greenwich-eureka-1.0.0.jar --spring.config.location=eureka-peer1.properties');
 
 }
 
