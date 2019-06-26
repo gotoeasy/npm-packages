@@ -2,14 +2,17 @@ const File = require('@gotoeasy/file');
 const fs = require('fs');
 const execa = require('execa');
 
+const NAME = 'eureka';
+const JAR = `greenwich-${NAME}-1.0.0.jar`;
+
 module.exports = function (opts){
 
     console.info('------------------------------');
-    console.info('    build greenwich-eureka');
+    console.info(`    build greenwich ${NAME}`);
     console.info('------------------------------');
 
-    let dir = File.resolve(__dirname, '../greenwich/eureka');
-    let dist = File.resolve(opts.cwd, 'eureka');
+    let dir = File.resolve(__dirname, `../greenwich/${NAME}`);
+    let dist = File.resolve(opts.cwd, NAME);
 
     // 复制源文件
     if ( !File.existsFile(dist + '/build.gradle') ) {
@@ -23,13 +26,13 @@ module.exports = function (opts){
     }
 
     // 编译
-    let cwd = opts.cwd + '/eureka';
+    let cwd = `${opts.cwd}/${NAME}`;
     let rs = execa.sync('gradle', ['clean', 'build'], {cwd});
     console.log(rs.stderr || rs.stdout);
 
     // 复制jar
-    let buildjarfile = opts.cwd + '/eureka/build/libs/greenwich-eureka-1.0.0.jar';
-    let jarfile = opts.cwd + '/greenwich-eureka-1.0.0.jar';
+    let buildjarfile = `${opts.cwd}/${NAME}/build/libs/${JAR}`;
+    let jarfile = `${opts.cwd}/${JAR}`;
     fs.copyFileSync(buildjarfile, jarfile);
 
     // 写配置文件
@@ -42,15 +45,18 @@ module.exports = function (opts){
     // 提示运行命令
     console.info('');
     console.info('etc.');
-    console.info('  java -jar greenwich-eureka-1.0.0.jar');
-    console.info('  java -jar greenwich-eureka-1.0.0.jar --spring.config.location=eureka-peer1.properties');
+    console.info(`  java -jar ${JAR}`);
+    console.info(`  java -jar ${JAR} --spring.config.location=${NAME}.properties`);
 
 }
 
 
 function getProperties(no){
 
-    return `# 主机
+    return `# 服务名
+spring.application.name=eureka
+
+# 主机
 eureka.instance.hostname=eureka${no}.server
 # 端口
 server.port=876${no}
@@ -59,6 +65,10 @@ server.port=876${no}
 spring.security.user.name=eureka
 spring.security.user.password=eureka
 
+# 开启健康检查，用以判断注销失效节点
+eureka.client.healthcheck.enabled=true
+# 关闭自我保护（自我保护：短时间内丢失过多客户端时，会进入自我保护模式，即一个服务长时间没有发送心跳，也不会将其删除）
+eureka.server.enable-self-preservation=false
 # 注册中心地址
 eureka.url1=http://eureka:eureka@eureka1.server:8761/eureka/
 eureka.url2=http://eureka:eureka@eureka2.server:8762/eureka/
