@@ -5,8 +5,10 @@ const commander = require('commander')
 commander
   .version(require('../package').version)
   .usage('<command> [options]')
-  .command('eureka', 'generate eureka server')
-  .command('config', 'generate config server')
+  .command('eureka', 'generate & build greenwich eureka')
+  .command('config', 'generate & build greenwich config')
+  .command('gateway', 'generate & build greenwich gateway')
+  .command('turbine', 'generate & build greenwich turbine')
   .command('redis', 'generate redis service')
   .command('service', 'generate service')
   .parse(process.argv);
