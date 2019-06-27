@@ -5,11 +5,13 @@ const commander = require('commander')
 commander
   .version(require('../package').version)
   .usage('<command> [options]')
-  .command('eureka', 'generate & build greenwich eureka')
-  .command('config', 'generate & build greenwich config')
-  .command('gateway', 'generate & build greenwich gateway')
-  .command('turbine', 'generate & build greenwich turbine')
-  .command('admin', 'generate & build greenwich spring-boot-admin')
-  .command('redis', 'generate redis service')
-  .command('service', 'generate service')
+  .command('eureka',     'generate & build greenwich eureka')
+  .command('config',     'generate & build greenwich config')
+  .command('gateway',    'generate & build greenwich gateway')
+
+  .command('turbine',    'generate & build greenwich turbine')
+  .command('admin',      'generate & build greenwich spring-boot-admin')
+
+  .command('helloworld', 'generate & build helloworld service')
+  .command('redis',      'generate & build redis service')
   .parse(process.argv);
