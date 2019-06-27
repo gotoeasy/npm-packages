@@ -65,10 +65,12 @@ server.port=876${no}
 spring.security.user.name=eureka
 spring.security.user.password=eureka
 
+# 支持actuator监控
+management.endpoints.web.exposure.include=*
+management.endpoint.health.show-details=always
+
 # 开启健康检查，用以判断注销失效节点
 eureka.client.healthcheck.enabled=true
-# 关闭自我保护（自我保护：短时间内丢失过多客户端时，会进入自我保护模式，即一个服务长时间没有发送心跳，也不会将其删除）
-eureka.server.enable-self-preservation=false
 # 注册中心地址
 eureka.url1=http://eureka:eureka@eureka1.server:8761/eureka/
 eureka.url2=http://eureka:eureka@eureka2.server:8762/eureka/
