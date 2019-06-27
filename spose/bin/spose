@@ -9,6 +9,7 @@ commander
   .command('config', 'generate & build greenwich config')
   .command('gateway', 'generate & build greenwich gateway')
   .command('turbine', 'generate & build greenwich turbine')
+  .command('admin', 'generate & build greenwich spring-boot-admin')
   .command('redis', 'generate redis service')
   .command('service', 'generate service')
   .parse(process.argv);
