@@ -2,7 +2,7 @@
 @gotoeasy/spose
 
 [version] // 版本号
-0.0.14
+0.0.15
 
 
 
@@ -13,7 +13,6 @@ spose = bin/spose
 
 [dependencies] // 依赖库
 @gotoeasy/file = 0.1.*
-@gotoeasy/btf = 1.2.*
 commander = *
 inquirer = *
 execa = 1.0.*
