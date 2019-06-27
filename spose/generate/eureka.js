@@ -27,26 +27,28 @@ module.exports = function (opts){
 
     // 编译
     let cwd = `${opts.cwd}/${NAME}`;
-    let rs = execa.sync('gradle', ['clean', 'build'], {cwd});
-    console.log(rs.stderr || rs.stdout);
+    let stdout = execa('gradle', ['clean', 'build', '-x', 'test'], {cwd}).stdout;
+    stdout.pipe(process.stdout);
+    stdout.unpipe = async function(){
 
-    // 复制jar
-    let buildjarfile = `${opts.cwd}/${NAME}/build/libs/${JAR}`;
-    let jarfile = `${opts.cwd}/${JAR}`;
-    fs.copyFileSync(buildjarfile, jarfile);
+        // 复制jar
+        let buildjarfile = `${opts.cwd}/${NAME}/build/libs/${JAR}`;
+        let jarfile = `${opts.cwd}/${JAR}`;
+        fs.copyFileSync(buildjarfile, jarfile);
 
-    // 写配置文件
-    if ( !File.existsFile(opts.cwd + '/eureka-peer1.properties') ) {
-        File.write(opts.cwd + '/eureka-peer1.properties', getProperties(1));
-        File.write(opts.cwd + '/eureka-peer2.properties', getProperties(2));
-        File.write(opts.cwd + '/eureka-peer3.properties', getProperties(3));
-    }
+        // 写配置文件
+        if ( !File.existsFile(opts.cwd + '/eureka-peer1.properties') ) {
+            File.write(opts.cwd + '/eureka-peer1.properties', getProperties(1));
+            File.write(opts.cwd + '/eureka-peer2.properties', getProperties(2));
+            File.write(opts.cwd + '/eureka-peer3.properties', getProperties(3));
+        }
 
-    // 提示运行命令
-    console.info('');
-    console.info('etc.');
-    console.info(`  java -jar ${JAR}`);
-    console.info(`  java -jar ${JAR} --spring.config.location=${NAME}.properties`);
+        // 提示运行命令
+        console.info('');
+        console.info('etc.');
+        console.info(`  java -jar ${JAR}`);
+        console.info(`  java -jar ${JAR} --spring.config.location=${NAME}.properties`);
+    };
 
 }
 
