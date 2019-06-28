@@ -43,6 +43,9 @@ module.exports = function (opts){
             File.write(opts.cwd + '/eureka-peer3.properties', getProperties(3));
         }
 
+        // 清除
+        execa.sync('gradle', ['clean'], {cwd});
+
         // 提示运行命令
         console.info('');
         console.info('etc.');

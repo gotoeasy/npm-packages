@@ -41,7 +41,10 @@ module.exports = function (opts){
         if ( !File.existsFile(propertiesfile) ) {
             File.write(propertiesfile, getProperties());
         }
-     
+
+        // 清除
+        execa.sync('gradle', ['clean'], {cwd});
+
         // 提示运行命令
         console.info('');
         console.info('etc.');

@@ -42,6 +42,9 @@ module.exports = function (opts){
             File.write(propertiesfile, getProperties());
         }
 
+        // 清除
+        execa.sync('gradle', ['clean'], {cwd});
+
         // 提示运行命令
         console.info('');
         console.info('etc.');
