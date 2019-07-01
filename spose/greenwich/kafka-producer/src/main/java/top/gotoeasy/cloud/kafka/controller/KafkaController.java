@@ -18,8 +18,8 @@ public class KafkaController {
     private KafkaProducerService kafkaProducerService;
 
     @RequestMapping("/send")
-    public void send(@RequestParam("message") String message) {
-        kafkaProducerService.send(topic, message);
+    public boolean send(@RequestParam("message") String message) {
+        return kafkaProducerService.send(topic, message);
     }
 
 }
