@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+const cmmd = require('commander');
+const inquirer = require('inquirer')
+
+cmmd.usage('[options] [path]')
+	.option('--debug', 'print debug log')
+	.parse(process.argv);
+
+let opts = {
+	cwd: process.cwd(),
+	debug: !!cmmd.debug
+};
+
+!opts.debug && (console.debug = x=>x);
+
+(async ()=>{
+	await require('../generate/kafka2es')(opts);
+})();
+

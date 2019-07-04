@@ -11,9 +11,11 @@ commander
 
   .command('turbine',         'generate & build greenwich turbine')
   .command('admin',           'generate & build greenwich spring-boot-admin')
+  .command('zipkin',          'generate zipkin-server')
 
   .command('helloworld',      'generate & build helloworld service')
   .command('redis',           'generate & build redis service')
   .command('kafka-producer',  'generate & build kafka-producer service')
   .command('kafka-consumer',  'generate & build kafka-consumer service')
+  .command('kafka2es',        'generate & build kafka2es service')
   .parse(process.argv);
