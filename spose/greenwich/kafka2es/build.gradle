@@ -18,16 +18,17 @@ apply plugin: 'io.spring.dependency-management'
 dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-config-client'
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	
+
 	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
-	
-	implementation 'com.github.danielwegener:logback-kafka-appender:0.2.0-RC2'
-	
+
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.2.0'
+	implementation 'org.elasticsearch:elasticsearch:7.2.0'
+	implementation 'org.elasticsearch.client:elasticsearch-rest-client:7.2.0'
+
 }
 
 dependencyManagement {
