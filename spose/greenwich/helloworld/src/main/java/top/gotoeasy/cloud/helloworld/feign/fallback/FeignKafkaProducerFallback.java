@@ -8,7 +8,7 @@ import top.gotoeasy.cloud.helloworld.feign.FeignKafkaProducerService;
 public class FeignKafkaProducerFallback implements FeignKafkaProducerService {
 
     @Override
-    public boolean send(String message) {
+    public boolean send(String topic, String message) {
         return false;
     }
 

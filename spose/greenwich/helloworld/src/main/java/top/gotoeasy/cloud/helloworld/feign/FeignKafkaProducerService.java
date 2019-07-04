@@ -10,6 +10,6 @@ import top.gotoeasy.cloud.helloworld.feign.fallback.FeignKafkaProducerFallback;
 public interface FeignKafkaProducerService {
 
     @RequestMapping("/send")
-    public boolean send(@RequestParam("message") String message);
+    public boolean send(@RequestParam("topic") String topic, @RequestParam("message") String message);
 
 }
