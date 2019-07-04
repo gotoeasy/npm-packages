@@ -65,19 +65,13 @@ spring.cloud.config.discovery.enabled=true
 spring.cloud.config.discovery.serviceId=config
 spring.cloud.config.profile=dev
 
-# 支持POST http://hostname:port/actuator/refresh 更新配置
-management.endpoints.web.exposure.include=*
-management.endpoint.health.show-details=always
-
 # 端口
 server.host=localhost
 server.port=9901
 
-# 列表上Status的显示格式
-eureka.instance.instance-id=\${server.host}:\${server.port}
+# 不需要向注册中心注册
+eureka.client.register-with-eureka=false
 
-# 开启健康检查，用以剔除失效节点
-eureka.client.healthcheck.enabled=true
 # 注册中心地址
 eureka.client.serviceUrl.defaultZone=http://eureka:eureka@eureka.server:8761/eureka/
 `;
