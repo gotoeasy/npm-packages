@@ -1,0 +1,23 @@
+[name]
+cmd
+
+[keywords]
+同步
+
+[function]
+const execa = require('execa');
+
+module.exports = function(sCmd=''){
+
+    if ( !sCmd ) return;
+
+	console.log('$> ' + sCmd);
+
+    let rs = execa.shellSync(sCmd);
+	if ( rs.stderr ) {
+		console.error( rs.stderr );
+	}else{
+		console.log( rs.stdout );
+	}
+    return !rs.code;
+};

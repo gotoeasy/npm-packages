@@ -1,6 +1,7 @@
 
 module.exports = {
 
+    autoinstall: require('./lib/autoinstall'),
     isInstalled: require('./lib/is-installed'),
     install: require('./lib/npm-install'),
     uninstall: require('./lib/npm-uninstall'),
