@@ -19,11 +19,27 @@ module.exports = function (opts){
         // 不覆盖，便于手动修改
         let files = File.files(dir, '**');
         files.forEach(from => {
-            let to = dist + from.substring(dir.length);
-            File.mkdir(to);
-            fs.copyFileSync(from, to);
+            if ( from.endsWith('.java') && opts.package ) {
+                // src/main/java/top/gotoeasy/cloud/eureka/
+                let pkg = opts.package || 'top.gotoeasy.cloud.eureka';
+                let to = dist + from.substring(dir.length);
+
+                to = to.replace('/src/main/java/top/gotoeasy/cloud/eureka', '/src/main/java/' + pkg.replace(/\./g, '/')); // 按包名替换目录
+                File.mkdir(to);
+
+                let src = File.read(from);
+                src = src.replace(/package\s+top.gotoeasy.cloud.eureka/, 'package ' + pkg); // 替换包名
+                File.write(to, src);
+
+            }else{
+                let to = dist + from.substring(dir.length);
+                File.mkdir(to);
+                fs.copyFileSync(from, to);
+            }
         });
     }
+
+    if ( !opts.build ) return;
 
     // 编译
     let cwd = `${opts.cwd}/${NAME}`;

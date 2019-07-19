@@ -1,0 +1,9 @@
+[name]
+写代码
+
+[keywords]
+demo, codding, helloworld, javascript, js
+
+[function]
+module.exports = () => "console.log('hello world');"
+

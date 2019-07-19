@@ -5,19 +5,21 @@ cmd
 同步
 
 [function]
-const execa = require('execa');
+const aify = require('aify');
 
 module.exports = function(sCmd=''){
 
     if ( !sCmd ) return;
 
-	console.log('$> ' + sCmd);
+	console.debug('$> ' + sCmd);
 
+	const execa = aify.skill('airequire').apply('execa');
     let rs = execa.shellSync(sCmd);
 	if ( rs.stderr ) {
 		console.error( rs.stderr );
 	}else{
 		console.log( rs.stdout );
 	}
+
     return !rs.code;
 };

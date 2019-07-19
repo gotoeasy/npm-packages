@@ -2,7 +2,7 @@
 @gotoeasy/aify-skills
 
 [version] // 版本号
-0.0.1
+0.0.3
 
 [main] // 入口文件
 
@@ -14,7 +14,7 @@
 skills for aify
 
 [keywords] // 检索关键字，多个关键字用半角逗号分隔
-aify aifyskill
+aify, aifyskill
 
 [scripts] // 脚本命令
 test = echo "Error: no test specified" && exit 1

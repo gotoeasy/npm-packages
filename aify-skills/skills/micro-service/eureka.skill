@@ -1,0 +1,28 @@
+[name]
+编写微服务基础组件
+
+[keywords]
+注册中心 greenwich eureka
+
+[aify]
+0.4.*
+
+[desc]
+编写微服务基础组件 - greenwich eureka
+
+[function]
+const aify = require('aify');
+
+module.exports = function(options={}){
+
+	let spose = aify.skill('airequire').apply('@gotoeasy/spose');
+	let File = require('@gotoeasy/file');
+
+	let cwd = File.resolve(process.cwd(), 'build/eureka');
+	let build = true;
+	let package = 'top.gotoeasy.cloud.eureka';
+	let opts = Object.assign({}, {cwd, build, package}, options);
+
+	spose('eureka', opts);
+
+};
