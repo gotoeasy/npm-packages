@@ -13,7 +13,7 @@ module.exports = function(sCmd=''){
 
 	console.debug('$> ' + sCmd);
 
-	const execa = aify.skill('airequire').apply('execa');
+	const execa = aify.ai('airequire').ok('execa');
     let rs = execa.shellSync(sCmd);
 	if ( rs.stderr ) {
 		console.error( rs.stderr );
