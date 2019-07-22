@@ -1,12 +1,13 @@
 {
   "name": "@gotoeasy/aify-skills",
-  "version": "0.0.3",
+  "version": "0.0.8",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "description": "skills for aify",
   "keywords": [
-    "aify aifyskill"
+    "aify",
+    "aifyskill"
   ],
   "repository": {
     "type": "git",

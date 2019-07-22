@@ -10,6 +10,19 @@ greenwich eureka
 [desc]
 编写微服务基础组件 - greenwich eureka
 
+options.cwd - 当前目录，默认为process.cwd()
+options.dist - 目标目录，默认为当前目录下的build/eureka
+options.clean - 是否清空重写，默认false
+options.build - 是否要build，默认true
+options.jdk - JDK版本，默认1.8
+options.groupId - 默认top.gotoeasy
+options.artifactId - 默认greenwich-eureka
+options.version - 默认1.0.0
+options.springBootVersion - 默认2.1.6.RELEASE
+options.springCloudVersion - 默认Greenwich.RELEASE
+options.package - 默认`${groupId}.cloud.eureka`
+options.jarFile - 默认`${artifactId}-${version}.jar`
+
 [function]
 const aify = require('aify');
 const File = require('@gotoeasy/file');
@@ -22,19 +35,20 @@ module.exports = function(options={}){
 
 	let cwd = File.resolve(options.cwd || process.cwd(), '');
 	let dist = File.resolve(cwd, 'build/eureka');
+	let clean = false;
 	let build = true;
 	let jdk = '1.8';
 
 	let groupId = options.groupId || 'top.gotoeasy';
-	let artifactId = 'greenwich-eureka';
-	let version = '1.0.0';
+	let artifactId = options.artifactId || 'greenwich-eureka';
+	let version = options.version || '1.0.0';
 	let springBootVersion = '2.1.6.RELEASE';
 	let springCloudVersion = 'Greenwich.RELEASE';
 
 	let package = `${groupId}.cloud.eureka`;
 	let jarFile = `${artifactId}-${version}.jar`;
 
-	let opts = Object.assign({}, {cwd, dist, build, jdk, groupId, artifactId, version, springBootVersion, springCloudVersion, package, jarFile}, options);
+	let opts = Object.assign({}, {cwd, dist, build, clean, jdk, groupId, artifactId, version, springBootVersion, springCloudVersion, package, jarFile}, options);
 
     // 生成代码、编译打包
 	genAll(opts);
@@ -72,6 +86,10 @@ function buildAll(opts){
 }
 
 function genAll(opts){
+
+	if (opts.clean){
+		File.remove(opts.dist);
+	}
 
 	let file, src, packagePath = opts.package.replace(/\./g, '/');
 
