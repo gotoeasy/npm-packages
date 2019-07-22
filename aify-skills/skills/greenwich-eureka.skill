@@ -1,0 +1,287 @@
+[name]
+编写微服务基础组件
+
+[keywords]
+greenwich eureka
+
+[aify]
+0.4.*
+
+[desc]
+编写微服务基础组件 - greenwich eureka
+
+[function]
+const aify = require('aify');
+const File = require('@gotoeasy/file');
+const execa = require('execa');
+const fs = require('fs');
+
+module.exports = function(options={}){
+
+	let File = require('@gotoeasy/file');
+
+	let cwd = File.resolve(options.cwd || process.cwd(), '');
+	let dist = File.resolve(cwd, 'build/eureka');
+	let build = true;
+	let jdk = '1.8';
+
+	let groupId = options.groupId || 'top.gotoeasy';
+	let artifactId = 'greenwich-eureka';
+	let version = '1.0.0';
+	let springBootVersion = '2.1.6.RELEASE';
+	let springCloudVersion = 'Greenwich.RELEASE';
+
+	let package = `${groupId}.cloud.eureka`;
+	let jarFile = `${artifactId}-${version}.jar`;
+
+	let opts = Object.assign({}, {cwd, dist, build, jdk, groupId, artifactId, version, springBootVersion, springCloudVersion, package, jarFile}, options);
+
+    // 生成代码、编译打包
+	genAll(opts);
+    buildAll(opts);
+
+};
+
+function buildAll(opts){
+    if ( !opts.build ) return;
+
+    // 编译
+    let cwd = opts.dist;
+    let stdout = execa('gradle', ['clean', 'build', '-x', 'test'], {cwd: opts.dist}).stdout;
+    stdout.pipe(process.stdout);
+    stdout.unpipe = async function(){
+
+        // 复制jar
+        let buildjarfile = `${opts.dist}/build/libs/${opts.jarFile}`;
+        let jarfile = `${opts.cwd}/${opts.jarFile}`;
+        fs.copyFileSync(buildjarfile, jarfile);
+
+        // 写配置文件
+        File.write(opts.cwd + '/eureka-peer.properties', getApplicationPropertiesPeer(opts));
+
+        // 清除
+        execa.sync('gradle', ['clean'], {cwd: opts.dist});
+
+        // 提示运行命令
+        console.info('');
+        console.info('etc.');
+        console.info(`  java -jar ${opts.jarFile}`);
+        console.info(`  java -jar ${opts.jarFile} --spring.config.location=eureka-peer.properties`);
+    };
+
+}
+
+function genAll(opts){
+
+	let file, src, packagePath = opts.package.replace(/\./g, '/');
+
+	// EurekaServerApplication.java
+	file = File.resolve(opts.dist, `src/main/java/${packagePath}/EurekaServerApplication.java`);
+	src = getEurekaServerApplication(opts);
+	File.write(file, src);
+
+	// WebSecurityConfigurer.java
+	file = File.resolve(opts.dist, `src/main/java/${packagePath}/configuration/WebSecurityConfigurer.java`);
+	src = getWebSecurityConfigurer(opts);
+	File.write(file, src);
+
+	// application.properties
+	file = File.resolve(opts.dist, `src/main/resources/application.properties`);
+	src = getApplicationProperties(opts);
+	File.write(file, src);
+
+	// application-dev.properties
+	file = File.resolve(opts.dist, `src/main/resources/application-dev.properties`);
+	src = getApplicationPropertiesDev(opts);
+	File.write(file, src);
+
+	// application-peer.properties
+	file = File.resolve(opts.dist, `src/main/resources/application-peer.properties`);
+	src = getApplicationPropertiesPeer(opts);
+	File.write(file, src);
+
+	// build.gradle
+	file = File.resolve(opts.dist, `build.gradle`);
+	src = getBuildGradle(opts);
+	File.write(file, src);
+
+	// gradle.properties
+	file = File.resolve(opts.dist, `gradle.properties`);
+	src = getGradleProperties(opts);
+	File.write(file, src);
+
+	// settings.gradle
+	file = File.resolve(opts.dist, `settings.gradle`);
+	src = getSettingsGradle(opts);
+	File.write(file, src);
+
+}
+
+
+// WebSecurityConfigurer.java
+function getWebSecurityConfigurer(opts){
+	return `package ${opts.package}.configuration;
+
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+@EnableWebSecurity
+public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable(); // disable csrf
+        super.configure(http);
+    }
+}
+`;
+}
+
+// EurekaServerApplication.java
+function getEurekaServerApplication(opts){
+	return `package ${opts.package};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaServerApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+
+}
+`;
+}
+
+// application-peer.properties
+function getApplicationPropertiesPeer(){
+	return `# 主机
+eureka.instance.hostname=eureka1.server
+# 端口
+server.port=8761
+
+# 简易用户密码保护
+spring.security.user.name=eureka
+spring.security.user.password=eureka
+
+# 支持actuator监控
+management.endpoints.web.exposure.include=*
+management.endpoint.health.show-details=always
+
+# 开启健康检查，用以剔除失效节点
+eureka.client.healthcheck.enabled=true
+# 注册中心地址
+eureka.url1=http://eureka:eureka@eureka1.server:8761/eureka/
+eureka.url2=http://eureka:eureka@eureka2.server:8761/eureka/
+eureka.url3=http://eureka:eureka@eureka3.server:8761/eureka/
+eureka.client.serviceUrl.defaultZone=$\{eureka.url1\}, $\{eureka.url2\}, $\{eureka.url3\}
+`;
+
+}
+
+
+// application-dev.properties
+function getApplicationPropertiesDev(){
+	return `# 主机
+eureka.instance.hostname=localhost
+# 端口
+server.port=8761
+
+# 简易用户密码保护
+spring.security.user.name=eureka
+spring.security.user.password=eureka
+
+# 开发环境使用单台注册中心，不需要向注册中心注册自己，也不需要检索注册中心服务
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+
+# 开启健康检查，用以剔除失效节点
+eureka.client.healthcheck.enabled=true
+# 注册中心地址
+eureka.client.serviceUrl.defaultZone=http://eureka:eureka@localhost:8761/eureka/
+`;
+
+}
+
+// application.properties
+function getApplicationProperties(){
+	return `# 服务名
+spring.application.name=eureka
+
+# 列表上Status的显示格式
+eureka.instance.instance-id=$\{eureka.instance.hostname\}:$\{server.port\}
+
+# 默认为开发环境配置，可通过启动参数修改
+spring.profiles.active=dev
+`;
+
+}
+
+// settings.gradle
+function getSettingsGradle(opts){
+	return 'rootProject.name = artifactId';
+}
+
+// gradle.properties
+function getGradleProperties(opts={}){
+
+	return `groupId    = ${opts.groupId || 'top.gotoeasy.cloud'}
+artifactId = ${opts.artifactId || 'greenwich-eureka'}
+version    = ${opts.artifactIdVersion || '1.0.0'}
+
+springBootVersion  = ${opts.springBootVersion || '2.1.6.RELEASE'}
+springCloudVersion = ${opts.springCloudVersion || 'Greenwich.RELEASE'}
+`;
+
+}
+
+// build.gradle
+function getBuildGradle(opts){
+
+	return `buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:$\{springBootVersion}")
+	}
+}
+
+group = groupId
+version = version
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+ 
+dependencies {
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:$\{springCloudVersion\}"
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+	sourceCompatibility = ${opts.jdk}
+	targetCompatibility = ${opts.jdk}
+	options.encoding = 'UTF-8'
+}
+`;
+
+}
+
