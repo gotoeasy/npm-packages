@@ -2,7 +2,7 @@
 编写微服务基础组件
 
 [keywords]
-greenwich eureka
+greenwich eureka gradle
 
 [aify]
 0.4.*
@@ -54,6 +54,7 @@ module.exports = function(options={}){
 	genAll(opts);
     buildAll(opts);
 
+	console.log('DONE');
 };
 
 function buildAll(opts){
