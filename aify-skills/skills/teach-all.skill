@@ -1,0 +1,40 @@
+[name]
+倾囊相授
+
+[keywords]
+
+[aify]
+0.5.*
+
+[desc]
+覆盖式的复制本领给他人
+ainame - 传授目标名
+bReplace - 非白纸时是否覆盖本领，默认false
+返回： 成功true，失败false
+
+[function]
+module.exports = function(ainame, bReplace=false){
+
+	let File = require('@gotoeasy/file');
+	let fs = require('fs');
+	let storePath = require('aify/src/util/store-path');
+
+	let pathFrom = storePath(this.ainame);
+	let pathTo = storePath(ainame);
+
+	if (!bReplace && File.existsDir(pathTo)){
+		console.error(`传授失败，${ainame}非白纸一张，强行灌输功力恐令其无法自控`);
+		return false;
+	}
+
+	File.remove(pathTo);
+	let files = File.files(pathFrom, '**.json');
+	files.forEach(from => {
+		let to = pathTo + from.substring(pathFrom.length);
+		File.mkdir(to);
+		fs.copyFileSync(from, to);
+	});
+
+	return true;
+}
+
