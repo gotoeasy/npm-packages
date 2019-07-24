@@ -1,0 +1,21 @@
+[name]
+代码行数统计
+
+[keywords]
+
+[aify]
+0.5.*
+
+[desc]
+指定目录统计其中的代码行数
+
+[function]
+module.exports = function(...dirs){
+
+	let aify = require('aify');
+	let countLine = aify.at(this.ainame).ai('airequire').ok('@gotoeasy/count-line-cli');
+
+	let mode = 'dir';
+	countLine({mode, dirs});
+}
+
