@@ -1,14 +1,10 @@
 [target-file]
-*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.sass, *.scss, *.less, *.tld, *.sh, *.sql, *.ts, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle, *.btf, *.rpose
+*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.sass, *.scss, *.less, *.tld, *.sh, *.sql, *.ts, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle, *.btf, *.rpose, *.skill
 
 [java]
 line-comment=//
 block-comment-start=/*
 block-comment-end=*/
-
-
-
-
 
 [js]
 line-comment=//

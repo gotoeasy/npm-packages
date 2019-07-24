@@ -19,6 +19,12 @@ module.exports = event.on('统计文件行数', function(){
             let oBtf = event.at('BTF文件内容解析', text);
             countRpose(result, oBtf);
 
+        }else if ( /.skill$/i.test(file) ) {
+
+            let text = File.read(file);
+            let oBtf = event.at('BTF文件内容解析', text);
+            countRpose(result, oBtf);
+
         }else{
 
             let oFlg = {isBlockCommentStart: false}, ext = getFileExt(file);
@@ -96,6 +102,43 @@ function countRpose(oRs, oBtf){
     oRs.total = oRs.blank + oRs.comment + oRs.code;
 }
 
+
+function countSkill(oRs, oBtf){
+    // oRs: {total: 0, blank: 0, comment: 0, code: 0}
+    // oBtf: {blank: nnn, comment: nnn, docs: [...]}
+    oRs.blank = oBtf.blank;
+    oRs.comment = oBtf.comment;
+
+    let rblocks = oBtf.docs[0] || [];
+
+    for ( let i=0,blocks; blocks=oBtf.docs[i++]; ) {
+        if ( i < 2 ) {
+            blocks.forEach(block => {
+                oRs.code++;                                             // 块名行算一行代码
+                if ( /^function$/i.test(block.name) ) {
+                    let result = countByExt(block.texts, 'js');
+                    oRs.blank += result.blank;
+                    oRs.comment += result.comment;
+                    oRs.code += result.code;
+                }else{
+                    block.texts.forEach(line => {
+                        line.trim() ? (oRs.code++) : (oRs.blank++);
+                    })
+                }
+            });
+        }else{
+            // 忽略的文档，按注释及空行统计
+            blocks.forEach(block => {
+                oRs.comment++;
+                block.texts.forEach(line => {
+                    line.trim() ? (oRs.comment++) : (oRs.blank++);
+                })
+            });
+        }
+    }
+
+    oRs.total = oRs.blank + oRs.comment + oRs.code;
+}
 
 
 
