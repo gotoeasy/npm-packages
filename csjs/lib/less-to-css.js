@@ -53,8 +53,11 @@ module.exports = (function(){
 
         let err, css;
 		require('less').render(src, opts, function(error, output) {
-            error && (err = error);
-            css = output.css;
+            if ( error ) {
+                err = error;
+            }else{
+                css = output.css;
+            }
         });
 
         if ( err ) {
