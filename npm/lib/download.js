@@ -17,7 +17,7 @@ File.mkdir(tmpdir, true);
 function download(url, dist){
 
 	let options = require('url').parse(url);
-	options.agent = agent;
+	proxy && (options.agent = agent); // 有代理时设定代理
 
 	return new Promise(function(resolve, reject){
 
