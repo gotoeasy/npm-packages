@@ -1,0 +1,15 @@
+[name]
+格式化代码
+
+[keywords]
+sql
+
+[function]
+const aify = require('aify');
+module.exports = function(sql){
+
+    if (!sql) return sql;
+
+    let sqlFormatter = aify.at(this.ainame).ai('airequire').ok('sql-formatter');
+    return sqlFormatter.format(sql);
+};
