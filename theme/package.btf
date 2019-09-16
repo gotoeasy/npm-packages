@@ -2,9 +2,7 @@
 @gotoeasy/theme
 
 [version] // 版本号
-0.1.0
-
-
+0.2.1
 
 [dependencies] // 依赖库
 

@@ -2,26 +2,21 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.3.1
-
-
+0.4.1
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/file = 0.1.*
-@gotoeasy/hash = 0.1.*
-@gotoeasy/babel = 0.3.*
-@gotoeasy/browserify = 0.3.*
-
+@gotoeasy/file = 0.2.*
+@gotoeasy/hash = 0.2.*
+@gotoeasy/babel = 0.4.*
+@gotoeasy/browserify = 0.4.*
 prettier = *
 uglify-es = *
-
 find-node-modules = *
 less = *
 node-sass = *
-
 browserslist = *
 postcss = *
 postcss-devtools = *

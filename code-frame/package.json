@@ -1,9 +1,9 @@
 {
   "name": "@gotoeasy/code-frame",
-  "version": "0.3.3",
+  "version": "0.4.1",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/file": "0.1.*"
+    "@gotoeasy/file": "0.2.*"
   },
   "devDependencies": {
     "ava": "*",

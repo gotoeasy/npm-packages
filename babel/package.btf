@@ -2,17 +2,15 @@
 @gotoeasy/babel
 
 [version] // 版本号
-0.3.0
-
-
+0.4.1
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-@babel/core = ~7.4
-@babel/preset-env = ~7.4
-@babel/polyfill = ~7.4
+@babel/core = 7.4.*
+@babel/preset-env = 7.4.*
+@babel/polyfill = 7.4.*
 
 [description] // 描述
 使用固定配置让babel转译代码，简化满足特定需求：语法转译+按需添加兼容补丁

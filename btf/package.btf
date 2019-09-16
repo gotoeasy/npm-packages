@@ -2,9 +2,7 @@
 @gotoeasy/btf
 
 [version] // 版本号
-1.2.0
-
-
+1.3.1
 
 [main] // 入口文件
 index.js
