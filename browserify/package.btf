@@ -2,14 +2,14 @@
 @gotoeasy/browserify
 
 [version] // 版本号
-0.4.1
+0.4.2
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-browserify = 16.2.*
-into-stream = 5.0.*
+browserify = 16.5.*
+into-stream = 5.1.*
 stream-to-string = 1.2.*
 
 [description] // 描述

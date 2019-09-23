@@ -1,10 +1,10 @@
 {
   "name": "@gotoeasy/browserify",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "index.js",
   "dependencies": {
-    "browserify": "16.2.*",
-    "into-stream": "5.0.*",
+    "browserify": "16.5.*",
+    "into-stream": "5.1.*",
     "stream-to-string": "1.2.*"
   },
   "scripts": {
