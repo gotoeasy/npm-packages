@@ -46,7 +46,7 @@ class BaseNode{
         // 遍历孙节点
         for ( let i=0,node,rs; node=nodes[i++]; ) {
             if ( node.parent ) {
-                rs = node.walk(typeOrRegexpOrCallback, callback);       // 忽略已被删除的节点
+                rs = node.walk(typeOrRegexpOrCallback, callback, opts); // 忽略已被删除的节点
                 if ( rs === false ) return rs;                          // 回调函数返回false时停止遍历
             }
         }
