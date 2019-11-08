@@ -1,0 +1,24 @@
+{
+  "name": "aipg",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "description": "自动编程，智能编程",
+  "keywords": [
+    "auto code"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gotoeasy/npm-packages.git"
+  },
+  "homepage": "https://github.com/gotoeasy/npm-packages/blob/master/aipg/README.md",
+  "bugs": {
+    "url": "https://github.com/gotoeasy/npm-packages/issues"
+  },
+  "author": {
+    "name": "青松",
+    "email": "gotoeasy@163.com"
+  },
+  "license": "MIT"
+}
