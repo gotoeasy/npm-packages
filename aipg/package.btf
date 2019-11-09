@@ -2,7 +2,7 @@
 aipg
 
 [version] // 版本号
-0.0.1
+0.0.2
 
 [main] // 入口文件
 index.js
@@ -15,9 +15,10 @@ index.js
 @gotoeasy/btf = 1.3.*
 @gotoeasy/err = 0.4.*
 @gotoeasy/csjs = 0.4.*
-@gotoeasy/postobject = 0.2.*
+@gotoeasy/postobject = 0.3.*
 @gotoeasy/cache = 0.3.*
 xlsx-populate = *
+office-document-properties = *
 
 [devDependencies] // 开发依赖库
 ava = *

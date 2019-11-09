@@ -14,6 +14,8 @@ bus.on('环境', function(result){
         result.build = !!opts.build;
         result.watch = !!opts.watch;
 
+        result.file = opts.file;
+
         return result;
     };
 

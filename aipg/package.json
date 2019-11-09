@@ -1,6 +1,7 @@
 {
   "name": "aipg",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "main": "index.js",
   "dependencies": {
     "@gotoeasy/bus": "0.2.*",
     "@gotoeasy/npm": "0.2.*",
@@ -9,9 +10,10 @@
     "@gotoeasy/btf": "1.3.*",
     "@gotoeasy/err": "0.4.*",
     "@gotoeasy/csjs": "0.4.*",
-    "@gotoeasy/postobject": "0.2.*",
+    "@gotoeasy/postobject": "0.3.*",
     "@gotoeasy/cache": "0.3.*",
-    "xlsx-populate": "*"
+    "xlsx-populate": "*",
+    "office-document-properties": "*"
   },
   "devDependencies": {
     "ava": "*",

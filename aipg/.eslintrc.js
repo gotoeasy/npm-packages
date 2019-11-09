@@ -16,5 +16,6 @@ module.exports = {
             'no-console': 'off'
             ,'no-cond-assign': 'off'
             ,'no-control-regex': 'off'
+            ,'require-atomic-updates': 'off'
     }
 };

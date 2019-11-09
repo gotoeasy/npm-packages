@@ -1,58 +1,58 @@
 import test from 'ava';
 import postobject from '.';
 
-test('11 3层节点的toJson', t => {
+test('11 3层节点的toJson', async t => {
 
-    let plugin0 = function(root, result){
+    let plugin0 = async function(root, result){
         result.json = root.toJson();
     };
 
-    let pluginlog = function(root, result){
+    let pluginlog = async function(root, result){
 //        console.info('-----------root----------', root);
 //        console.info('-----------JSON----------');
 //        console.info(JSON.stringify(root.toJson(),null,4));
     };
 
 
-    let rs = postobject([plugin0, pluginlog]).process({lay:1,nodes:[{lay:2,nodes:[{lay:3}]}]})
+    let rs = await postobject([plugin0, pluginlog]).process({lay:1,nodes:[{lay:2,nodes:[{lay:3}]}]})
     t.is(JSON.stringify(rs.json), '{"type":"root","nodes":[{"type":"Unknown","object":{"lay":1},"nodes":[{"type":"Unknown","object":{"lay":2},"nodes":[{"type":"Unknown","object":{"lay":3}}]}]}]}');
 
 });
 
-test('10 单节点的toJson', t => {
+test('10 单节点的toJson', async t => {
 
-    let plugin0 = function(root, result){
+    let plugin0 = async function(root, result){
     };
 
-    let plugin1 = function(root, result){
+    let plugin1 = async function(root, result){
         result.json = root.toJson();
     };
 
-    let rs = postobject([plugin0, plugin1]).process({})
+    let rs = await postobject([plugin0, plugin1]).process({})
     t.is(JSON.stringify(rs.json), '{"type":"root","nodes":[{"type":"Unknown","object":{}}]}');
 
 });
 
-test('09 单纯根节点的toJson', t => {
+test('09 单纯根节点的toJson', async t => {
 
-    let plugin0 = function(root, result){
+    let plugin0 = async function(root, result){
     };
 
-    let plugin1 = function(root, result){
+    let plugin1 = async function(root, result){
         result.json = root.toJson();
     };
 
-    let rs = postobject([plugin0, plugin1]).process()
+    let rs = await postobject([plugin0, plugin1]).process()
     t.is(JSON.stringify(rs.json), '{"type":"root"}');
 
 });
 
 
 
-test('08 三个插件，一个添加节点和删除指定子节点，一个替换指定节点，一个计算总和', t => {
+test('08 三个插件，一个添加节点和删除指定子节点，一个替换指定节点，一个计算总和', async t => {
 
-    let plugin0 = function(root, result){
-        root.walk(/num/, (node, object) => {
+    let plugin0 = async function(root, result){
+        await root.walk(/num/, (node, object) => {
             if ( object.value === 1 ) {
                 let oNode = node.clone();
                 oNode.object.value = 10;
@@ -68,8 +68,8 @@ test('08 三个插件，一个添加节点和删除指定子节点，一个替�
             }
         });
     };
-    let plugin1 = function(root, result){
-        root.walk((node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk((node, object) => {
             if ( object.value === 10 ) {
                 let oNode = node.clone();
                 oNode.object.value = 100;
@@ -78,23 +78,23 @@ test('08 三个插件，一个添加节点和删除指定子节点，一个替�
             }
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 124);
 
 });
 
-test('07 三个插件，一个添加节点和删除指定子节点，一个删除指定节点，一个计算总和', t => {
+test('07 三个插件，一个添加节点和删除指定子节点，一个删除指定节点，一个计算总和', async t => {
 
-    let plugin0 = function(root, result){
-        root.walk(/num/, (node, object) => {
+    let plugin0 = async function(root, result){
+        await root.walk(/num/, (node, object) => {
             if ( object.value === 1 ) {
                 let oNode = node.clone();
                 oNode.object.value = 10;
@@ -110,29 +110,29 @@ test('07 三个插件，一个添加节点和删除指定子节点，一个删�
             }
         });
     };
-    let plugin1 = function(root, result){
-        root.walk((node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk((node, object) => {
             object.value === 10 && node.remove();
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 24);
 
 });
 
 
-test('06 三个插件，一个添加节点和删除指定子节点，一个删除指定节点，一个计算总和', t => {
+test('06 三个插件，一个添加节点和删除指定子节点，一个删除指定节点，一个计算总和', async t => {
 
-    let plugin0 = function(root, result){
-        root.walk(/num/, (node, object) => {
+    let plugin0 = async function(root, result){
+        await root.walk(/num/, (node, object) => {
             if ( object.value === 1 ) {
                 let oNode = node.clone();
                 oNode.object.value = 10;
@@ -147,29 +147,29 @@ test('06 三个插件，一个添加节点和删除指定子节点，一个删�
             }
         });
     };
-    let plugin1 = function(root, result){
-        root.walk((node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk((node, object) => {
             object.value === 10 && node.remove();
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 23);
 
 });
 
 
-test('05 三个插件，一个添加节点，一个删除子节点，一个计算总和', t => {
+test('05 三个插件，一个添加节点，一个删除子节点，一个计算总和', async t => {
 
-    let plugin0 = function(root, result){
-        root.walk(/num/, (node, object) => {
+    let plugin0 = async function(root, result){
+        await root.walk(/num/, (node, object) => {
             if ( object.value === 1 ) {
                 let oNode = node.clone();
                 oNode.object.value = 10;
@@ -184,28 +184,28 @@ test('05 三个插件，一个添加节点，一个删除子节点，一个计�
             }
         });
     };
-    let plugin1 = function(root, result){
-        root.walk((node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk((node, object) => {
             object.value === 3 && node.remove();
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin0, plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 31);
 
 });
 
-test('04 四个插件，一个添加节点，一个删除节点，一个计算总和，最后一个注释空转', t => {
+test('04 四个插件，一个添加节点，一个删除节点，一个计算总和，最后一个注释空转', async t => {
 
-    let plugin0 = function(root, result){
-        root.walk(/num/, (node, object) => {
+    let plugin0 = async function(root, result){
+        await root.walk(/num/, (node, object) => {
             if ( object.value === 1 ) {
                 let oNode = node.clone();
                 oNode.object.value = 10;
@@ -229,80 +229,80 @@ test('04 四个插件，一个添加节点，一个删除节点，一个计算�
             }
         });
     };
-    let plugin1 = function(root, result){
-        root.walk((node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk((node, object) => {
             object.value === 3 && node.remove();
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
-    let pluginlog = function(root, result){
+    let pluginlog = async function(root, result){
   //      console.info('-----------root----------', root);
   //      console.info('-----------JSON----------');
   //      console.info(JSON.stringify(root.toJson(),null,4));
     };
 
-    let rs = postobject([plugin0,plugin1, plugin2,pluginlog]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin0,plugin1, plugin2,pluginlog]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 33);
 
 });
 
 
-test('03 两个插件，一个删除节点，最后计算总和', t => {
+test('03 两个插件，一个删除节点，最后计算总和', async t => {
 
-    let plugin1 = function(root, result){
-        root.walk((node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk((node, object) => {
             object.value > 2 && node.remove();
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 3);
 
 });
 
-test('02 两个插件，一个乘2，最后计算总和', t => {
+test('02 两个插件，一个乘2，最后计算总和', async t => {
 
-    let plugin1 = function(root, result){
-        root.walk('num', (node, object) => {
+    let plugin1 = async function(root, result){
+        await root.walk('num', (node, object) => {
             object.value *= 2;
         });
     };
-    let plugin2 = function(root, result){
+    let plugin2 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin1, plugin2]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 12);
 
 });
 
-test('01 一个插件，计算总和', t => {
+test('01 一个插件，计算总和', async t => {
 
-    let plugin1 = function(root, result){
+    let plugin1 = async function(root, result){
         result.total = result.total || 0;
-        root.walk('num', (node, object) => {
+        await root.walk('num', (node, object) => {
             result.total += object.value;
         });
     };
 
-    let rs = postobject([plugin1]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
+    let rs = await postobject([plugin1]).process({type:'num', value:1, nodes:[{type:'num', value:2},{type:'num', value:3}]})
 
     t.is(rs.total, 6);
 

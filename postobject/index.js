@@ -15,7 +15,7 @@ function postobject(plugins=[], opts={}){
     return {plugins, TYPE, NODES, process, createNode};
 };
 
-function process(object, opts={}){
+async function process(object, opts={}){
 
     let sTime, time;
     let root = new Root();
@@ -24,7 +24,7 @@ function process(object, opts={}){
     let result = {};
     for ( let i=0,plugin; plugin=this.plugins[i++]; ) {
         opts.log && (sTime = new Date().getTime());
-        plugin.bind(this)(root, result);
+        await plugin.bind(this)(root, result);
         opts.log && ((time = new Date().getTime() - sTime) > 30) && console.info(`${weakmap.get(plugin)} : ${time}ms`);
     }
     return result;

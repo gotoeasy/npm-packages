@@ -10,7 +10,7 @@ class BaseNode{
         });
     }
 
-    walk(typeOrRegexpOrCallback, callback, opts) {
+    async walk(typeOrRegexpOrCallback, callback, opts) {
         if ( !this.nodes ) return;
 
         // 整理参数
@@ -39,21 +39,21 @@ class BaseNode{
             if ( type !== undefined && type !== node.type ) continue;
             if ( regexp && !regexp.test(node.type) ) continue;
 
-            rs = fnCallback(node, node.object);
+            rs = await fnCallback(node, node.object);                   // 支持异步函数
             if ( rs === false ) return rs;                              // 回调函数返回false时停止遍历
         }
 
         // 遍历孙节点
         for ( let i=0,node,rs; node=nodes[i++]; ) {
             if ( node.parent ) {
-                rs = node.walk(typeOrRegexpOrCallback, callback, opts); // 忽略已被删除的节点
-                if ( rs === false ) return rs;                          // 回调函数返回false时停止遍历
+                rs = await node.walk(typeOrRegexpOrCallback, callback, opts);   // 忽略已被删除的节点
+                if ( rs === false ) return rs;                                  // 回调函数返回false时停止遍历
             }
         }
     }
 
     clone(){
-        let cloneNode = new this.constructor(Object.assign({}, this.object));     // TODO 深度克隆数据？
+        let cloneNode = new this.constructor(Object.assign({}, this.object));   // TODO 深度克隆数据？
         cloneNode.type = this.type;
         cloneNode.parent = this.parent;
         this.nodes && this.nodes.length && (cloneNode.nodes = []) && this.nodes.forEach( node => cloneNode.addChild(node.clone()) );

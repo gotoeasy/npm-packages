@@ -1,0 +1,13 @@
+node_modules/
+package-lock.json
+.nyc_output/
+.gitignore
+.browserslistrc
+src/
+.eslintrc.js
+aipg.config.btf
+build.bat
+build.js
+package.btf
+test.xlsx
+z.js

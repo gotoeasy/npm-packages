@@ -3,9 +3,9 @@ const postobject = require('@gotoeasy/postobject');
 
 bus.on('自动编程', function (){
 
-    return function(file){
+    return async function(file){
         let plugins = bus.on('编程插件');
-        let context = postobject(plugins).process({file});
+        let context = await postobject(plugins).process({file});
         return context;
     }
 

@@ -1,0 +1,8 @@
+[setting]
+lang : java
+
+[input]
+filter : doc/**.xlsx
+
+[output]
+dist : dist
