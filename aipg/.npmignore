@@ -5,9 +5,8 @@ package-lock.json
 .browserslistrc
 src/
 .eslintrc.js
-aipg.config.btf
-build.bat
+*.bat
+*.xlsx
+*.btf
 build.js
-package.btf
-test.xlsx
 z.js
