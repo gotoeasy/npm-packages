@@ -16,12 +16,13 @@ bus.on('编程插件', function(){
             startRow = oSheet.maxHeadRow + 1;                                               // 开始行
             endRow = oSheet.maxRow;                                                         // 结束行
             startColumn = 1;                                                                // 开始列
-            endColumn = oSheet.maxHeadColumn;                                               // 结束列
+            endColumn = oSheet.maxColumn;                                                   // 结束列
 
             oCell = getSestionStartRow(sheet, startRow, endRow, startColumn, endColumn);    // 主章节起始单元格
             isTableCell = isCellInTable(sheet, oSheet, oCell);                              // 是不是表格中的单元格
             if ( isTableCell ) {
                 let oTableRange = getTableRange(sheet, oSheet, oCell);                      // 表格的起始单元格
+                console.info(oTableRange)
                 sestions.push(oTableRange);                                                 // TODO
             }else{
                 let aryCells = parseSestionText(sheet, oSheet, oCell);                      // 章节文本
@@ -37,18 +38,18 @@ bus.on('编程插件', function(){
 
 // 读取文本章节
 function parseSestionText(sheet, oSheet, oCell){
-    let value, rs = [];
+    let value, rows = [];
     for (let row=oCell.row,max=oCell.row+30,cells; row<max; row++) {
         cells = [];
-        for (let column=oCell.column; column<=oSheet.maxHeadColumn; column++) {
+        for (let column=oCell.column; column<=oSheet.maxColumn; column++) {
             value = sheet.row(row).cell(column).value();
             bus.at('isNotBlank', value) && cells.push({row, column, value});
         }
 
         if ( !cells.length ) break;
-        rs.push(...cells);
+        rows.push(cells);
     }
-    return rs;
+    return rows;
 }
 
 // 在指定的表格行中，找出表格的起始行列范围
@@ -57,14 +58,14 @@ function getTableRange(sheet, oSheet, oCell){
     let startRow = oCell.row, endRow, startColumn, endColumn;
 
     // 第一个看起来有左边框的单元格，就是开始列
-    for (let column=2; column<oSheet.maxHeadColumn; column++ ) {
+    for (let column=2; column<oSheet.maxColumn; column++ ) {
         if ( sheet.row(startRow).cell(column).style('border').left || sheet.row(startRow).cell(column-1).style('border').right) {
             startColumn = column;
             break;
         }
     }
     // 最后一个看起来有右边框的单元格，就是结束列
-    for (let column=oSheet.maxHeadColumn-1; column>1; column-- ) {
+    for (let column=oSheet.maxColumn-1; column>1; column-- ) {
         if ( sheet.row(startRow).cell(column).style('border').right || sheet.row(startRow).cell(column+1).style('border').left) {
             endColumn = column;
             break;
@@ -90,7 +91,7 @@ function isCellInTable(sheet, oSheet, oCell){
     }
 
     // 除去Sheet页左右边框线外，发现竖向边框就算是
-    for (let i=1; i<oSheet.maxHeadColumn; i++ ) {
+    for (let i=1; i<oSheet.maxColumn; i++ ) {
         if ( sheet.row(oCell.row).cell(oCell.column).style('border').right ) {
             return true;
         }

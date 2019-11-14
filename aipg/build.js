@@ -11,14 +11,15 @@ const csjs = require('@gotoeasy/csjs');
 
     files.forEach(f => {
         let name = File.name(f);
+        let isUtils = /-util/i.test(name);
         let src = File.read(f);
         if ( name !== 'all' ) {
             ary.push(`/* ------- ${name} ------- */`);
-            ary.push('(() => {');
+            !isUtils && ary.push('(() => {');
             ary.push(`// ------- ${name} start`);
             ary.push(`  ${src.replace(/\/\*\*\/__filename\/\*\*\//g, "'" + name + "'")}`);
             ary.push(`// ------- ${name} end`);
-            ary.push('})();');
+            !isUtils && ary.push('})();');
             ary.push('');
         }
     });

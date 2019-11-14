@@ -40,7 +40,7 @@ console.time("load");
         (function() {
             return async function() {
                 let env = bus.at("环境");
-                let plugins = bus.on("编程插件");
+                let plugins = bus.on("编程插件"); // 用bus.on而不是bus.at
                 let context = await postobject(plugins).process({ file: env.file });
                 return context;
             };
@@ -58,7 +58,7 @@ console.time("load");
         "自动编程",
         (function() {
             return async function(file) {
-                let plugins = bus.on("编程插件");
+                let plugins = bus.on("编程插件"); // 用bus.on而不是bus.at
                 let context = await postobject(plugins).process({ file });
                 return context;
             };
@@ -196,15 +196,99 @@ console.time("load");
     // ------- b33p-excel-filter-sheet end
 })();
 
-/* ------- b41p-excel-get-sheet-max-row-column ------- */
+/* ------- b35p-excel-parse-sheet-type ------- */
 (() => {
-    // ------- b41p-excel-get-sheet-max-row-column start
+    // ------- b35p-excel-parse-sheet-type start
+
+    bus.on(
+        "编程插件",
+        (function() {
+            // 根据Sheet名称识别Sheet类型（修订履历、页面布局、页面项目、详细处理、编辑、补足、、、、等等）
+            return postobject.plugin("b35p-excel-parse-sheet-type", function(root, context) {
+                for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
+                    if (oSheet.ignore) continue; // 跳过忽略的Sheet
+
+                    oSheet.type = getSheetType(oSheet.name);
+                }
+            });
+        })()
+    );
+
+    // SheetVersion : 修订履历
+    // SheetPageLayout : 页面布局
+    // SheetPageItems : 页面项目
+    // SheetProcess : 详细处理
+    // SheetEdit : 编辑明细
+    // SheetOther : 其他
+    function getSheetType(name) {
+        if (/^(变更履历|修订履历|修订版本|版本|版本履历)$/.test(name) || /^(変更履歴|改訂履歴)$/.test(name)) {
+            return "SheetVersion";
+        }
+
+        if (/^(页面设计|页面布局|布局|页面)$/.test(name) || /^(画面仕様|画面レイアウト|画面|レイアウト)$/.test(name)) {
+            return "SheetPageLayout";
+        }
+
+        if (
+            /^(页面项目|页面项目设计|页面项目明细|页面项目说明|项目说明)$/.test(name) ||
+            /^(画面アイテム|画面項目|画面アイテム说明|画面項目说明|画面詳細)$/.test(name)
+        ) {
+            return "SheetPageItems";
+        }
+
+        if (/^(详细处理|处理设计|处理说明)$/.test(name) || /^(処理仕様|詳細処理)$/.test(name)) {
+            return "SheetProcess";
+        }
+
+        if (/^编辑/.test(name) || /^編集/.test(name)) {
+            return "SheetTableEdit";
+        }
+
+        // 其他
+        return "SheetOther";
+    }
+    // ------- b35p-excel-parse-sheet-type end
+})();
+
+/* ------- b37p-excel-parse-merge-cells ------- */
+(() => {
+    // ------- b37p-excel-parse-merge-cells start
+
+    bus.on(
+        "编程插件",
+        (function() {
+            // 根据Sheet名称识别Sheet类型（修订履历、页面布局、页面项目、详细处理、编辑、补足、、、、等等）
+            return postobject.plugin("b37p-excel-parse-merge-cells", function(root, context) {
+                for (let i = 0, oSheet, sheet; (oSheet = context.Sheets[i++]); ) {
+                    if (oSheet.ignore) continue; // 跳过忽略的Sheet
+
+                    sheet = context.workbook.sheet(oSheet.name);
+                    oSheet.mapMergeCell = getMapMergeCell(sheet); // 所有合并单元格的地址信息，如 {'A1': {addr: 'A1:C2', startRow:1, endRow:2, startColumn:1, endColumn:3}}
+                }
+            });
+        })()
+    );
+
+    function getMapMergeCell(sheet) {
+        let map = new Map();
+        let oMergeCells = sheet._mergeCells;
+        for (let addr in oMergeCells) {
+            map.set(addr.split(":")[0], bus.at("地址转换", addr)); // 首单元格作为键，值为地址信息对象
+        }
+        return map;
+    }
+    // ------- b37p-excel-parse-merge-cells end
+})();
+
+/* ------- b41p-excel-sheet-get-max-row-column ------- */
+(() => {
+    // ------- b41p-excel-sheet-get-max-row-column start
 
     bus.on(
         "编程插件",
         (function() {
             // 读取Sheet的最大行数列数备用
-            return postobject.plugin("b41p-excel-get-sheet-max-row-column", function(root, context) {
+            return postobject.plugin("b41p-excel-sheet-get-max-row-column", function(root, context) {
                 for (let i = 0, oSheet, usedRange; (oSheet = context.Sheets[i++]); ) {
                     if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
@@ -221,18 +305,18 @@ console.time("load");
         })()
     );
 
-    // ------- b41p-excel-get-sheet-max-row-column end
+    // ------- b41p-excel-sheet-get-max-row-column end
 })();
 
-/* ------- b43p-excel-get-sheet-head-max-column ------- */
+/* ------- b43p-excel-sheet-get-head-max-column ------- */
 (() => {
-    // ------- b43p-excel-get-sheet-head-max-column start
+    // ------- b43p-excel-sheet-get-head-max-column start
 
     bus.on(
         "编程插件",
         (function() {
             // 识别【表头最大列】
-            return postobject.plugin("b43p-excel-get-sheet-head-max-column", function(root, context) {
+            return postobject.plugin("b43p-excel-sheet-get-head-max-column", function(root, context) {
                 for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
                     if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
@@ -245,31 +329,25 @@ console.time("load");
     function guessMaxHeadColumn(context, oSheet) {
         let sheet = context.workbook.sheet(oSheet.name);
         for (let i = oSheet.maxColumn; i > 0; i--) {
-            if (hasRightBorder(sheet, i)) {
+            if (bus.at("右边框线", sheet, 1, i)) {
                 return i; // 第一行最后一个有右边框线的列就是表头的最后列
             }
         }
         return 0;
     }
 
-    function hasRightBorder(sheet, iColumn) {
-        let curCell = sheet.row(1).cell(iColumn);
-        let nextCell = sheet.row(1).cell(iColumn + 1);
-        return !!curCell.style("border").right || !!nextCell.style("border").left; // 当前单元格有右线，或下一列单元格有左线
-    }
-
-    // ------- b43p-excel-get-sheet-head-max-column end
+    // ------- b43p-excel-sheet-get-head-max-column end
 })();
 
-/* ------- b45p-excel-get-sheet-head-max-row ------- */
+/* ------- b45p-excel-sheet-get-head-max-row ------- */
 (() => {
-    // ------- b45p-excel-get-sheet-head-max-row start
+    // ------- b45p-excel-sheet-get-head-max-row start
 
     bus.on(
         "编程插件",
         (function() {
             // 识别【表头最大行】
-            return postobject.plugin("b45p-excel-get-sheet-head-max-row", function(root, context) {
+            return postobject.plugin("b45p-excel-sheet-get-head-max-row", function(root, context) {
                 for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
                     if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
@@ -286,12 +364,12 @@ console.time("load");
         // 前10行最后列有底线的行都存起来
         let rows = [];
         for (let i = 1; i < 10; i++) {
-            hasBottomBorder(sheet, i, oSheet.maxHeadColumn) && rows.push(i);
+            bus.at("下边框线", sheet, i, oSheet.maxHeadColumn) && rows.push(i);
         }
 
         // 最后一个全有底线的行就是表头结束行了
         for (let iRow; (iRow = rows.pop()); ) {
-            if (hasFullRowBottomBorder(sheet, iRow, oSheet.maxHeadColumn)) {
+            if (bus.at("全有下边框线", sheet, iRow, 1, oSheet.maxHeadColumn)) {
                 return iRow;
             }
         }
@@ -299,37 +377,37 @@ console.time("load");
         return 0;
     }
 
-    // 判断指定单元格有没有底线
-    function hasBottomBorder(sheet, iRow, maxColumn) {
-        let curCell = sheet.row(iRow).cell(maxColumn);
-        let nextCell = sheet.row(iRow + 1).cell(maxColumn);
-        return !!curCell.style("border").bottom || !!nextCell.style("border").top; // 当前单元格有底线，或下一行单元格有上线
-    }
-
-    // 判断是否整行都有底线
-    function hasFullRowBottomBorder(sheet, iRow, maxColumn) {
-        if (iRow < 1 || maxColumn < 1) return false;
-
-        for (let iColumn = maxColumn; iColumn > 0; iColumn--) {
-            if (!hasBottomBorder(sheet, iRow, iColumn)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // ------- b45p-excel-get-sheet-head-max-row end
+    // ------- b45p-excel-sheet-get-head-max-row end
 })();
 
-/* ------- b51p-excel-parse-sheet-head ------- */
+/* ------- b47p-excel-sheet-update-max-column ------- */
 (() => {
-    // ------- b51p-excel-parse-sheet-head start
+    // ------- b47p-excel-sheet-update-max-column start
+
+    bus.on(
+        "编程插件",
+        (function() {
+            // 修正Sheet的【最大列】范围，以表头最大宽度为准
+            return postobject.plugin("b47p-excel-sheet-update-max-column", function(root, context) {
+                for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
+                    oSheet.maxHeadColumn && (oSheet.maxColumn = oSheet.maxHeadColumn);
+                }
+            });
+        })()
+    );
+
+    // ------- b47p-excel-sheet-update-max-column end
+})();
+
+/* ------- b51p-excel-sheet-parse-head ------- */
+(() => {
+    // ------- b51p-excel-sheet-parse-head start
 
     bus.on(
         "编程插件",
         (function() {
             // 解析Sheet【表头】
-            return postobject.plugin("b51p-excel-parse-sheet-head", function(root, context) {
+            return postobject.plugin("b51p-excel-sheet-parse-head", function(root, context) {
                 for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
                     if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
@@ -340,22 +418,14 @@ console.time("load");
     );
 
     function parseSheetHead(context, oSheet) {
-        let val,
-            oHead = {};
         let sheet = context.workbook.sheet(oSheet.name);
 
-        for (let i = 1; i < oSheet.maxHeadRow; i++) {
-            for (let j = 1; j < oSheet.maxHeadColumn; j++) {
-                val = sheet
-                    .row(i)
-                    .cell(j)
-                    .value();
-                val !== undefined && (oHead[`${i},${j}`] = val); // TODO 有值的都存起来
-            }
-        }
+        let trs = bus.at("边框表格全部行位置", sheet, oSheet, 1, 1, oSheet.maxHeadRow, oSheet.maxHeadColumn);
+        console.info("---------trs-------", trs);
+        let oHead = { trs };
         oSheet.Head = oHead;
     }
-    // ------- b51p-excel-parse-sheet-head end
+    // ------- b51p-excel-sheet-parse-head end
 })();
 
 /* ------- b61p-excel-parse-sheet-main-sections ------- */
@@ -376,12 +446,13 @@ console.time("load");
                     startRow = oSheet.maxHeadRow + 1; // 开始行
                     endRow = oSheet.maxRow; // 结束行
                     startColumn = 1; // 开始列
-                    endColumn = oSheet.maxHeadColumn; // 结束列
+                    endColumn = oSheet.maxColumn; // 结束列
 
                     oCell = getSestionStartRow(sheet, startRow, endRow, startColumn, endColumn); // 主章节起始单元格
                     isTableCell = isCellInTable(sheet, oSheet, oCell); // 是不是表格中的单元格
                     if (isTableCell) {
                         let oTableRange = getTableRange(sheet, oSheet, oCell); // 表格的起始单元格
+                        console.info(oTableRange);
                         sestions.push(oTableRange); // TODO
                     } else {
                         let aryCells = parseSestionText(sheet, oSheet, oCell); // 章节文本
@@ -397,10 +468,10 @@ console.time("load");
     // 读取文本章节
     function parseSestionText(sheet, oSheet, oCell) {
         let value,
-            rs = [];
+            rows = [];
         for (let row = oCell.row, max = oCell.row + 30, cells; row < max; row++) {
             cells = [];
-            for (let column = oCell.column; column <= oSheet.maxHeadColumn; column++) {
+            for (let column = oCell.column; column <= oSheet.maxColumn; column++) {
                 value = sheet
                     .row(row)
                     .cell(column)
@@ -409,9 +480,9 @@ console.time("load");
             }
 
             if (!cells.length) break;
-            rs.push(...cells);
+            rows.push(cells);
         }
-        return rs;
+        return rows;
     }
 
     // 在指定的表格行中，找出表格的起始行列范围
@@ -422,7 +493,7 @@ console.time("load");
             endColumn;
 
         // 第一个看起来有左边框的单元格，就是开始列
-        for (let column = 2; column < oSheet.maxHeadColumn; column++) {
+        for (let column = 2; column < oSheet.maxColumn; column++) {
             if (
                 sheet
                     .row(startRow)
@@ -438,7 +509,7 @@ console.time("load");
             }
         }
         // 最后一个看起来有右边框的单元格，就是结束列
-        for (let column = oSheet.maxHeadColumn - 1; column > 1; column--) {
+        for (let column = oSheet.maxColumn - 1; column > 1; column--) {
             if (
                 sheet
                     .row(startRow)
@@ -486,7 +557,7 @@ console.time("load");
         }
 
         // 除去Sheet页左右边框线外，发现竖向边框就算是
-        for (let i = 1; i < oSheet.maxHeadColumn; i++) {
+        for (let i = 1; i < oSheet.maxColumn; i++) {
             if (
                 sheet
                     .row(oCell.row)
@@ -518,6 +589,381 @@ console.time("load");
 
     // ------- b61p-excel-parse-sheet-main-sections end
 })();
+
+/* ------- b98m-excel-util-01-first-not-blank-cell-in-range ------- */
+// ------- b98m-excel-util-01-first-not-blank-cell-in-range start
+
+// 在指定范围内找出非空白的起始单元格
+bus.on("非空起始单元格", function(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
+    for (let row = iStartRow, value; row < iEndRow; row++) {
+        for (let column = iStartColumn; column <= iEndColumn; column++) {
+            value = sheet
+                .row(row)
+                .cell(column)
+                .value();
+            if (bus.at("isNotBlank", value)) {
+                return { row, column };
+            }
+        }
+    }
+    return null; // 找不到返回null
+});
+
+// ------- b98m-excel-util-01-first-not-blank-cell-in-range end
+
+/* ------- b98m-excel-util-02-border-line-recognise ------- */
+// ------- b98m-excel-util-02-border-line-recognise start
+
+// 边框线识别
+
+bus.on("上边框线", function(sheet, iRow, iColumn) {
+    if (!iRow || !iColumn) {
+        return false; // 参数不对
+    } else if (
+        sheet
+            .row(iRow)
+            .cell(iColumn)
+            .style("border").top
+    ) {
+        return true; // 有的
+    } else if (iRow <= 1) {
+        return false; // 边界了
+    } else {
+        return sheet
+            .row(iRow - 1)
+            .cell(iColumn)
+            .style("border").bottom; // 也有的
+    }
+});
+
+bus.on("下边框线", function(sheet, iRow, iColumn) {
+    if (!iRow || !iColumn) {
+        return false; // 参数不对
+    } else if (
+        sheet
+            .row(iRow)
+            .cell(iColumn)
+            .style("border").bottom
+    ) {
+        return true; // 有的
+    } else {
+        return sheet
+            .row(iRow + 1)
+            .cell(iColumn)
+            .style("border").top; // 也有的
+    }
+});
+
+bus.on("左边框线", function(sheet, iRow, iColumn) {
+    if (!iRow || !iColumn) {
+        return false; // 参数不对
+    } else if (
+        sheet
+            .row(iRow)
+            .cell(iColumn)
+            .style("border").left
+    ) {
+        return true; // 有的
+    } else if (iColumn <= 1) {
+        return false; // 边界了
+    } else {
+        return sheet
+            .row(iRow)
+            .cell(iColumn - 1)
+            .style("border").right; // 也有的
+    }
+});
+
+bus.on("右边框线", function(sheet, iRow, iColumn) {
+    if (!iRow || !iColumn) {
+        return false; // 参数不对
+    } else if (
+        sheet
+            .row(iRow)
+            .cell(iColumn)
+            .style("border").right
+    ) {
+        return true; // 有的
+    } else {
+        return sheet
+            .row(iRow)
+            .cell(iColumn + 1)
+            .style("border").left; // 也有的
+    }
+});
+
+bus.on("全有上边框线", function(sheet, iRow, iStartColumn, iEndColumn) {
+    if (!iRow || !iStartColumn || !iEndColumn || iStartColumn > iEndColumn) {
+        return false; // 参数不对
+    }
+
+    let has = true;
+    for (let column = iStartColumn; column <= iEndColumn; column++) {
+        if (!bus.at("上边框线", sheet, iRow, column)) {
+            return false;
+        }
+    }
+    return has;
+});
+
+bus.on("全有下边框线", function(sheet, iRow, iStartColumn, iEndColumn) {
+    if (!iRow || !iStartColumn || !iEndColumn || iStartColumn > iEndColumn) {
+        return false; // 参数不对
+    }
+
+    let has = true;
+    for (let column = iStartColumn; column <= iEndColumn; column++) {
+        if (!bus.at("下边框线", sheet, iRow, column)) {
+            return false;
+        }
+    }
+    return has;
+});
+
+bus.on("全有左边框线", function(sheet, iColumn, iStartRow, iEndRow) {
+    if (!iColumn || !iStartRow || !iEndRow || iStartRow > iEndRow) {
+        return false; // 参数不对
+    }
+
+    let has = true;
+    for (let row = iStartRow; row <= iEndRow; row++) {
+        if (!bus.at("左边框线", sheet, row, iColumn)) {
+            return false;
+        }
+    }
+    return has;
+});
+
+bus.on("全有右边框线", function(sheet, iColumn, iStartRow, iEndRow) {
+    if (!iColumn || !iStartRow || !iEndRow || iStartRow > iEndRow) {
+        return false; // 参数不对
+    }
+
+    let has = true;
+    for (let row = iStartRow; row <= iEndRow; row++) {
+        if (!bus.at("右边框线", sheet, row, iColumn)) {
+            return false;
+        }
+    }
+    return has;
+});
+
+bus.on("全有边框线", function(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
+    if (!iStartRow || !iEndRow || iStartRow > iEndRow || !iStartColumn || !iEndColumn || iStartColumn > iEndColumn) {
+        return false; // 参数不对
+    }
+
+    return (
+        bus.at("全有上边框线", sheet, iStartRow, iStartColumn, iEndColumn) &&
+        bus.at("全有下边框线", sheet, iEndRow, iStartColumn, iEndColumn) &&
+        bus.at("全有左边框线", sheet, iStartColumn, iStartRow, iEndRow) &&
+        bus.at("全有右边框线", sheet, iEndColumn, iStartRow, iEndRow)
+    );
+});
+
+// ------- b98m-excel-util-02-border-line-recognise end
+
+/* ------- b98m-excel-util-03-border-cell-recognise ------- */
+// ------- b98m-excel-util-03-border-cell-recognise start
+
+// 边框单元格识别
+
+// 取出边框表格行的整行边框单元格位置（最终结构效果如同Table的Tr）
+bus.on("边框表格全部行位置", (sheet, oSheet, iRow, iColumn, maxRow, maxColumn) => {
+    if (!iRow || !iColumn) {
+        return null; // 参数不对
+    }
+
+    let oSet = new Set(); // 存放已被找出占用的单元格
+
+    let positions = [],
+        aryTr = [];
+    let oPos = bus.at("边框单元格位置", sheet, oSheet, iRow, iColumn, maxRow, maxColumn);
+    if (oPos) {
+        aryTr.push(oPos);
+        saveFoundCell(oSet, oPos); // 缓存已被找出来的单元格
+        positions.push(aryTr);
+    } else {
+        return positions; // 根本就不是表格
+    }
+
+    // 第一行直接按右边紧邻关系，找出首行的全部边框单元格
+    while ((oPos = bus.at("右边框单元格位置", sheet, oSheet, oPos, maxRow, maxColumn))) {
+        saveFoundCell(oSet, oPos); // 缓存已被找出来的单元格
+        aryTr.push(oPos);
+    }
+
+    // 接下去从第二行开始逐行递增，遍历全部单元格，逐个确认找出所有边框单元格
+    for (let row = iRow + 1, tr; row <= maxRow; row++) {
+        tr = getRowBorderCells(sheet, oSheet, oSet, row, iColumn, maxRow, maxColumn); // 一个不落的找
+        tr.length && positions.push(tr); // 该行有才推入数组
+    }
+
+    return positions;
+});
+
+// 指定行逐个确认查找边框单元格
+function getRowBorderCells(sheet, oSheet, oSet, row, iColumn, maxRow, maxColumn) {
+    let cells = [];
+    for (let column = iColumn, oPos; column <= maxColumn; column++) {
+        if (oSet.has(`${row},${column}`)) continue; // 跳过已找出来的单元格
+
+        oPos = bus.at("边框单元格位置", sheet, oSheet, row, column, maxRow, maxColumn);
+        saveFoundCell(oSet, oPos); // 缓存已被找出来的单元格
+        oPos && cells.push(oPos);
+    }
+    return cells;
+}
+
+// 缓存已被找出来的单元格
+function saveFoundCell(oSet, oPos) {
+    if (!oPos) return;
+
+    for (let row = oPos.startRow; row <= oPos.endRow; row++) {
+        for (let column = oPos.startColumn; column <= oPos.endColumn; column++) {
+            oSet.add(`${row},${column}`); // 这个单元格已被找出来了
+        }
+    }
+}
+
+// 查找紧邻右边的边框单元格位置（仅限简易二维表格）
+bus.on("右边框单元格位置", (sheet, oSheet, oPos, maxRow, maxColumn) => {
+    if (!oPos) return null;
+
+    return bus.at("边框单元格位置", sheet, oSheet, oPos.startRow, oPos.endColumn + 1, maxRow, maxColumn);
+});
+
+// 通过边框线判断所在边框单元格位置（参数位置应该是边框单元格的起始位置）
+bus.on("边框单元格位置", (sheet, oSheet, iRow, iColumn, maxRow, maxColumn) => {
+    if (!iRow || !iColumn) {
+        return null; // 参数不对
+    }
+
+    let startRow = iRow;
+    let endRow = 0;
+    let startColumn = iColumn;
+    let endColumn = 0;
+
+    // -----------------------------------------------------------------
+    // 传入的地址属于合并单元格的起始位置，直接用合并单元格的位置信息
+    // -----------------------------------------------------------------
+    let mergeAddr = bus.at("所属合并单元格的位置", oSheet, iRow, iColumn);
+    if (mergeAddr) {
+        endRow = mergeAddr.endRow;
+        endColumn = mergeAddr.endColumn;
+        return { startRow, endRow, startColumn, endColumn }; // 既然合并了单元格，理应有边框线，不必再看，直接返回
+    }
+
+    // -----------------------------------------------------------------
+    // 不是合并单元格，逐个单元格判断边框线决定
+    // -----------------------------------------------------------------
+    for (let row = startRow, max = maxRow || startRow + 100; row <= max; row++) {
+        if (bus.at("下边框线", sheet, row, startColumn)) {
+            endRow = row; // 找到结束行
+            break;
+        }
+    }
+    if (!endRow) return null; // 找不到边框线，返回null
+
+    for (let column = startColumn, max = maxColumn || startColumn + 100; column <= max; column++) {
+        if (bus.at("右边框线", sheet, startRow, column)) {
+            endColumn = column; // 找到结束列
+            break;
+        }
+    }
+    if (!endRow) return null; // 找不到边框线，返回null
+
+    return { startRow, endRow, startColumn, endColumn };
+});
+
+// ------- b98m-excel-util-03-border-cell-recognise end
+
+/* ------- b98m-excel-util-04-merge-cell-recognise ------- */
+// ------- b98m-excel-util-04-merge-cell-recognise start
+
+// 给定一个单元格地址，找出其所属的合并单元格地址，没有则返回空
+bus.on("所属合并单元格的位置", (oSheet, iRow, iColumn) => {
+    if (!iRow || !iColumn) {
+        return null; // 参数不对
+    }
+
+    let map = oSheet.mapMergeCell;
+    let addr = bus.on("数字转列名", iColumn) + iRow;
+    if (map.has(addr)) {
+        return map.get(addr); // 按合并单元格起始地址直接找到
+    }
+
+    for (let oAddr of map.values()) {
+        // 遍历合并单元格，确认是否在其中
+        if (iRow >= oAddr.startRow && iRow <= oAddr.endRow && iColumn >= oAddr.startColumn && iColumn <= oAddr.endColumn) {
+            return oAddr; // 找到
+        }
+    }
+
+    return null; // 找不到
+});
+
+// 判断是否属于某个合并单元格的起始单元格位置
+bus.on("是否合并单元格起始位置", (oSheet, iRow, iColumn) => {
+    if (!iRow || !iColumn) {
+        return false; // 参数不对
+    }
+
+    let map = oSheet.mapMergeCell;
+    let addr = bus.at("数字转列名", iColumn) + iRow;
+    return map.has(addr);
+});
+
+// ------- b98m-excel-util-04-merge-cell-recognise end
+
+/* ------- b98m-excel-util-05-address-converter ------- */
+// ------- b98m-excel-util-05-address-converter start
+
+// 给定一个地址(如A1或A1:B3)，转换为地址对象{addr, startRow, endRow, startColumn, endColumn}
+bus.on("地址转换", addr => {
+    if (!addr || typeof addr !== "string") return null;
+
+    addr = addr.toUpperCase();
+    let startRow, endRow, startColumn, endColumn, match;
+    if (addr.indexOf(":") > 1) {
+        match = addr.match(/([A-Z]+)([0-9]+):([A-Z]+)([0-9]+)/);
+        startColumn = bus.at("列名转数字", match[1]);
+        endColumn = bus.at("列名转数字", match[3]);
+        startRow = match[2] - 0;
+        endRow = match[4] - 0;
+    } else {
+        match = addr.match(/([A-Z]+)([0-9]+)/);
+        startColumn = endColumn = bus.at("列名转数字", match[1]);
+        startRow = endRow = match[2] - 0;
+    }
+
+    return { addr, startRow, endRow, startColumn, endColumn };
+});
+
+bus.on("数字转列名", iColumn => {
+    let dividend = iColumn;
+    let name = "";
+    let modulo = 0;
+
+    while (dividend > 0) {
+        modulo = (dividend - 1) % 26;
+        name = String.fromCharCode("A".charCodeAt(0) + modulo) + name;
+        dividend = Math.floor((dividend - modulo) / 26);
+    }
+
+    return name;
+});
+
+bus.on("列名转数字", columnName => {
+    let sum = 0;
+    for (let i = 0; i < columnName.length; i++) {
+        sum = sum * 26;
+        sum = sum + (columnName[i].charCodeAt(0) - "A".charCodeAt(0) + 1);
+    }
+    return sum;
+});
+
+// ------- b98m-excel-util-05-address-converter end
 
 /* ------- b98p-------log ------- */
 (() => {
@@ -553,19 +999,17 @@ console.time("load");
 })();
 
 /* ------- z99m-utils ------- */
-(() => {
-    // ------- z99m-utils start
+// ------- z99m-utils start
 
-    // 工具函数
-    bus.on("isBlank", function(val) {
-        return !val || /^\s*$/.test(val);
-    });
-    bus.on("isNotBlank", function(val) {
-        return !bus.at("isBlank", val);
-    });
+// 工具函数
+bus.on("isBlank", function(val) {
+    return !val || /^\s*$/.test(val);
+});
+bus.on("isNotBlank", function(val) {
+    return !bus.at("isBlank", val);
+});
 
-    // ------- z99m-utils end
-})();
+// ------- z99m-utils end
 
 console.timeEnd("load");
 

@@ -17,14 +17,10 @@ bus.on('编程插件', function(){
 }());
 
 function parseSheetHead(context, oSheet){
-    let val, oHead = {};
     let sheet = context.workbook.sheet(oSheet.name);
 
-    for (let i=1; i<oSheet.maxHeadRow; i++ ) {
-        for (let j=1; j<oSheet.maxHeadColumn; j++ ) {
-            val = sheet.row(i).cell(j).value();
-            val !== undefined && (oHead[`${i},${j}`] = val);                    // TODO 有值的都存起来
-        }
-    }
+    let trs = bus.at('边框表格全部行位置', sheet, oSheet, 1, 1, oSheet.maxHeadRow, oSheet.maxHeadColumn);
+    console.info('---------trs-------', trs)
+    let oHead = {trs};
     oSheet.Head = oHead;
 }

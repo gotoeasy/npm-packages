@@ -20,15 +20,9 @@ bus.on('编程插件', function(){
 function guessMaxHeadColumn(context, oSheet){
     let sheet = context.workbook.sheet(oSheet.name);
     for (let i=oSheet.maxColumn; i>0; i--) {
-        if ( hasRightBorder(sheet, i) ) {
+        if ( bus.at('右边框线', sheet, 1, i) ) {
             return i;                                                           // 第一行最后一个有右边框线的列就是表头的最后列
         }
     }
     return 0;
-}
-
-function hasRightBorder(sheet, iColumn){
-    let curCell = sheet.row(1).cell(iColumn);
-    let nextCell = sheet.row(1).cell(iColumn+1);
-    return !!curCell.style('border').right || !!nextCell.style('border').left;  // 当前单元格有右线，或下一列单元格有左线
 }
