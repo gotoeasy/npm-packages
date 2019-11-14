@@ -329,7 +329,7 @@ console.time("load");
     function guessMaxHeadColumn(context, oSheet) {
         let sheet = context.workbook.sheet(oSheet.name);
         for (let i = oSheet.maxColumn; i > 0; i--) {
-            if (bus.at("右边框线", sheet, 1, i)) {
+            if (bus.at("右边框线", sheet, oSheet, 1, i)) {
                 return i; // 第一行最后一个有右边框线的列就是表头的最后列
             }
         }
@@ -364,12 +364,12 @@ console.time("load");
         // 前10行最后列有底线的行都存起来
         let rows = [];
         for (let i = 1; i < 10; i++) {
-            bus.at("下边框线", sheet, i, oSheet.maxHeadColumn) && rows.push(i);
+            bus.at("下边框线", sheet, oSheet, i, oSheet.maxHeadColumn) && rows.push(i);
         }
 
         // 最后一个全有底线的行就是表头结束行了
         for (let iRow; (iRow = rows.pop()); ) {
-            if (bus.at("全有下边框线", sheet, iRow, 1, oSheet.maxHeadColumn)) {
+            if (bus.at("全有下边框线", sheet, oSheet, iRow, 1, oSheet.maxHeadColumn)) {
                 return iRow;
             }
         }
@@ -421,9 +421,16 @@ console.time("load");
         let sheet = context.workbook.sheet(oSheet.name);
 
         let trs = bus.at("边框表格全部行位置", sheet, oSheet, 1, 1, oSheet.maxHeadRow, oSheet.maxHeadColumn);
-        console.info("---------trs-------", trs);
-        let oHead = { trs };
-        oSheet.Head = oHead;
+        let aryHeah = [];
+        trs.forEach(tr => {
+            let ary = [];
+            tr.forEach(td => {
+                let tdv = bus.at("读值", sheet, oSheet, td.startRow, td.startColumn);
+                tdv && ary.push(tdv);
+            });
+            ary.length && aryHeah.push(ary);
+        });
+        oSheet.Head = aryHeah;
     }
     // ------- b51p-excel-sheet-parse-head end
 })();
@@ -437,171 +444,101 @@ console.time("load");
         (function() {
             // 解析Sheet的【章节】
             return postobject.plugin("b61p-excel-parse-sheet-main-sections", function(root, context) {
-                let sestions = [];
-                let oSheet, sheet, startRow, endRow, startColumn, endColumn, oCell, isTableCell;
-                for (let i = 0; (oSheet = context.Sheets[i++]); ) {
+                for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
                     if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
-                    sheet = context.workbook.sheet(oSheet.name);
-                    startRow = oSheet.maxHeadRow + 1; // 开始行
-                    endRow = oSheet.maxRow; // 结束行
-                    startColumn = 1; // 开始列
-                    endColumn = oSheet.maxColumn; // 结束列
+                    let sestions = (oSheet.Sestions = []); // 章节数组先存起来
 
-                    oCell = getSestionStartRow(sheet, startRow, endRow, startColumn, endColumn); // 主章节起始单元格
-                    isTableCell = isCellInTable(sheet, oSheet, oCell); // 是不是表格中的单元格
-                    if (isTableCell) {
-                        let oTableRange = getTableRange(sheet, oSheet, oCell); // 表格的起始单元格
-                        console.info(oTableRange);
-                        sestions.push(oTableRange); // TODO
+                    let sheet = context.workbook.sheet(oSheet.name);
+                    let startRow = oSheet.maxHeadRow + 1; // 开始行
+                    let endRow = oSheet.maxRow; // 结束行
+                    let startColumn = 1; // 开始列
+                    let endColumn = oSheet.maxColumn; // 结束列
+
+                    // 主章节起始单元格
+                    let oPos = bus.at("非空白起始单元格", sheet, startRow, endRow, startColumn, endColumn); // 位置对象 {row, column}
+                    if (!oPos) continue; // 没内容哦
+
+                    let oTbPos = bus.at("边框表格位置", sheet, oSheet, oPos.row, oPos.column); // 位置对象 {startRow, endRow, startColumn, endColumn}
+                    if (oTbPos) {
+                        // 表格
+                        sestions.push(oTbPos); // TODO
                     } else {
-                        let aryCells = parseSestionText(sheet, oSheet, oCell); // 章节文本
-                        sestions.push(aryCells);
+                        // 文字
+                        let section = bus.at("读章节文本", sheet, oSheet, oPos);
+                        sestions.push(section);
                     }
-
-                    oSheet.Sestions = sestions;
                 }
             });
         })()
     );
 
-    // 读取文本章节
-    function parseSestionText(sheet, oSheet, oCell) {
-        let value,
-            rows = [];
-        for (let row = oCell.row, max = oCell.row + 30, cells; row < max; row++) {
-            cells = [];
-            for (let column = oCell.column; column <= oSheet.maxColumn; column++) {
-                value = sheet
-                    .row(row)
-                    .cell(column)
-                    .value();
-                bus.at("isNotBlank", value) && cells.push({ row, column, value });
-            }
-
-            if (!cells.length) break;
-            rows.push(cells);
-        }
-        return rows;
-    }
-
-    // 在指定的表格行中，找出表格的起始行列范围
-    function getTableRange(sheet, oSheet, oCell) {
-        let startRow = oCell.row,
-            endRow,
-            startColumn,
-            endColumn;
-
-        // 第一个看起来有左边框的单元格，就是开始列
-        for (let column = 2; column < oSheet.maxColumn; column++) {
-            if (
-                sheet
-                    .row(startRow)
-                    .cell(column)
-                    .style("border").left ||
-                sheet
-                    .row(startRow)
-                    .cell(column - 1)
-                    .style("border").right
-            ) {
-                startColumn = column;
-                break;
-            }
-        }
-        // 最后一个看起来有右边框的单元格，就是结束列
-        for (let column = oSheet.maxColumn - 1; column > 1; column--) {
-            if (
-                sheet
-                    .row(startRow)
-                    .cell(column)
-                    .style("border").right ||
-                sheet
-                    .row(startRow)
-                    .cell(column + 1)
-                    .style("border").left
-            ) {
-                endColumn = column;
-                break;
-            }
-        }
-        // 最后一个看起来有底线的单元格，所在就是结束行
-        for (let row = startRow; row < oSheet.maxRow; row++) {
-            if (
-                sheet
-                    .row(row)
-                    .cell(startColumn)
-                    .style("border").bottom ||
-                sheet
-                    .row(row)
-                    .cell(startColumn + 1)
-                    .style("border").top
-            ) {
-                endRow = row;
-                break;
-            }
-        }
-
-        return { startRow, endRow, startColumn, endColumn };
-    }
-
-    // 判断指定单元是否在表格中（当前行有竖线）
-    function isCellInTable(sheet, oSheet, oCell) {
-        // 通常起始单元格有左边框
-        if (
-            sheet
-                .row(oCell.row)
-                .cell(oCell.column)
-                .style("border").left
-        ) {
-            return true;
-        }
-
-        // 除去Sheet页左右边框线外，发现竖向边框就算是
-        for (let i = 1; i < oSheet.maxColumn; i++) {
-            if (
-                sheet
-                    .row(oCell.row)
-                    .cell(oCell.column)
-                    .style("border").right
-            ) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // 在指定范围内找出非空白的起始单元格
-    function getSestionStartRow(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
-        for (let row = iStartRow, value; row < iEndRow; row++) {
-            for (let column = iStartColumn; column <= iEndColumn; column++) {
-                value = sheet
-                    .row(row)
-                    .cell(column)
-                    .value();
-                if (bus.at("isNotBlank", value)) {
-                    return { row, column };
-                }
-            }
-        }
-        return null; // 找不到返回null
-    }
-
     // ------- b61p-excel-parse-sheet-main-sections end
 })();
 
-/* ------- b98m-excel-util-01-first-not-blank-cell-in-range ------- */
-// ------- b98m-excel-util-01-first-not-blank-cell-in-range start
+/* ------- b98m-excel-util-01-address-converter ------- */
+// ------- b98m-excel-util-01-address-converter start
+
+// 给定一个地址(如A1或A1:B3)，转换为地址对象{addr, startRow, endRow, startColumn, endColumn}
+bus.on("地址转换", addr => {
+    if (!addr || typeof addr !== "string") return null;
+
+    addr = addr.toUpperCase();
+    let cell, startRow, endRow, startColumn, endColumn, match;
+    if (addr.indexOf(":") > 1) {
+        match = addr.match(/([A-Z]+)([0-9]+):([A-Z]+)([0-9]+)/);
+        startColumn = bus.at("列名转数字", match[1]);
+        endColumn = bus.at("列名转数字", match[3]);
+        startRow = match[2] - 0;
+        endRow = match[4] - 0;
+        cell = match[1] + match[2]; // 起始单元格地址
+    } else {
+        match = addr.match(/([A-Z]+)([0-9]+)/);
+        startColumn = endColumn = bus.at("列名转数字", match[1]);
+        startRow = endRow = match[2] - 0;
+        cell = addr; // 起始单元格地址
+    }
+
+    return { cell, addr, startRow, endRow, startColumn, endColumn };
+});
+
+bus.on("数字转列名", iColumn => {
+    let dividend = iColumn;
+    let name = "";
+    let modulo = 0;
+
+    while (dividend > 0) {
+        modulo = (dividend - 1) % 26;
+        name = String.fromCharCode("A".charCodeAt(0) + modulo) + name;
+        dividend = Math.floor((dividend - modulo) / 26);
+    }
+
+    return name;
+});
+
+bus.on("列名转数字", columnName => {
+    let sum = 0;
+    for (let i = 0; i < columnName.length; i++) {
+        sum = sum * 26;
+        sum = sum + (columnName[i].charCodeAt(0) - "A".charCodeAt(0) + 1);
+    }
+    return sum;
+});
+
+// ------- b98m-excel-util-01-address-converter end
+
+/* ------- b98m-excel-util-02-first-not-blank-cell-in-range ------- */
+// ------- b98m-excel-util-02-first-not-blank-cell-in-range start
 
 // 在指定范围内找出非空白的起始单元格
-bus.on("非空起始单元格", function(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
+bus.on("非空白起始单元格", function(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
     for (let row = iStartRow, value; row < iEndRow; row++) {
         for (let column = iStartColumn; column <= iEndColumn; column++) {
             value = sheet
                 .row(row)
                 .cell(column)
                 .value();
-            if (bus.at("isNotBlank", value)) {
+            if (bus.at("非空白", value)) {
                 return { row, column };
             }
         }
@@ -609,14 +546,123 @@ bus.on("非空起始单元格", function(sheet, iStartRow, iEndRow, iStartColumn
     return null; // 找不到返回null
 });
 
-// ------- b98m-excel-util-01-first-not-blank-cell-in-range end
+// ------- b98m-excel-util-02-first-not-blank-cell-in-range end
 
-/* ------- b98m-excel-util-02-border-line-recognise ------- */
-// ------- b98m-excel-util-02-border-line-recognise start
+/* ------- b98m-excel-util-03-cell-value-reader ------- */
+// ------- b98m-excel-util-03-cell-value-reader start
+
+// -----------------------------------------------------------------------------
+// 单元格读值，不是件单纯的事
+// 参数可以是（行、列）或（名称地址）或（地址对象）
+//
+// 1，数字或日期等格式化的单元格 ....... 所见即所得
+// 2，公式单元格 ....................... 所见即所得
+// 3，富文本单元格 ..................... 人性化读取，要去除删除线文字
+// 4，合并单元格 ....................... 人性化读取，合并范围内仅读合并单元格
+// 5，线框单元格 ....................... 人性化读取，线框范围内多单元格合并读取
+// -----------------------------------------------------------------------------
+bus.on(
+    "读值",
+    (function() {
+        return function(sheet, oSheet, iRow, iColumn) {
+            if (!iRow) return "";
+
+            let oAddr;
+            if (typeof iRow === "string") {
+                oAddr = bus.at("地址转换", iRow); // {cell, addr, startRow, endRow, startColumn, endColumn}
+            } else if (typeof iRow === "number") {
+                if (!iColumn) {
+                    return "";
+                } else {
+                    oAddr = bus.at("地址转换", bus.at("数字转列名", iColumn) + iRow);
+                }
+            } else {
+                oAddr = iRow; // 传入的就是地址对象
+            }
+
+            return readCell(sheet, oAddr, oSheet.mapMergeCell.has(oAddr.cell)); // 对象或数组或空串
+        };
+
+        // 返回对象或数组或null
+        function readCell(sheet, oAddr, isMerged) {
+            //let {cell, addr, startRow, endRow, startColumn, endColumn} = oAddr;         // cell:单元格地址
+            let { cell } = oAddr; // cell:单元格地址
+            let oCell = sheet.cell(cell);
+            let value = oCell.value();
+
+            if (value == null) {
+                // 转成空串直接返回
+                return "";
+            } else if (value.get) {
+                // 富文本时，检查忽略带删除线的文字
+                let txt = "";
+                for (let i = 0, fragment; (fragment = value.get(i++)); ) {
+                    !fragment.style("strikethrough") && (txt += fragment.value());
+                }
+                value = txt;
+            } else {
+                // TODO
+                // let fmt = oCell.style('numberFormat');
+                //   fmt = oCell.style('fill');  // background
+                // fmt && (value += fmt)
+            }
+
+            if (value == null) {
+                return "";
+            }
+
+            if (isMerged) {
+                return { cell, value };
+            }
+
+            return { cell, value };
+        }
+    })()
+);
+
+// ------- b98m-excel-util-03-cell-value-reader end
+
+/* ------- b98m-excel-util-04-section-text-reader ------- */
+// ------- b98m-excel-util-04-section-text-reader start
+
+bus.on(
+    "读章节文本",
+    (function() {
+        // oPos: {row, column}
+        return function(sheet, oSheet, oPos) {
+            let oValue,
+                rows = [];
+            let startRow = oPos.row,
+                endRow = oPos.row,
+                startColumn = oPos.column;
+
+            for (let row = startRow, max = startRow + 30, cells; row < max; row++) {
+                cells = [];
+                for (let column = oPos.column; column <= oSheet.maxColumn; column++) {
+                    oValue = bus.at("读值", sheet, oSheet, row, column);
+                    oValue && cells.push(oValue);
+                }
+
+                if (!cells.length) {
+                    endRow++;
+                    break;
+                }
+                rows.push(cells);
+            }
+
+            return { startRow, endRow, startColumn, rows };
+        };
+    })()
+);
+
+// ------- b98m-excel-util-04-section-text-reader end
+
+/* ------- b98m-excel-util-10-border-line-recognise ------- */
+// ------- b98m-excel-util-10-border-line-recognise start
 
 // 边框线识别
 
-bus.on("上边框线", function(sheet, iRow, iColumn) {
+bus.on("上边框线", function(sheet, oSheet, iRow, iColumn) {
     if (!iRow || !iColumn) {
         return false; // 参数不对
     } else if (
@@ -636,7 +682,7 @@ bus.on("上边框线", function(sheet, iRow, iColumn) {
     }
 });
 
-bus.on("下边框线", function(sheet, iRow, iColumn) {
+bus.on("下边框线", function(sheet, oSheet, iRow, iColumn) {
     if (!iRow || !iColumn) {
         return false; // 参数不对
     } else if (
@@ -654,7 +700,7 @@ bus.on("下边框线", function(sheet, iRow, iColumn) {
     }
 });
 
-bus.on("左边框线", function(sheet, iRow, iColumn) {
+bus.on("左边框线", function(sheet, oSheet, iRow, iColumn) {
     if (!iRow || !iColumn) {
         return false; // 参数不对
     } else if (
@@ -674,7 +720,7 @@ bus.on("左边框线", function(sheet, iRow, iColumn) {
     }
 });
 
-bus.on("右边框线", function(sheet, iRow, iColumn) {
+bus.on("右边框线", function(sheet, oSheet, iRow, iColumn) {
     if (!iRow || !iColumn) {
         return false; // 参数不对
     } else if (
@@ -692,79 +738,246 @@ bus.on("右边框线", function(sheet, iRow, iColumn) {
     }
 });
 
-bus.on("全有上边框线", function(sheet, iRow, iStartColumn, iEndColumn) {
+bus.on("全有上边框线", function(sheet, oSheet, iRow, iStartColumn, iEndColumn) {
     if (!iRow || !iStartColumn || !iEndColumn || iStartColumn > iEndColumn) {
         return false; // 参数不对
     }
 
     let has = true;
     for (let column = iStartColumn; column <= iEndColumn; column++) {
-        if (!bus.at("上边框线", sheet, iRow, column)) {
+        if (!bus.at("上边框线", sheet, oSheet, iRow, column)) {
             return false;
         }
     }
     return has;
 });
 
-bus.on("全有下边框线", function(sheet, iRow, iStartColumn, iEndColumn) {
+bus.on("全有下边框线", function(sheet, oSheet, iRow, iStartColumn, iEndColumn) {
     if (!iRow || !iStartColumn || !iEndColumn || iStartColumn > iEndColumn) {
         return false; // 参数不对
     }
 
     let has = true;
     for (let column = iStartColumn; column <= iEndColumn; column++) {
-        if (!bus.at("下边框线", sheet, iRow, column)) {
+        if (!bus.at("下边框线", sheet, oSheet, iRow, column)) {
             return false;
         }
     }
     return has;
 });
 
-bus.on("全有左边框线", function(sheet, iColumn, iStartRow, iEndRow) {
+bus.on("全有左边框线", function(sheet, oSheet, iColumn, iStartRow, iEndRow) {
     if (!iColumn || !iStartRow || !iEndRow || iStartRow > iEndRow) {
         return false; // 参数不对
     }
 
     let has = true;
     for (let row = iStartRow; row <= iEndRow; row++) {
-        if (!bus.at("左边框线", sheet, row, iColumn)) {
+        if (!bus.at("左边框线", sheet, oSheet, row, iColumn)) {
             return false;
         }
     }
     return has;
 });
 
-bus.on("全有右边框线", function(sheet, iColumn, iStartRow, iEndRow) {
+bus.on("全有右边框线", function(sheet, oSheet, iColumn, iStartRow, iEndRow) {
     if (!iColumn || !iStartRow || !iEndRow || iStartRow > iEndRow) {
         return false; // 参数不对
     }
 
     let has = true;
     for (let row = iStartRow; row <= iEndRow; row++) {
-        if (!bus.at("右边框线", sheet, row, iColumn)) {
+        if (!bus.at("右边框线", sheet, oSheet, row, iColumn)) {
             return false;
         }
     }
     return has;
 });
 
-bus.on("全有边框线", function(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
+bus.on("全有边框线", function(sheet, oSheet, iStartRow, iEndRow, iStartColumn, iEndColumn) {
     if (!iStartRow || !iEndRow || iStartRow > iEndRow || !iStartColumn || !iEndColumn || iStartColumn > iEndColumn) {
         return false; // 参数不对
     }
 
     return (
-        bus.at("全有上边框线", sheet, iStartRow, iStartColumn, iEndColumn) &&
-        bus.at("全有下边框线", sheet, iEndRow, iStartColumn, iEndColumn) &&
-        bus.at("全有左边框线", sheet, iStartColumn, iStartRow, iEndRow) &&
-        bus.at("全有右边框线", sheet, iEndColumn, iStartRow, iEndRow)
+        bus.at("全有上边框线", sheet, oSheet, iStartRow, iStartColumn, iEndColumn) &&
+        bus.at("全有下边框线", sheet, oSheet, iEndRow, iStartColumn, iEndColumn) &&
+        bus.at("全有左边框线", sheet, oSheet, iStartColumn, iStartRow, iEndRow) &&
+        bus.at("全有右边框线", sheet, oSheet, iEndColumn, iStartRow, iEndRow)
     );
 });
 
-// ------- b98m-excel-util-02-border-line-recognise end
+// ------- b98m-excel-util-10-border-line-recognise end
 
-/* ------- b98m-excel-util-03-border-cell-recognise ------- */
-// ------- b98m-excel-util-03-border-cell-recognise start
+/* ------- b98m-excel-util-11-border-table-recognise ------- */
+// ------- b98m-excel-util-11-border-table-recognise start
+
+// 边框表格识别（看上去有线框的表格，识别出范围地址）
+// 指定一个单元格，判断是否在边框表格中，是的话返回边框表格的位置信息{startRow, endRow, startColumn, endColumn}，否则返回null
+// （指定的单元格通常应该是边框表格的首行）
+bus.on("边框表格位置", function(sheet, oSheet, iRow, iColumn) {
+    if (!iRow || !iColumn) return null;
+
+    // 位置{row, column}
+    let oPos = bus.at("非空白起始单元格", sheet, iRow, oSheet.maxRow, iColumn, oSheet.maxColumn);
+    if (!oPos) return null;
+
+    if (!bus.at("上边框线", sheet, oSheet, oPos.row, oPos.column)) {
+        return null; // 没有上边框线，不是表格（首行应当有上边框线）
+    }
+
+    // 有戏，开始找范围
+    let startRow, endRow, startColumn, endColumn;
+    startRow = endRow = iRow;
+    startColumn = endColumn = oPos.column;
+
+    for (let i = startColumn - 1; i > 0; i--) {
+        if (bus.at("上边框线", sheet, oSheet, startRow, i)) {
+            startColumn = i; // 开始列
+        } else {
+            break;
+        }
+    }
+    for (let i = startColumn + 1; i <= oSheet.maxHeadColumn; i++) {
+        if (bus.at("上边框线", sheet, oSheet, startRow, i)) {
+            endColumn = i; // 结束列
+        } else {
+            break;
+        }
+    }
+
+    for (let i = startRow + 1; i <= oSheet.maxHeadRow; i++) {
+        if (bus.at("左边框线", sheet, oSheet, i, startColumn)) {
+            endRow = i; // 结束行
+        } else {
+            break;
+        }
+    }
+
+    // TODO 没有左右边框线的表格 ...
+
+    return { startRow, endRow, startColumn, endColumn };
+});
+
+// ------- b98m-excel-util-11-border-table-recognise end
+
+/* ------- b98m-excel-util-12-border-table-cell-recognise ------- */
+// ------- b98m-excel-util-12-border-table-cell-recognise start
+
+// 边框单元格识别
+
+// 取出边框表格行的整行边框单元格位置（最终结构效果如同Table的Tr）
+bus.on("边框表格全部行位置", (sheet, oSheet, iRow, iColumn, maxRow, maxColumn) => {
+    if (!iRow || !iColumn) {
+        return null; // 参数不对
+    }
+
+    let oSet = new Set(); // 存放已被找出占用的单元格
+
+    let positions = [],
+        aryTr = [];
+    let oPos = bus.at("边框单元格位置", sheet, oSheet, iRow, iColumn, maxRow, maxColumn);
+    if (oPos) {
+        aryTr.push(oPos);
+        saveFoundCell(oSet, oPos); // 缓存已被找出来的单元格
+        positions.push(aryTr);
+    } else {
+        return positions; // 根本就不是表格
+    }
+
+    // 第一行直接按右边紧邻关系，找出首行的全部边框单元格
+    while ((oPos = bus.at("右边框单元格位置", sheet, oSheet, oPos, maxRow, maxColumn))) {
+        saveFoundCell(oSet, oPos); // 缓存已被找出来的单元格
+        aryTr.push(oPos);
+    }
+
+    // 接下去从第二行开始逐行递增，遍历全部单元格，逐个确认找出所有边框单元格
+    for (let row = iRow + 1, tr; row <= maxRow; row++) {
+        tr = getRowBorderCells(sheet, oSheet, oSet, row, iColumn, maxRow, maxColumn); // 一个不落的找
+        tr.length && positions.push(tr); // 该行有才推入数组
+    }
+
+    return positions;
+});
+
+// 指定行逐个确认查找边框单元格
+function getRowBorderCells(sheet, oSheet, oSet, row, iColumn, maxRow, maxColumn) {
+    let cells = [];
+    for (let column = iColumn, oPos; column <= maxColumn; column++) {
+        if (oSet.has(`${row},${column}`)) continue; // 跳过已找出来的单元格
+
+        oPos = bus.at("边框单元格位置", sheet, oSheet, row, column, maxRow, maxColumn);
+        saveFoundCell(oSet, oPos); // 缓存已被找出来的单元格
+        oPos && cells.push(oPos);
+    }
+    return cells;
+}
+
+// 缓存已被找出来的单元格
+function saveFoundCell(oSet, oPos) {
+    if (!oPos) return;
+
+    for (let row = oPos.startRow; row <= oPos.endRow; row++) {
+        for (let column = oPos.startColumn; column <= oPos.endColumn; column++) {
+            oSet.add(`${row},${column}`); // 这个单元格已被找出来了
+        }
+    }
+}
+
+// 查找紧邻右边的边框单元格位置（仅限简易二维表格）
+bus.on("右边框单元格位置", (sheet, oSheet, oPos, maxRow, maxColumn) => {
+    if (!oPos) return null;
+
+    return bus.at("边框单元格位置", sheet, oSheet, oPos.startRow, oPos.endColumn + 1, maxRow, maxColumn);
+});
+
+// 通过边框线判断所在边框单元格位置（参数位置应该是边框单元格的起始位置）
+bus.on("边框单元格位置", (sheet, oSheet, iRow, iColumn, maxRow, maxColumn) => {
+    if (!iRow || !iColumn) {
+        return null; // 参数不对
+    }
+
+    let startRow = iRow;
+    let endRow = 0;
+    let startColumn = iColumn;
+    let endColumn = 0;
+
+    // -----------------------------------------------------------------
+    // 传入的地址属于合并单元格的起始位置，直接用合并单元格的位置信息
+    // -----------------------------------------------------------------
+    let mergeAddr = bus.at("所属合并单元格的位置", oSheet, iRow, iColumn);
+    if (mergeAddr) {
+        endRow = mergeAddr.endRow;
+        endColumn = mergeAddr.endColumn;
+        return { startRow, endRow, startColumn, endColumn }; // 既然合并了单元格，理应有边框线，不必再看，直接返回
+    }
+
+    // -----------------------------------------------------------------
+    // 不是合并单元格，逐个单元格判断边框线决定
+    // -----------------------------------------------------------------
+    for (let row = startRow, max = maxRow || startRow + 100; row <= max; row++) {
+        if (bus.at("下边框线", sheet, oSheet, row, startColumn)) {
+            endRow = row; // 找到结束行
+            break;
+        }
+    }
+    if (!endRow) return null; // 找不到边框线，返回null
+
+    for (let column = startColumn, max = maxColumn || startColumn + 100; column <= max; column++) {
+        if (bus.at("右边框线", sheet, oSheet, startRow, column)) {
+            endColumn = column; // 找到结束列
+            break;
+        }
+    }
+    if (!endRow) return null; // 找不到边框线，返回null
+
+    return { startRow, endRow, startColumn, endColumn };
+});
+
+// ------- b98m-excel-util-12-border-table-cell-recognise end
+
+/* ------- b98m-excel-util-13-border-table-head-recognise ------- */
+// ------- b98m-excel-util-13-border-table-head-recognise start
 
 // 边框单元格识别
 
@@ -876,10 +1089,10 @@ bus.on("边框单元格位置", (sheet, oSheet, iRow, iColumn, maxRow, maxColumn
     return { startRow, endRow, startColumn, endColumn };
 });
 
-// ------- b98m-excel-util-03-border-cell-recognise end
+// ------- b98m-excel-util-13-border-table-head-recognise end
 
-/* ------- b98m-excel-util-04-merge-cell-recognise ------- */
-// ------- b98m-excel-util-04-merge-cell-recognise start
+/* ------- b98m-excel-util-21-cell-merge-recognise ------- */
+// ------- b98m-excel-util-21-cell-merge-recognise start
 
 // 给定一个单元格地址，找出其所属的合并单元格地址，没有则返回空
 bus.on("所属合并单元格的位置", (oSheet, iRow, iColumn) => {
@@ -903,7 +1116,7 @@ bus.on("所属合并单元格的位置", (oSheet, iRow, iColumn) => {
     return null; // 找不到
 });
 
-// 判断是否属于某个合并单元格的起始单元格位置
+// 判断是否属于某个合并单元格的起始单元格位置，是的话返回地址信息
 bus.on("是否合并单元格起始位置", (oSheet, iRow, iColumn) => {
     if (!iRow || !iColumn) {
         return false; // 参数不对
@@ -911,59 +1124,31 @@ bus.on("是否合并单元格起始位置", (oSheet, iRow, iColumn) => {
 
     let map = oSheet.mapMergeCell;
     let addr = bus.at("数字转列名", iColumn) + iRow;
-    return map.has(addr);
+    return map.get(addr);
 });
 
-// ------- b98m-excel-util-04-merge-cell-recognise end
+// ------- b98m-excel-util-21-cell-merge-recognise end
 
-/* ------- b98m-excel-util-05-address-converter ------- */
-// ------- b98m-excel-util-05-address-converter start
+/* ------- b98m-excel-util-22-cell-background-recognise ------- */
+// ------- b98m-excel-util-22-cell-background-recognise start
 
-// 给定一个地址(如A1或A1:B3)，转换为地址对象{addr, startRow, endRow, startColumn, endColumn}
-bus.on("地址转换", addr => {
-    if (!addr || typeof addr !== "string") return null;
-
-    addr = addr.toUpperCase();
-    let startRow, endRow, startColumn, endColumn, match;
-    if (addr.indexOf(":") > 1) {
-        match = addr.match(/([A-Z]+)([0-9]+):([A-Z]+)([0-9]+)/);
-        startColumn = bus.at("列名转数字", match[1]);
-        endColumn = bus.at("列名转数字", match[3]);
-        startRow = match[2] - 0;
-        endRow = match[4] - 0;
-    } else {
-        match = addr.match(/([A-Z]+)([0-9]+)/);
-        startColumn = endColumn = bus.at("列名转数字", match[1]);
-        startRow = endRow = match[2] - 0;
+bus.on("单元格背景色", (sheet, oSheet, iRow, iColumn) => {
+    if (!iRow || !iColumn) {
+        return null; // 参数不对
     }
 
-    return { addr, startRow, endRow, startColumn, endColumn };
-});
-
-bus.on("数字转列名", iColumn => {
-    let dividend = iColumn;
-    let name = "";
-    let modulo = 0;
-
-    while (dividend > 0) {
-        modulo = (dividend - 1) % 26;
-        name = String.fromCharCode("A".charCodeAt(0) + modulo) + name;
-        dividend = Math.floor((dividend - modulo) / 26);
+    let map = oSheet.mapMergeCell;
+    let addr = bus.on("数字转列名", iColumn) + iRow;
+    if (map.has(addr)) {
+        return map.get(addr); // 按合并单元格起始地址直接找到
     }
 
-    return name;
+    let oCell = sheet.cell(addr.cell);
+
+    return oCell; // 找不到
 });
 
-bus.on("列名转数字", columnName => {
-    let sum = 0;
-    for (let i = 0; i < columnName.length; i++) {
-        sum = sum * 26;
-        sum = sum + (columnName[i].charCodeAt(0) - "A".charCodeAt(0) + 1);
-    }
-    return sum;
-});
-
-// ------- b98m-excel-util-05-address-converter end
+// ------- b98m-excel-util-22-cell-background-recognise end
 
 /* ------- b98p-------log ------- */
 (() => {
@@ -973,7 +1158,8 @@ bus.on("列名转数字", columnName => {
         "编程插件",
         (function() {
             return postobject.plugin("b98p-------log", function(root, context) {
-                console.info(context.Sheets);
+                //  console.info(context.Sheets)
+                console.info(JSON.stringify(context.Sheets, null, 2));
             });
         })()
     );
@@ -1002,11 +1188,11 @@ bus.on("列名转数字", columnName => {
 // ------- z99m-utils start
 
 // 工具函数
-bus.on("isBlank", function(val) {
+bus.on("空白", function(val) {
     return !val || /^\s*$/.test(val);
 });
-bus.on("isNotBlank", function(val) {
-    return !bus.at("isBlank", val);
+bus.on("非空白", function(val) {
+    return !bus.at("空白", val);
 });
 
 // ------- z99m-utils end

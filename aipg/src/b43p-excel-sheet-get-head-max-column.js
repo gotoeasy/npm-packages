@@ -20,7 +20,7 @@ bus.on('编程插件', function(){
 function guessMaxHeadColumn(context, oSheet){
     let sheet = context.workbook.sheet(oSheet.name);
     for (let i=oSheet.maxColumn; i>0; i--) {
-        if ( bus.at('右边框线', sheet, 1, i) ) {
+        if ( bus.at('右边框线', sheet, oSheet, 1, i) ) {
             return i;                                                           // 第一行最后一个有右边框线的列就是表头的最后列
         }
     }

@@ -20,7 +20,14 @@ function parseSheetHead(context, oSheet){
     let sheet = context.workbook.sheet(oSheet.name);
 
     let trs = bus.at('边框表格全部行位置', sheet, oSheet, 1, 1, oSheet.maxHeadRow, oSheet.maxHeadColumn);
-    console.info('---------trs-------', trs)
-    let oHead = {trs};
-    oSheet.Head = oHead;
+    let aryHeah = [];
+    trs.forEach(tr => {
+        let ary = [];
+        tr.forEach(td => {
+            let tdv = bus.at('读值', sheet, oSheet, td.startRow, td.startColumn);
+            tdv && ary.push(tdv);
+        });
+        ary.length && aryHeah.push(ary);
+    });
+    oSheet.Head = aryHeah;
 }

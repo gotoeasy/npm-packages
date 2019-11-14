@@ -1,10 +1,10 @@
 const bus = require('@gotoeasy/bus');
 
 // 工具函数
-bus.on('isBlank', function (val){
+bus.on('空白', function (val){
     return !val || /^\s*$/.test(val);
 });
-bus.on('isNotBlank', function (val){
-    return !bus.at('isBlank', val);
+bus.on('非空白', function (val){
+    return !bus.at('空白', val);
 });
 

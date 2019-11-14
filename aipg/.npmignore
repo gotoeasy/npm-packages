@@ -5,8 +5,8 @@ package-lock.json
 .browserslistrc
 src/
 .eslintrc.js
-*.bat
-*.xlsx
-*.btf
+**.bat
+**.xlsx
+**.btf
 build.js
 z.js

@@ -22,7 +22,7 @@ bus.on('所属合并单元格的位置', (oSheet, iRow, iColumn) => {
 
 });
 
-// 判断是否属于某个合并单元格的起始单元格位置
+// 判断是否属于某个合并单元格的起始单元格位置，是的话返回地址信息
 bus.on('是否合并单元格起始位置', (oSheet, iRow, iColumn) => {
     if ( !iRow || !iColumn ) {
         return false;                                                                // 参数不对
@@ -30,6 +30,5 @@ bus.on('是否合并单元格起始位置', (oSheet, iRow, iColumn) => {
 
     let map = oSheet.mapMergeCell;
     let addr = bus.at('数字转列名', iColumn) + iRow;
-    return map.has(addr);
-
+    return map.get(addr);
 });

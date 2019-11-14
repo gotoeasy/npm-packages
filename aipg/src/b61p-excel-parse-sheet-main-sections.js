@@ -7,109 +7,34 @@ bus.on('编程插件', function(){
     // 解析Sheet的【章节】
     return postobject.plugin(/**/__filename/**/, function(root, context){
 
-        let sestions = [];
-        let oSheet,sheet,startRow,endRow,startColumn,endColumn,oCell,isTableCell;
-        for (let i=0; oSheet=context.Sheets[i++]; ){
-            if ( oSheet.ignore ) continue;                                                  // 跳过忽略的Sheet
+        for (let i=0,oSheet; oSheet=context.Sheets[i++]; ){
+            if ( oSheet.ignore ) continue;                                                              // 跳过忽略的Sheet
 
-            sheet = context.workbook.sheet(oSheet.name);
-            startRow = oSheet.maxHeadRow + 1;                                               // 开始行
-            endRow = oSheet.maxRow;                                                         // 结束行
-            startColumn = 1;                                                                // 开始列
-            endColumn = oSheet.maxColumn;                                                   // 结束列
+            let sestions = oSheet.Sestions = [];                                                        // 章节数组先存起来
 
-            oCell = getSestionStartRow(sheet, startRow, endRow, startColumn, endColumn);    // 主章节起始单元格
-            isTableCell = isCellInTable(sheet, oSheet, oCell);                              // 是不是表格中的单元格
-            if ( isTableCell ) {
-                let oTableRange = getTableRange(sheet, oSheet, oCell);                      // 表格的起始单元格
-                console.info(oTableRange)
-                sestions.push(oTableRange);                                                 // TODO
+            let sheet = context.workbook.sheet(oSheet.name);
+            let startRow = oSheet.maxHeadRow + 1;                                                       // 开始行
+            let endRow = oSheet.maxRow;                                                                 // 结束行
+            let startColumn = 1;                                                                        // 开始列
+            let endColumn = oSheet.maxColumn;                                                           // 结束列
+
+            // 主章节起始单元格
+            let oPos = bus.at('非空白起始单元格', sheet, startRow, endRow, startColumn, endColumn);     // 位置对象 {row, column}
+            if ( !oPos ) continue;                                                                      // 没内容哦
+
+            let oTbPos = bus.at('边框表格位置', sheet, oSheet, oPos.row, oPos.column);                  // 位置对象 {startRow, endRow, startColumn, endColumn}
+            if ( oTbPos ) {
+                // 表格
+                sestions.push(oTbPos);                                                         // TODO
             }else{
-                let aryCells = parseSestionText(sheet, oSheet, oCell);                      // 章节文本
-                sestions.push(aryCells);
+                // 文字
+                let section = bus.at('读章节文本', sheet, oSheet, oPos);
+                sestions.push(section);
             }
 
-            oSheet.Sestions = sestions;
         }
 
     });
 
 }());
 
-// 读取文本章节
-function parseSestionText(sheet, oSheet, oCell){
-    let value, rows = [];
-    for (let row=oCell.row,max=oCell.row+30,cells; row<max; row++) {
-        cells = [];
-        for (let column=oCell.column; column<=oSheet.maxColumn; column++) {
-            value = sheet.row(row).cell(column).value();
-            bus.at('isNotBlank', value) && cells.push({row, column, value});
-        }
-
-        if ( !cells.length ) break;
-        rows.push(cells);
-    }
-    return rows;
-}
-
-// 在指定的表格行中，找出表格的起始行列范围
-function getTableRange(sheet, oSheet, oCell){
-
-    let startRow = oCell.row, endRow, startColumn, endColumn;
-
-    // 第一个看起来有左边框的单元格，就是开始列
-    for (let column=2; column<oSheet.maxColumn; column++ ) {
-        if ( sheet.row(startRow).cell(column).style('border').left || sheet.row(startRow).cell(column-1).style('border').right) {
-            startColumn = column;
-            break;
-        }
-    }
-    // 最后一个看起来有右边框的单元格，就是结束列
-    for (let column=oSheet.maxColumn-1; column>1; column-- ) {
-        if ( sheet.row(startRow).cell(column).style('border').right || sheet.row(startRow).cell(column+1).style('border').left) {
-            endColumn = column;
-            break;
-        }
-    }
-    // 最后一个看起来有底线的单元格，所在就是结束行
-    for (let row=startRow; row<oSheet.maxRow; row++ ) {
-        if ( sheet.row(row).cell(startColumn).style('border').bottom || sheet.row(row).cell(startColumn+1).style('border').top) {
-            endRow = row;
-            break;
-        }
-    }
-
-    return {startRow, endRow, startColumn, endColumn};
-}
-
-// 判断指定单元是否在表格中（当前行有竖线）
-function isCellInTable(sheet, oSheet, oCell){
-
-    // 通常起始单元格有左边框
-    if ( sheet.row(oCell.row).cell(oCell.column).style('border').left ) {
-        return true;
-    }
-
-    // 除去Sheet页左右边框线外，发现竖向边框就算是
-    for (let i=1; i<oSheet.maxColumn; i++ ) {
-        if ( sheet.row(oCell.row).cell(oCell.column).style('border').right ) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// 在指定范围内找出非空白的起始单元格
-function getSestionStartRow(sheet, iStartRow, iEndRow, iStartColumn, iEndColumn){
-
-    for (let row=iStartRow,value; row<iEndRow; row++) {
-        for (let column=iStartColumn; column<=iEndColumn; column++) {
-            value = sheet.row(row).cell(column).value();
-            if ( bus.at('isNotBlank', value) ) {
-                return {row, column};
-            }
-        }
-    }
-    return null; // 找不到返回null
-}

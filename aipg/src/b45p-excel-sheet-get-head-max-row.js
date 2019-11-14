@@ -24,12 +24,12 @@ function guessMaxHeadRow(context, oSheet){
     // 前10行最后列有底线的行都存起来
     let rows = [];
     for (let i=1; i<10; i++) {
-        bus.at('下边框线', sheet, i, oSheet.maxHeadColumn) && rows.push(i);
+        bus.at('下边框线', sheet, oSheet, i, oSheet.maxHeadColumn) && rows.push(i);
     }
 
     // 最后一个全有底线的行就是表头结束行了
     for (let iRow; iRow=rows.pop(); ) {
-        if ( bus.at('全有下边框线', sheet, iRow, 1, oSheet.maxHeadColumn) ) {
+        if ( bus.at('全有下边框线', sheet, oSheet, iRow, 1, oSheet.maxHeadColumn) ) {
             return iRow;
         }
     }

@@ -2,7 +2,7 @@
 aipg
 
 [version] // 版本号
-0.0.2
+0.0.3
 
 [main] // 入口文件
 index.js

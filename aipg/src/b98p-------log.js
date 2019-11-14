@@ -6,7 +6,8 @@ bus.on('编程插件', function(){
     
     return postobject.plugin(/**/__filename/**/, function(root, context){
         
-        console.info(context.Sheets)
+      //  console.info(context.Sheets)
+        console.info(JSON.stringify(context.Sheets, null, 2))
         
     });
 

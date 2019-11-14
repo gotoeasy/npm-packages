@@ -5,20 +5,22 @@ bus.on('地址转换', (addr) => {
     if (!addr || typeof addr !== "string") return null;
 
     addr = addr.toUpperCase();
-    let startRow, endRow, startColumn, endColumn, match;
+    let cell, startRow, endRow, startColumn, endColumn, match;
     if ( addr.indexOf(':') > 1 ) {
         match = addr.match(/([A-Z]+)([0-9]+):([A-Z]+)([0-9]+)/);
         startColumn = bus.at('列名转数字', match[1]);
         endColumn = bus.at('列名转数字', match[3]);
         startRow = match[2] - 0;
         endRow = match[4] - 0;
+        cell = match[1] + match[2];                                     // 起始单元格地址
     }else{
         match = addr.match(/([A-Z]+)([0-9]+)/);
         startColumn = endColumn = bus.at('列名转数字', match[1]);
         startRow = endRow = match[2] - 0;
+        cell = addr;                                                    // 起始单元格地址
     }
 
-    return {addr, startRow, endRow, startColumn, endColumn};
+    return {cell, addr, startRow, endRow, startColumn, endColumn};
 });
 
 bus.on('数字转列名', iColumn => {
