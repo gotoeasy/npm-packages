@@ -1,49 +1,126 @@
 const bus = require('@gotoeasy/bus');
 
-// 边框表格识别（看上去有线框的表格，识别出范围地址）
-// 指定一个单元格，判断是否在边框表格中，是的话返回边框表格的位置信息{startRow, endRow, startColumn, endColumn}，否则返回null
-// （指定的单元格通常应该是边框表格的首行）
-bus.on('边框表格位置', function (sheet, oSheet, iRow, iColumn){
-    if ( !iRow || !iColumn ) return null;
+// 如果不是表格，返回0，否则返回开始列号（第一个有上线的单元格所在列）
+bus.on('边框表格首行开始列', (sheet, oSheet, row) => {
 
-    // 位置{row, column}
-    let oPos = bus.at('非空白起始单元格', sheet, iRow, oSheet.maxRow, iColumn, oSheet.maxColumn);
+    if ( oSheet.maxHeadRow && row === oSheet.maxHeadRow + 1 ) return 0;                         // 有表头时，表头的下一行不能是表格
+
+    for (let column=1; column<=oSheet.maxColumn; column++) {
+        if ( bus.at('上边框线', sheet, oSheet, row, column) ) {
+            return column;                                                                      // 简化，见有上边框线就行
+        }
+    }
+    return 0;
+});
+
+// 取出边框表格的全部单元格位置（最终结构效果如同Table的Tr）
+bus.on('边框表格全部行位置', function() {
+
+    return function (sheet, oSheet, iRow, iColumn, maxRow, maxColumn) {
+
+        if ( !iRow || !iColumn ) return [];                                                         // 参数不对
+
+        let oSet = new Set();                                                                       // 存放已被找出占用的单元格
+        let positions = [], aryTr = [];
+        let oPos = bus.at('边框单元格位置', sheet, oSheet, iRow, iColumn, maxRow, maxColumn);
+        if ( oPos ) {
+            aryTr.push(oPos);
+            saveFoundCell(oSet, oPos);                                                              // 缓存已被找出来的单元格
+            positions.push(aryTr);
+        }else{
+            return positions;                                                                       // 根本就不是表格
+        }
+
+        // 第一行直接按右边紧邻关系，找出首行的全部边框单元格
+        while ( oPos = bus.at('右边框单元格位置', sheet, oSheet, oPos, maxRow, maxColumn) ) {
+            saveFoundCell(oSet, oPos);                                                              // 缓存已被找出来的单元格
+            aryTr.push(oPos);
+        }
+
+        // 接下去从第二行开始逐行递增，遍历全部单元格，逐个确认找出所有边框单元格
+        for (let row=iRow+1,tr; row<=maxRow; row++ ) {
+            tr = getRowBorderCells(sheet, oSheet, oSet, row, iColumn, maxRow, maxColumn);           // 一个不落的找
+            tr.length && positions.push(tr);                                                        // 该行有才推入数组
+        }
+
+        return positions;
+    }
+
+
+    // 指定行逐个确认查找边框单元格
+    function getRowBorderCells(sheet, oSheet, oSet, row, iColumn, maxRow, maxColumn){
+
+        let cells = [];
+        for (let column=iColumn,oPos; column<=maxColumn; column++) {
+            if ( oSet.has(`${row},${column}`) ) continue;                                           // 跳过已找出来的单元格
+
+            oPos = bus.at('边框单元格位置', sheet, oSheet, row, column, maxRow, maxColumn);
+            saveFoundCell(oSet, oPos);                                                              // 缓存已被找出来的单元格
+            oPos && cells.push(oPos);
+        }
+        return cells;
+    }
+
+    // 缓存已被找出来的单元格
+    function saveFoundCell(oSet, oPos){
+        if ( !oPos ) return;
+
+        for (let row=oPos.startRow; row<=oPos.endRow; row++) {
+            for (let column=oPos.startColumn; column<=oPos.endColumn; column++) {
+                oSet.add(`${row},${column}`);                                                       // 这个单元格已被找出来了
+            }
+        }
+    }
+
+}());
+
+
+// 查找紧邻右边的边框单元格位置（仅限简易二维表格）
+bus.on('右边框单元格位置', (sheet, oSheet, oPos, maxRow, maxColumn) => {
     if ( !oPos ) return null;
 
-    if ( !bus.at('上边框线', sheet, oSheet, oPos.row, oPos.column) ) {
-        return null;                                                            // 没有上边框线，不是表格（首行应当有上边框线）
+    return bus.at('边框单元格位置', sheet, oSheet, oPos.startRow, oPos.endColumn+1, maxRow, maxColumn);
+});
+
+// 通过边框线判断所在边框单元格位置（参数位置应该是边框单元格的起始位置）
+bus.on('边框单元格位置', (sheet, oSheet, iRow, iColumn, maxRow, maxColumn) => {
+    if ( !iRow || !iColumn ) {
+        return null;                                                                            // 参数不对
     }
 
-    // 有戏，开始找范围
-    let startRow, endRow, startColumn, endColumn;
-    startRow = endRow = iRow;
-    startColumn = endColumn = oPos.column;
+    let startRow = iRow;
+    let endRow = 0;
+    let startColumn = iColumn;
+    let endColumn = 0;
 
-    for (let i=startColumn-1; i>0; i--) {
-        if ( bus.at('上边框线', sheet, oSheet, startRow, i) ) {
-            startColumn = i;                                                    // 开始列
-        }else{
+    // -----------------------------------------------------------------
+    // 传入的地址属于合并单元格的起始位置，直接用合并单元格的位置信息
+    // -----------------------------------------------------------------
+    let mergeAddr = bus.at('所属合并单元格的位置', oSheet, iRow, iColumn);
+    if ( mergeAddr ) {
+        endRow = mergeAddr.endRow;
+        endColumn = mergeAddr.endColumn;
+        return {startRow, endRow, startColumn, endColumn};                                      // 既然合并了单元格，理应有边框线，不必再看，直接返回
+    }
+
+    // -----------------------------------------------------------------
+    // 不是合并单元格，逐个单元格判断边框线决定
+    // -----------------------------------------------------------------
+    for (let row=startRow,max=maxRow||(startRow+100); row<=max; row++) {
+        if ( bus.at('下边框线', sheet, oSheet, row, startColumn) ) {
+            endRow = row;                                                                       // 找到结束行
             break;
         }
     }
-    for (let i=startColumn+1; i<=oSheet.maxHeadColumn; i++) {
-        if ( bus.at('上边框线', sheet, oSheet, startRow, i) ) {
-            endColumn = i;                                                      // 结束列
-        }else{
+    if ( !endRow ) return null;                                                                 // 找不到边框线，返回null
+
+    for (let column=startColumn,max=maxColumn||(startColumn+100); column<=max; column++) {
+        if ( bus.at('右边框线', sheet, oSheet, startRow, column) ) {
+            endColumn = column;                                                                 // 找到结束列
             break;
         }
     }
-
-    for (let i=startRow+1; i<=oSheet.maxHeadRow; i++) {
-        if ( bus.at('左边框线', sheet, oSheet, i, startColumn) ) {
-            endRow = i;                                                         // 结束行
-        }else{
-            break;
-        }
-    }
-
-    // TODO 没有左右边框线的表格 ...
+    if ( !endColumn ) return null;                                                              // 找不到边框线，返回null
 
     return {startRow, endRow, startColumn, endColumn};
 });
-
