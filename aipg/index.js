@@ -506,6 +506,11 @@ bus.on("列名转数字", columnName => {
     return sum;
 });
 
+bus.on("地址起始列数字", addr => {
+    let match = addr.match(/^[A-Z]+/);
+    return match ? bus.at("列名转数字", match[0]) : 0; // 错误地址返回0
+});
+
 // ------- b98m-excel-util-01-address-converter end
 
 /* ------- b98m-excel-util-02-first-not-blank-cell-in-range ------- */
@@ -536,24 +541,26 @@ bus.on("非空白起始单元格", function(sheet, iStartRow, iEndRow, iStartCol
 // 单元格读值，不是件单纯的事
 // 参数可以是（行、列）或（名称地址）或（地址对象）
 //
-// 1，数字或日期等格式化的单元格 ....... 所见即所得
-// 2，公式单元格 ....................... 所见即所得
-// 3，富文本单元格 ..................... 人性化读取，要去除删除线文字
-// 4，合并单元格 ....................... 人性化读取，合并范围内仅读合并单元格
-// 5，线框单元格 ....................... 人性化读取，线框范围内多单元格合并读取
+// 1，数字带日期格式的单元格 ........ 所见即所得，只应付常见格式
+// 2，数字带逗号格式的单元格 ........ 直接返回原数字（转字符串）
+// 3，公式单元格 .................... 所见即所得
+// 4，富文本单元格带部分删除线 ...... 人性化读取，要去除删除线文字
+// 5，富文本单元格带全部删除线 ...... 人性化读取，返回半角空格以区别无内容
+// 6，无内容的null单元格 ............ 人性化读取，返回无内容的空串
+// 7，单元格格式 .................... numberFormat和background，有则读出备用
 // -----------------------------------------------------------------------------
 bus.on(
     "读值",
     (function() {
         return function(sheet, oSheet, iRow, iColumn) {
-            if (!iRow) return "";
+            if (!iRow) return { value: "" }; // 参数输入无效时的返回值
 
             let oAddr;
             if (typeof iRow === "string") {
                 oAddr = bus.at("地址转换", iRow); // {cell, addr, startRow, endRow, startColumn, endColumn}
             } else if (typeof iRow === "number") {
                 if (!iColumn) {
-                    return "";
+                    return { value: "" }; // 参数输入无效时的返回值
                 } else {
                     oAddr = bus.at("地址转换", bus.at("数字转列名", iColumn) + iRow);
                 }
@@ -561,42 +568,48 @@ bus.on(
                 oAddr = iRow; // 传入的就是地址对象
             }
 
-            return readCell(sheet, oAddr, oSheet.mapMergeCell.has(oAddr.cell)); // 对象或数组或空串
+            return readCell(sheet, oAddr); // 对象或数组或空串
         };
 
-        // 返回对象或数组或null
-        function readCell(sheet, oAddr, isMerged) {
-            //let {cell, addr, startRow, endRow, startColumn, endColumn} = oAddr;         // cell:单元格地址
+        // 返回对象
+        function readCell(sheet, oAddr) {
             let { cell } = oAddr; // cell:单元格地址
             let oCell = sheet.cell(cell);
             let value = oCell.value();
 
+            let del = false;
+            let numberFormat = null;
+            let fill = null;
+
             if (value == null) {
                 // 转成空串直接返回
-                return "";
+                value = "";
             } else if (value.get) {
                 // 富文本时，检查忽略带删除线的文字
                 let txt = "";
-                for (let i = 0, fragment; (fragment = value.get(i++)); ) {
-                    !fragment.style("strikethrough") && (txt += fragment.value());
+                for (let i = 0, fragment, val; (fragment = value.get(i++)); ) {
+                    val = fragment.value();
+                    if (val != null) {
+                        if (fragment.style("strikethrough")) {
+                            del = true; // 有删除内容
+                        } else {
+                            txt += val;
+                        }
+                    }
                 }
                 value = txt;
             } else {
-                // TODO
-                // let fmt = oCell.style('numberFormat');
-                //   fmt = oCell.style('fill');  // background
-                // fmt && (value += fmt)
+                numberFormat = oCell.style("numberFormat");
+                fill = oCell.style("fill"); // background
+                value = value + "";
             }
 
-            if (value == null) {
-                return "";
-            }
+            let rs = { cell, value };
+            !value && del && (rs.delete = true);
+            numberFormat && numberFormat !== "General" && (rs.numberFormat = numberFormat);
+            fill && (rs.fill = fill);
 
-            if (isMerged) {
-                return { cell, value };
-            }
-
-            return { cell, value };
+            return rs;
         }
     })()
 );
@@ -608,58 +621,251 @@ bus.on(
 
 bus.on("读取章节", function(sheet, oSheet) {
     let contents = bus.at("顺序通读", sheet, oSheet);
+    console.info();
+    console.info(JSON.stringify(contents, null, 2));
+    console.info();
     return bus.at("整理章节", sheet, oSheet, contents);
 });
 
 bus.on("整理章节", function(sheet, oSheet, contents) {
-    // TODO
-    let sections = contents;
+    let oRoot = {};
+    for (let i = 0; i < contents.length; i++) {
+        i = bus.at("整理子章节", oRoot, contents, i);
+    }
+    return oRoot;
+});
 
-    return sections;
+bus.on("整理子章节", function(oParent, contents, index) {
+    !oParent.nodes && (oParent.nodes = []);
+
+    let oItem, oSec;
+    for (let i = index; i < contents.length; i++) {
+        oItem = contents[i];
+        if (!oItem) {
+            continue;
+        }
+
+        oSec = { ...oItem };
+        oSec.Seq = bus.at("章节编号", oItem.values[0]);
+
+        // 找到父章节，并添加为父章节的子章节
+        let oSuper = oParent;
+        let iColSec, iColParent;
+        while (oSuper) {
+            if (!oSuper.parent) {
+                oSec.parent = () => oSuper;
+                oSuper.nodes.push(oSec); // 根节点了，直接添加为子章节
+                break;
+            }
+
+            if (oSec.Seq && oSuper.Seq) {
+                if (oSec.Seq.seq > oSuper.Seq.seq) {
+                    oSec.parent = () => oSuper;
+                    oSuper.nodes.push(oSec); // 都有章节号时，按章节号比较是否为子章节
+                    break;
+                }
+            } else {
+                iColSec = oSec.startColumn || bus.at("地址起始列数字", oSec.values[0].cell);
+                iColParent = oSuper.startColumn || bus.at("地址起始列数字", oSuper.values[0].cell);
+                if (iColSec > iColParent) {
+                    oSec.parent = () => oSuper;
+                    oSuper.nodes.push(oSec); // 没有章节号时，按缩进对齐方式判断是否子章节（比较首个单元格位置）
+                    break;
+                }
+            }
+            oSuper = oSuper.parent();
+        }
+
+        return bus.at("整理子章节", oSec, contents, i + 1); // 继续按顺序整理
+    }
 });
 
 bus.on("顺序通读", function(sheet, oSheet) {
     let iStartColumn,
-        oVal,
+        aryVal,
         contents = [];
 
     for (let row = oSheet.maxHeadRow + 1; row <= oSheet.maxRow; row++) {
         iStartColumn = bus.at("边框表格首行开始列", sheet, row);
         if (iStartColumn) {
-            oVal = bus.at("读边框表格", sheet, oSheet, row, iStartColumn); // 表格对象或空串
+            aryVal = bus.at("读边框表格", sheet, oSheet, row, iStartColumn); // 表格对象
+            row = aryVal.endRow - 1; // 表格末行
         } else {
-            oVal = bus.at("读行单元格", sheet, oSheet, row); // 单元格对象数组或空串
+            aryVal = bus.at("读行单元格", sheet, oSheet, row); // 返回数组
         }
 
-        if (oVal) {
-            contents.push(oVal);
+        contents.push(aryVal);
+    }
+
+    let rs = [];
+    for (let i = 0, aryLine; (aryLine = contents[i++]); ) {
+        if (aryLine.length === 1 && aryLine[0].delete) continue; // 过滤删除行
+
+        if (aryLine.length) {
+            rs.push(aryLine);
         } else {
-            contents.length && contents[contents.legnth - 1] && contents.push(oVal); // 空行占个位便于后续判断
+            rs[rs.length - 1] && rs[rs.length - 1].length && rs.push(aryLine); // 重复空行仅保留一行
         }
     }
 
-    return contents;
+    rs = bus.at("同段文本合并", rs);
+    // TODO 表格的头部脚部文本，表头识别
+    return rs;
+});
+
+bus.on("同段文本合并", function(contents) {
+    if (!contents.length) return [];
+
+    let rs = [],
+        oSec,
+        values;
+    for (let i = 0; i < contents.length; i++) {
+        values = contents[i];
+        if (values.length) {
+            if (values.endRow) {
+                rs.push({ table: values.trs, endRow: values.endRow, startColumn: values.startColumn }); // 表格
+                oSec = null;
+            } else {
+                if (!oSec) {
+                    rs.push((oSec = { values })); // 起始文本章节
+                } else {
+                    if (bus.at("章节编号", values[0])) {
+                        rs.push((oSec = { values })); // 有章节编号，按新章节处理
+                    } else {
+                        oSec.values.push(...values); // 没有章节编号的做合并处理
+                    }
+                }
+            }
+        } else {
+            rs.push((oSec = null)); // 空行
+        }
+    }
+
+    return rs;
 });
 
 bus.on("读边框表格", function(sheet, oSheet, iStartRow, iStartColumn) {
     let trs = bus.at("边框表格全部行位置", sheet, oSheet, iStartRow, oSheet.maxRow, iStartColumn, oSheet.maxColumn);
+    let startColumn = trs[0][0].startColumn;
+    let endRow = trs[trs.length - 1][0].endRow;
 
     for (let i = 0, tds; (tds = trs[i++]); ) {
         for (let j = 0, td; (td = tds[j++]); ) {
-            td.value = bus.at("读值", sheet, oSheet, td.startRow, td.startColumn);
+            td.Value = bus.at("读值", sheet, oSheet, td.startRow, td.startColumn);
         }
     }
 
-    return trs;
+    for (let i = 0; i < trs.length; i++) {
+        trs[i].length === 1 && trs[i][0].delete && (trs[i] = null);
+    }
+    trs = trs.filter(tr => !tr); // 过滤删除行
+
+    return { trs, endRow, startColumn };
 });
 
 bus.on("读行单元格", function(sheet, oSheet, row) {
-    let values = [];
+    let values = [],
+        oDelete = null;
     for (let column = 1, oVal; column <= oSheet.maxColumn; column++) {
         oVal = bus.at("读值", sheet, oSheet, row, column);
-        oVal && values.push(oVal);
+        oVal.value.trim() && values.push(oVal);
+        !oDelete && oVal.delete && (oDelete = oVal);
     }
-    return values.length ? values : ""; // 空行时返回的是空串
+
+    if (values.length) {
+        return values; // 正常有值时返回的是数组
+    } else if (oDelete) {
+        return [oDelete]; // 删除行时，数组仅含首个删除单元格
+    } else {
+        return values; // 空行时返回的是空数组
+    }
+});
+
+bus.on("章节编号", function(oVal) {
+    if (!oVal || !oVal.value) return null;
+
+    let str = (oVal.value + "").trim();
+    let match = str.match(
+        /^[0-9１２３４５６７８９０一二三四五六七八九〇ⅠⅡⅢⅣⅤⅥⅦⅧⅨ㈠㈡㈢㈣㈤㈥㈦㈧㈨⒈⒉⒊⒋⒌⒍⒎⒏⒐Ⅺ⒑㈩⑽]+[0-9１２３４５６７８９０一二三四五六七八九〇ⅠⅡⅢⅣⅤⅥⅦⅧⅨ㈠㈡㈢㈣㈤㈥㈦㈧㈨⒈⒉⒊⒋⒌⒍⒎⒏⒐Ⅺ⒑㈩⑽.．－-]*/
+    );
+    if (!match) return null;
+
+    let oNum = {
+        "１": "1",
+        一: "1",
+        Ⅰ: "1",
+        "⑴": "1",
+        "㈠": "1",
+        "⒈": "1",
+        "２": "2",
+        二: "2",
+        Ⅱ: "2",
+        "⑵": "2",
+        "㈡": "2",
+        "⒉": "2",
+        "３": "3",
+        三: "3",
+        Ⅲ: "3",
+        "⑶": "3",
+        "㈢": "3",
+        "⒊": "3",
+        "４": "4",
+        四: "4",
+        Ⅴ: "4",
+        "⑷": "4",
+        "㈣": "4",
+        "⒋": "4",
+        "５": "5",
+        五: "5",
+        Ⅵ: "5",
+        "⑸": "5",
+        "㈤": "5",
+        "⒌": "5",
+        "６": "6",
+        六: "6",
+        Ⅶ: "6",
+        "⑹": "6",
+        "㈥": "6",
+        "⒍": "6",
+        "７": "7",
+        七: "7",
+        Ⅷ: "7",
+        "⑺": "7",
+        "㈦": "7",
+        "⒎": "7",
+        "８": "8",
+        八: "8",
+        Ⅸ: "8",
+        "⑻": "8",
+        "㈧": "8",
+        "⒏": "8",
+        "９": "9",
+        九: "9",
+        Ⅹ: "9",
+        "⑼": "9",
+        "㈨": "9",
+        "⒐": "9",
+        "０": "0",
+        〇: "0",
+        Ⅺ: "10",
+        "⒑": "10",
+        "㈩": "10",
+        "⑽": "10"
+    };
+
+    let strMatch = match[0]
+        .split("")
+        .map(ch => (oNum[ch] ? oNum[ch] : ch))
+        .join(""); // 数字统一替换为半角数字
+    strMatch = strMatch.replace(/[.．－]+/g, "-"); // 分隔符统一替换为半角减号
+
+    let ary = strMatch.split("-");
+    ary = ary.map(v => (100 + (v - 0) + "").substring(1)); // 每段统一2位长度
+    while (ary.length < 5) ary.push("00"); // 统一为5段，便于字符串方式比较
+    let seq = ary.join("-");
+    let cell = oVal.cell;
+
+    return { cell, seq, orig: match[0] };
 });
 
 // ------- b98m-excel-util-04-sheet-sections-reader end

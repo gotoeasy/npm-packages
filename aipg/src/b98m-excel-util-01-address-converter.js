@@ -45,3 +45,8 @@ bus.on('列名转数字', columnName => {
     }
     return sum;
 });
+
+bus.on('地址起始列数字', addr => {
+    let match = addr.match(/^[A-Z]+/);
+    return match ? bus.at('列名转数字', match[0]) : 0;      // 错误地址返回0
+});
