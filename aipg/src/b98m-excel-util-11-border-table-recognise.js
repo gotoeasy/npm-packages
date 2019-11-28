@@ -3,14 +3,40 @@ const bus = require('@gotoeasy/bus');
 // 如果不是表格，返回0，否则返回开始列号（第一个有上线的单元格所在列）
 bus.on('边框表格首行开始列', (sheet, oSheet, row) => {
 
-    if ( oSheet.maxHeadRow && row === oSheet.maxHeadRow + 1 ) return 0;                         // 有表头时，表头的下一行不能是表格
+    if ( oSheet.maxHeadRow && row === oSheet.maxHeadRow + 1 ) return 0;                             // 有表头时，表头的下一行不能是表格
 
     for (let column=1; column<=oSheet.maxColumn; column++) {
-        if ( bus.at('上边框线', sheet, oSheet, row, column) ) {
-            return column;                                                                      // 简化，见有上边框线就行
+        if ( bus.at('左边框线', sheet, oSheet, row, column) && bus.at('上边框线', sheet, oSheet, row, column) ) {
+            return column;                                                                          // 简化，见有左边框线和上就行
         }
     }
     return 0;
+});
+
+bus.on('边框表格结束行', (sheet, oSheet, iStartRow, iStartColumn) => {
+
+    for (let row=iStartRow; row<=oSheet.maxRow; row++) {
+        if ( iStartColumn === 1 ) {
+            if ( !bus.at('下边框线', sheet, oSheet, row, iStartColumn) ) {
+                return row - 1;                                                                     // 简化，见有左边框线就行
+            }
+        }else{
+            if ( !bus.at('左边框线', sheet, oSheet, row, iStartColumn) ) {
+                return row - 1;                                                                     // 简化，见有左边框线就行
+            }
+        }
+    }
+    return iStartRow;
+});
+
+bus.on('边框表格结束列', (sheet, oSheet, iStartRow, iStartColumn) => {
+
+    for (let column=iStartColumn; column<=oSheet.maxColumn; column++) {
+        if ( !bus.at('上边框线', sheet, oSheet, iStartRow, column) ) {
+            return column - 1;                                                                      // 简化，见有上边框线就行
+        }
+    }
+    return iStartColumn;
 });
 
 // 取出边框表格的全部单元格位置（最终结构效果如同Table的Tr）

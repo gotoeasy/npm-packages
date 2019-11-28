@@ -4,7 +4,7 @@ const bus = require('@gotoeasy/bus');
 bus.on('读取章节', function (sheet, oSheet){
     let contents = bus.at('顺序通读', sheet, oSheet);
 console.info( )
-console.info( JSON.stringify(contents,null,2))
+//console.info( JSON.stringify(contents,null,2))
 console.info( ) 
     return bus.at('整理章节', sheet, oSheet, contents);
 });
@@ -30,8 +30,8 @@ bus.on('整理子章节', function (oParent, contents, index){
             continue;
         }
 
-        oSec = {...oItem};
-        oSec.Seq = bus.at('章节编号', oItem.values[0]);
+        oSec = oItem.table ? oItem : {...oItem};
+        oSec.Seq = oItem.table ? null : bus.at('章节编号', oItem.values[0]);
 
         // 找到父章节，并添加为父章节的子章节
         let oSuper = oParent;
@@ -44,25 +44,53 @@ bus.on('整理子章节', function (oParent, contents, index){
                 break;
             }
 
+            if ( oSuper.startColumn ) {
+                oSuper = oSuper.parent();
+                continue;                                                                               // 表格没有子章节，继续找上级章节
+            }
+            if ( oSec.startColumn ) {
+                oSec.parent = ()=>oSuper;
+                oSuper.nodes.push(oSec);                                                                // 如果是表格，直接按子章节处理
+                break;
+            }
+
             if ( oSec.Seq && oSuper.Seq ) {
-                if ( oSec.Seq.seq > oSuper.Seq.seq ) {
+                if ( oSec.Seq.seq.length > oSuper.Seq.seq.length ) {                                    // 章节号更深，按子章节处理
                     oSec.parent = ()=>oSuper;
-                    oSuper.nodes.push(oSec);                                                            // 都有章节号时，按章节号比较是否为子章节
+                    oSuper.nodes.push(oSec);
                     break;
+                }else if ( oSec.Seq.seq.length === oSuper.Seq.seq.length ) {                            // 章节号同级，继续找上级章节
+                    oSuper = oSuper.parent();
+                    continue;
+                }else {                                                                                 // 章节号更浅，还得再看看
+                    if ( oSec.Seq.seq.length === 2 ) {
+
+                        iColSec = bus.at('地址起始列数字', oSec.values[0].cell);
+                        iColParent = bus.at('地址起始列数字', oSuper.values[0].cell);
+                        if ( iColSec > iColParent ) {
+                            oSec.parent = ()=>oSuper;
+                            oSuper.nodes.push(oSec);                                                    // 缩进的单章节号，按子章节处理（如1-2下的缩进的1按1-2-1看待）
+                            break;
+                        }
+
+                    }
                 }
+
             }else{
-                iColSec = oSec.startColumn || bus.at('地址起始列数字', oSec.values[0].cell);
-                iColParent = oSuper.startColumn || bus.at('地址起始列数字', oSuper.values[0].cell);
+
+                iColSec = bus.at('地址起始列数字', oSec.values[0].cell);
+                iColParent = bus.at('地址起始列数字', oSuper.values[0].cell);
                 if ( iColSec > iColParent ) {
                     oSec.parent = ()=>oSuper;
                     oSuper.nodes.push(oSec);                                                            // 没有章节号时，按缩进对齐方式判断是否子章节（比较首个单元格位置）
                     break;
                 }
+
             }
-            oSuper = oSuper.parent();
+            oSuper = oSuper.parent();                                                                   // 继续找上级章节
         }
 
-        return bus.at('整理子章节', oSec, contents, i+1);                                                  // 继续按顺序整理
+        return bus.at('整理子章节', oSec, contents, i+1);                                               // 继续按顺序整理
     }
 
 });
@@ -73,26 +101,33 @@ bus.on('顺序通读', function (sheet, oSheet){
 
     for (let row=oSheet.maxHeadRow+1; row<=oSheet.maxRow; row++ ) {
 
-        iStartColumn = bus.at('边框表格首行开始列', sheet, row);
+        iStartColumn = bus.at('边框表格首行开始列', sheet, oSheet, row);
         if ( iStartColumn ) {
             aryVal = bus.at('读边框表格', sheet, oSheet, row, iStartColumn);                            // 表格对象
-            row = aryVal.endRow - 1;                                                                    // 表格末行
+            row = aryVal.endRow;                                                                        // 表格末行
         }else{
             aryVal = bus.at('读行单元格', sheet, oSheet, row);                                          // 返回数组
         }
 
         contents.push(aryVal);
     }
+console.info('顺序通读-------1' )
+console.info( JSON.stringify(contents,null,2))
+console.info( ) 
 
     let rs = [];
-    for (let i=0,aryLine; aryLine=contents[i++]; ) {
-        if ( aryLine.length === 1 && aryLine[0].delete ) continue;                                      // 过滤删除行
+    for (let i=0,aryLine; i<contents.length; i++) {
+        aryLine = contents[i];
 
-        if ( aryLine.length ) {
+        if ( aryLine.length || aryLine.endRow ) {
+            if ( aryLine.length === 1 && aryLine[0].delete ){
+                continue;                                                                               // 过滤删除行
+            }
             rs.push(aryLine);
         }else{
-            rs[rs.length-1] && rs[rs.length-1].length && rs.push(aryLine);                              // 重复空行仅保留一行
+            rs[rs.length-1] && (rs[rs.length-1].length || rs[rs.length-1].endRow) && rs.push(aryLine);  // 重复空行仅保留一行
         }
+
     }
 
     rs = bus.at('同段文本合并', rs);
@@ -101,13 +136,16 @@ bus.on('顺序通读', function (sheet, oSheet){
 });
 
 bus.on('同段文本合并', function (contents){
+console.info('同段文本合并-------1' )
+console.info( JSON.stringify(contents,null,2))
+console.info( ) 
 
     if ( !contents.length ) return [];
 
     let rs = [], oSec, values;
     for (let i=0; i<contents.length; i++) {
         values = contents[i];
-        if ( values.length ) {
+        if ( values ) {
             if ( values.endRow ) {
                 rs.push({table: values.trs, endRow:values.endRow, startColumn:values.startColumn});     // 表格
                 oSec = null;
@@ -127,12 +165,19 @@ bus.on('同段文本合并', function (contents){
         }
     }
 
+console.info('同段文本合并-------2' )
+console.info( JSON.stringify(rs,null,2))
+console.info( ) 
     return rs;
 });
 
 bus.on('读边框表格', function (sheet, oSheet, iStartRow, iStartColumn){
 
-    let trs = bus.at('边框表格全部行位置', sheet, oSheet, iStartRow, oSheet.maxRow, iStartColumn, oSheet.maxColumn);
+
+    let maxRow = bus.at('边框表格结束行', sheet, oSheet, iStartRow, iStartColumn);
+    let maxColumn = bus.at('边框表格结束列', sheet, oSheet, iStartRow, iStartColumn);
+
+    let trs = bus.at('边框表格全部行位置', sheet, oSheet, iStartRow, iStartColumn, maxRow, maxColumn);
     let startColumn = trs[0][0].startColumn;
     let endRow = trs[trs.length-1][0].endRow;
 
@@ -145,7 +190,7 @@ bus.on('读边框表格', function (sheet, oSheet, iStartRow, iStartColumn){
     for (let i=0; i<trs.length; i++) {
         trs[i].length === 1 && trs[i][0].delete && (trs[i] = null);
     }
-    trs = trs.filter(tr => !tr);                                                                        // 过滤删除行
+    trs = trs.filter(tr => !!tr);                                                                       // 过滤删除行
 
     return {trs, endRow, startColumn};
 });
@@ -196,7 +241,7 @@ bus.on('章节编号', function (oVal){
 
     let ary = strMatch.split('-');
     ary = ary.map( v => ((100+(v-0))+'').substring(1) );                                                // 每段统一2位长度
-    while (ary.length < 5) ary.push('00');                                                              // 统一为5段，便于字符串方式比较
+    //while (ary.length < 5) ary.push('00');                                                              // 统一为5段，便于字符串方式比较
     let seq = ary.join('-');
     let cell = oVal.cell;
 
