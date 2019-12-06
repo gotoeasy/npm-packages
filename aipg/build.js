@@ -50,7 +50,6 @@ function getIndexSrc(){
 // ------------------------ index ------------------------
 
 const bus = require('@gotoeasy/bus');
-const Err = require('@gotoeasy/err');
 
 async function build(opts){
     let stime = new Date().getTime();
@@ -61,7 +60,7 @@ async function build(opts){
 
         await bus.at('全部编写');
     }catch(e){
-        console.error(Err.cat('build failed', e).toString());
+        console.error('build failed', e);
     }
 
     let time = new Date().getTime() - stime;
@@ -75,7 +74,7 @@ function clean(opts){
         bus.at('环境', opts);
         bus.at('clean');
     }catch(e){
-        console.error(Err.cat('clean failed', e).toString());
+        console.error('clean failed', e);
     }
 
     let time = new Date().getTime() - stime;
