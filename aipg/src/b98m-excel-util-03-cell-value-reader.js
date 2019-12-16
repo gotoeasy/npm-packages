@@ -6,11 +6,11 @@ const bus = require('@gotoeasy/bus');
 // 
 // 1，数字带日期格式的单元格 ........ 所见即所得，只应付常见格式
 // 2，数字带逗号格式的单元格 ........ 直接返回原数字（转字符串）
-// 3，公式单元格 .................... 所见即所得
+// 3，公式单元格 .................. 所见即所得
 // 4，富文本单元格带部分删除线 ...... 人性化读取，要去除删除线文字
 // 5，富文本单元格带全部删除线 ...... 人性化读取，返回半角空格以区别无内容
-// 6，无内容的null单元格 ............ 人性化读取，返回无内容的空串
-// 7，单元格格式 .................... numberFormat和background，有则读出备用
+// 6，无内容的null单元格 ........... 人性化读取，返回无内容的空串
+// 7，单元格格式 .................. numberFormat和background，有则读出备用
 // -----------------------------------------------------------------------------
 bus.on('读值', function(){
 
@@ -20,7 +20,7 @@ bus.on('读值', function(){
 
         let oAddr;
         if ( typeof iRow === "string" ) {
-            oAddr = bus.at('地址转换', iRow);                                       // {cell, addr, startRow, endRow, startColumn, endColumn}
+            oAddr = bus.at('地址转换', iRow);											// {cell, addr, startRow, endRow, startColumn, endColumn}
         }else if ( typeof iRow === "number" ) {
             if ( !iColumn ) {
                 return {value: ''};                                                 // 参数输入无效时的返回值

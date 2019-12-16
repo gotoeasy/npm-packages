@@ -32,11 +32,13 @@ const csjs = require('@gotoeasy/csjs');
     js = js.replace(/const\s+bus\s*=\s*require\(\s*['"]{1,1}@gotoeasy\/bus['"]{1,1}\)\s*[;]*/g, '');
     js = js.replace(/const\s+postobject\s*=\s*require\(\s*['"]{1,1}@gotoeasy\/postobject['"]{1,1}\)\s*[;]*/g, '');
 
-    js = `const bus = require("@gotoeasy/bus");
-    const postobject = require("@gotoeasy/postobject");
+    js = `module.exports = (function(){
+        const bus = require("@gotoeasy/bus");
+        const postobject = require("@gotoeasy/postobject");
 
-    ${js}
-    `
+        ${js}
+    }());
+    `;
 
     js = csjs.formatJs(js);         // 便于确认代码，格式化代码且不删除注释
 
@@ -89,7 +91,7 @@ async function watch(opts){
 
 }
 
-module.exports = { build, clean, watch };
+return { build, clean, watch };
 
 
     `;
