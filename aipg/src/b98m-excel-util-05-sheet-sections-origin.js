@@ -40,8 +40,6 @@ bus.on('顺序通读', function (sheet, oSheet){
 
     }
 
-    console.info( JSON.stringify(rs,null,2))
-
     rs = bus.at('同段文本合并', rs);
     rs = rs.filter(v => v && (!v.values || v.values.length));                                           // 过滤没有内容文本章节
 
