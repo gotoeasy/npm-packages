@@ -25,10 +25,16 @@ bus.on('查找引号内容', function (){
             idxLeft = str.indexOf(cLeft);
             if (idxLeft < 0) return null;
 
-            idxRight = str.indexOf(cRight, idxLeft+1);
+            idxRight = str.indexOf(cRight, idxLeft+cLeft.length);
             if (idxRight < 0) return null;
 
-            return str.substring(idxLeft, idxRight+1);
+            // 前一字符是反斜杠时继续往后找
+            while (str.substring(idxRight-1, idxRight) === '\\') {
+                idxRight = str.indexOf(cRight, idxRight+cRight.length);
+                if (idxRight < 0) return null;
+            }
+
+            return str.substring(idxLeft, idxRight+cRight.length);
         }
 
         // 未指定起始字符时，按默认规则查找
@@ -38,6 +44,12 @@ bus.on('查找引号内容', function (){
 
             idxRight = str.indexOf(aryRight[i-1], idxLeft+1);
             if (idxRight < 0) continue;
+
+            // 前一字符是反斜杠时继续往后找
+            while (str.substring(idxRight-1, idxRight) === '\\') {
+                idxRight = str.indexOf(cRight, idxRight+cRight.length);
+                if (idxRight < 0) return null;
+            }
 
             return str.substring(idxLeft, idxRight+1);
         }
@@ -50,6 +62,10 @@ bus.on('句型转正则', function (){
     const aryKey  = '⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑⒒⒓⒔⒕⒖⒗⒘⒙⒚⒛'.split('');                   // 临时替代引号内容的特殊字符
 
     return function (sentencePattern){
+
+        if (typeof sentencePattern !== 'string' || !sentencePattern) {
+            return null;
+        }
 
         let pattern = sentencePattern;
         let oReplace = {};
@@ -81,8 +97,9 @@ bus.on('句型转正则', function (){
                     if (k === aryTmp.length - 1) {
                         sTmp += bus.at('正则转义', aryTmp[k]);
                     }else{
-                        if (/[0-9１２３４５６７８９０]\s*$/.test(aryTmp[k])) {
-                            sTmp += bus.at('正则转义', aryTmp[k] + '/');                    // 数字后面跟着的斜杠，按正常字符看待
+                        if (/[0-9１２３４５６７８９０/]\s*$/.test(aryTmp[k])               // 斜杠前跟着的是数字或斜杠
+                            || /^\s*[0-9１２３４５６７８９０/]/.test(aryTmp[k+1])) {       // 斜杠后跟着的是数字或斜杠
+                            sTmp += bus.at('正则转义', aryTmp[k] + '/');                    // 按正常斜杠看待
                         }else{
                             sTmp += bus.at('正则转义', aryTmp[k]) + '|';                    // 斜杠是或的意思，转义成正则语法字符
                             hasOr = true;
@@ -106,7 +123,7 @@ bus.on('句型转正则', function (){
             aryPattern[i] = sTmp;
         }
 
-        sTmp = '^' + aryPattern.join('\\s?(.+)\\s?') + '$';
+        sTmp = '^' + aryPattern.join('\\s?(.+?)\\s?') + '$';                                // 非贪婪模式匹配
         return new RegExp(sTmp);
     }
 

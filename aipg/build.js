@@ -91,7 +91,11 @@ async function watch(opts){
 
 }
 
-return { build, clean, watch };
+    let f = s => bus.at("句型转正则", s);
+
+    return { build, clean, watch, f };
+
+//return { build, clean, watch };
 
 
     `;
