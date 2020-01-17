@@ -1327,8 +1327,8 @@ module.exports = (function() {
     bus.on(
         "查找引号内容",
         (function() {
-            const aryLeft = [`“`, `【`, `〖`, `『`, `《`, `「`, `［`, `[`, `'`, `"`];
-            const aryRight = [`”`, `】`, `〗`, `』`, `》`, `」`, `］`, `]`, `'`, `"`];
+            const aryLeft = [`“`, `【`, `〖`, `『`, `《`, `「`, `［`, `[`, `'`, `"`, `‘`, `《`];
+            const aryRight = [`”`, `】`, `〗`, `』`, `》`, `」`, `］`, `]`, `'`, `"`, `’`, `》`];
 
             // 可指定起始字符
             return function(str, cLeft, cRight) {

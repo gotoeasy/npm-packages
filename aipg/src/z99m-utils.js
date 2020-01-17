@@ -13,8 +13,8 @@ bus.on('正则转义', function (str){
 });
 
 bus.on('查找引号内容', function (){
-    const aryLeft  = [`“`, `【`, `〖`, `『`, `《`, `「`, `［`, `[`, `'`, `"`];
-    const aryRight = [`”`, `】`, `〗`, `』`, `》`, `」`, `］`, `]`, `'`, `"`];
+    const aryLeft  = [`“`, `【`, `〖`, `『`, `《`, `「`, `［`, `[`, `'`, `"`, `‘`, `《`];
+    const aryRight = [`”`, `】`, `〗`, `』`, `》`, `」`, `］`, `]`, `'`, `"`, `’`, `》`];
 
     // 可指定起始字符
     return function (str, cLeft, cRight){
@@ -97,8 +97,8 @@ bus.on('句型转正则', function (){
                     if (k === aryTmp.length - 1) {
                         sTmp += bus.at('正则转义', aryTmp[k]);
                     }else{
-                        if (/[0-9１２３４５６７８９０/]\s*$/.test(aryTmp[k])               // 斜杠前跟着的是数字或斜杠
-                            || /^\s*[0-9１２３４５６７８９０/]/.test(aryTmp[k+1])) {       // 斜杠后跟着的是数字或斜杠
+                        if (/[0-9１２３４５６７８９０/]\s*$/.test(aryTmp[k])                // 斜杠前跟着的是数字或斜杠
+                            || /^\s*[0-9１２３４５６７８９０/]/.test(aryTmp[k+1])) {        // 斜杠后跟着的是数字或斜杠
                             sTmp += bus.at('正则转义', aryTmp[k] + '/');                    // 按正常斜杠看待
                         }else{
                             sTmp += bus.at('正则转义', aryTmp[k]) + '|';                    // 斜杠是或的意思，转义成正则语法字符
