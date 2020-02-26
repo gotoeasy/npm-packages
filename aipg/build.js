@@ -1,6 +1,12 @@
 const File = require('@gotoeasy/file');
 const csjs = require('@gotoeasy/csjs');
 
+(async ()=>{
+    await run();
+})();
+
+async function run(){
+
     let fileIndex = File.resolve(__dirname, './index.js');
 
     let ary = [];
@@ -32,18 +38,25 @@ const csjs = require('@gotoeasy/csjs');
     js = js.replace(/const\s+bus\s*=\s*require\(\s*['"]{1,1}@gotoeasy\/bus['"]{1,1}\)\s*[;]*/g, '');
     js = js.replace(/const\s+postobject\s*=\s*require\(\s*['"]{1,1}@gotoeasy\/postobject['"]{1,1}\)\s*[;]*/g, '');
 
+    let sentences = await readSentences();
+
     js = `module.exports = (function(){
         const bus = require("@gotoeasy/bus");
         const postobject = require("@gotoeasy/postobject");
 
+        console.time('load');
+
+        ${sentences}
+
         ${js}
+
     }());
     `;
 
     js = csjs.formatJs(js);         // 便于确认代码，格式化代码且不删除注释
 
     File.write(__dirname + '/index.js', js);
-
+}
 
 function getIndexSrc(){
 
@@ -101,3 +114,67 @@ async function watch(opts){
     `;
 
 }
+
+
+async function readSentences(){
+
+    let XlsxPopulate = require('xlsx-populate');
+    let workbook = await XlsxPopulate.fromFileAsync('src/00-sentence.xlsx');
+    let sheet = workbook.sheet('句型');
+
+    let ary = [];
+    for (let i=2; i<100; i++) {
+        let id = i - 1;
+        let type = sheet.cell('B' + i).value();
+        let sentence = sheet.cell('C' + i).value();
+        let regexp = /^(?:如果|若)(.+)[，,\\n]\s*(则|那么)?(.+)[．.。]?$/.toString();
+        let note = sheet.cell('E' + i).value();
+
+        if (sentence && sentence.get) {
+            // 富文本
+            let txt = '';
+            for (let i=0,fragment,val; fragment=sentence.get(i++); ) {
+                val = fragment.value();
+                if ( val != null ) {
+                    txt += val;
+                }
+            }
+            sentence = txt;
+        }
+
+        if (type && sentence) {
+            ary.push({id, type, sentence, regexp, note});
+        }else{
+            break;
+        }
+    }
+
+    let src = JSON.stringify(ary, null, 4);
+    let arySrc = src.split('\n');
+    for (let i=0,str; i<arySrc.length; i++) {
+        str = arySrc[i];
+        if (/^\s*"regexp"/.test(str)) {
+            str = str.replace(/"regexp": "/, '"regexp": ').replace(/",$/, ',').replace(/"$/, '');
+            arySrc[i] = str;
+        }
+    }
+
+    let rs = arySrc.join('\r\n');
+    rs = `
+        // ------- build sentences start
+        bus.on("句型", function() {
+            let sentences = ${rs};
+
+            return function() {
+                return sentences;
+            };
+        });
+        // ------- build sentences end
+
+    `;
+    
+   // console.info(rs);
+    return rs;
+
+}
+

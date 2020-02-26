@@ -3,6 +3,37 @@ module.exports = (function() {
     const postobject = require("@gotoeasy/postobject");
 
     console.time("load");
+
+    // ------- build sentences start
+    bus.on("句型", function() {
+        let sentences = [
+            {
+                id: 1,
+                type: "IF",
+                sentence: "如果/若 …，[则/那么] …[。]",
+                regexp: /^(?:如果|若)(.+)[，,\\\\n]\\s*(则|那么)?(.+)[．.。]?$/
+            },
+            {
+                id: 2,
+                type: "IF",
+                sentence: "[当] … 时/的时候，…[。]",
+                regexp: /^(?:如果|若)(.+)[，,\\\\n]\\s*(则|那么)?(.+)[．.。]?$/
+            },
+            {
+                id: 3,
+                type: "IFELSE",
+                sentence: "如果/若 …，[则/那么] …[，/。]否则 … [。]",
+                regexp: /^(?:如果|若)(.+)[，,\\\\n]\\s*(则|那么)?(.+)[．.。]?$/
+            }
+        ];
+
+        return function() {
+            return sentences;
+        };
+    });
+    // ------- build sentences end
+
+    console.time("load");
     /* ------- a00m-aipg-env ------- */
     (() => {
         // ------- a00m-aipg-env start
