@@ -38,7 +38,7 @@ async function run(){
     js = js.replace(/const\s+bus\s*=\s*require\(\s*['"]{1,1}@gotoeasy\/bus['"]{1,1}\)\s*[;]*/g, '');
     js = js.replace(/const\s+postobject\s*=\s*require\(\s*['"]{1,1}@gotoeasy\/postobject['"]{1,1}\)\s*[;]*/g, '');
 
-    let sentences = await readSentences();
+    let sentences = await readSentences();  // 句型
 
     js = `module.exports = (function(){
         const bus = require("@gotoeasy/bus");
