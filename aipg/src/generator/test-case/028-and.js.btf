@@ -1,0 +1,85 @@
+[node]
+{
+    type : Types.And,
+    nodes : [{
+        type : Types.GreaterThan,
+        nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'cnt',
+            },{
+                type : Types.Literal,
+                kind : Kinds.Integer,
+                value : 999,
+        }]
+    },{
+        type : Types.LessThan,
+        nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'amount',
+            },{
+                type : Types.Literal,
+                kind : Kinds.Integer,
+                value : 123,
+        }]
+    }]
+}
+
+[src]
+cnt > 999 && amount < 123
+==================================
+[node]
+{
+    type : Types.And,
+    nodes : [{
+        type : Types.GreaterThan,
+        nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'cnt',
+            },{
+                type : Types.Literal,
+                kind : Kinds.Integer,
+                value : 999,
+        }]
+    },{
+        type : Types.LessThan,
+        nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'amount',
+            },{
+                type : Types.Literal,
+                kind : Kinds.Integer,
+                value : 123,
+        }]
+    },{
+        type : Types.Or,
+        nodes : [{
+            type : Types.Equal,
+            nodes : [{
+                    type : Types.Var,
+                    value : 'abc',
+                },{
+                    type : Types.Literal,
+                    kind : Kinds.String,
+                    value : 'abc',
+            }]
+        },{
+            type : Types.ExactEqual,
+            nodes : [{
+                    type : Types.Var,
+                    value : 'note',
+                },{
+                    type : Types.Literal,
+                    kind : Kinds.String,
+                    value : '123',
+            }]
+        }]
+    }]
+}
+
+[src]
+cnt > 999 && amount < 123 && (abc == "abc" || note === "123")
+==================================

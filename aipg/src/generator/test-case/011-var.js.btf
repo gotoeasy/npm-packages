@@ -1,0 +1,8 @@
+[node]
+{
+    type : Types.Var,
+    value : 'count',
+}
+
+[src]
+count

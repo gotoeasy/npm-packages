@@ -1,0 +1,18 @@
+[node]
+{
+    type : Types.Literal,
+    kind : Kinds.String,
+    value : '12345',
+}
+
+[src]
+"12345"
+=====================================================
+[node]
+{
+    type : Types.Literal,
+    value : '12345',
+}
+
+[src]
+12345

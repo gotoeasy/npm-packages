@@ -1,0 +1,16 @@
+[node]
+{
+    type : Types.LessThan,
+    nodes : [{
+            type : Types.Var,
+            kind : Kinds.Integer,
+            value : 'cnt',
+        },{
+            type : Types.Literal,
+            value : 999,
+    }]
+}
+
+[src]
+cnt < 999
+==================================

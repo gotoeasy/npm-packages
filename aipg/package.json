@@ -1,6 +1,6 @@
 {
   "name": "aipg",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
     "@gotoeasy/bus": "0.2.*",
@@ -12,13 +12,16 @@
     "@gotoeasy/csjs": "0.4.*",
     "@gotoeasy/npm": "0.2.*",
     "@gotoeasy/file": "0.2.*",
+    "@gotoeasy/btf": "1.3.*",
     "ava": "*",
     "nyc": "*",
+    "opn": "*",
     "eslint": "*"
   },
   "scripts": {
     "eslint": "node node_modules/eslint/bin/eslint index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc ava",
+    "coverage": "nyc ava & nyc report --reporter=html & node coverage"
   },
   "description": "自动编程，智能编程",
   "keywords": [

@@ -1,0 +1,20 @@
+[node]
+{
+    type : Types.Subtract,
+    nodes : [{
+            type : Types.Var,
+            kind : Kinds.Integer,
+            value : 'cnt1',
+        },{
+            type : Types.Var,
+            kind : Kinds.Integer,
+            value : 'cnt2',
+        },{
+            type : Types.Literal,
+            value : 123,
+    }]
+}
+
+[src]
+cnt1 - cnt2 - 123
+==================================

@@ -1,0 +1,16 @@
+[node]
+{
+    type : 'LessEqualThan',
+    nodes : [{
+            type : 'Var',
+            kind : 'Integer',
+            value : 'cnt',
+        },{
+            type : 'Literal',
+            value : 999,
+    }]
+}
+
+[src]
+cnt <= 999
+==================================

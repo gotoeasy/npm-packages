@@ -1,0 +1,52 @@
+[node]
+{
+    type : Types.Return,
+}
+
+[src]
+return;
+==================================
+[node]
+{
+    type : Types.Return,
+    kind : Kinds.Var,
+    value : 'cnt',
+}
+
+[src]
+return cnt;
+==================================
+[node]
+{
+    type : Types.Return,
+    kind : Kinds.String,
+    value : 'abcd',
+}
+
+[src]
+return "abcd";
+==================================
+[node]
+{
+    type : Types.Return,
+    kind : Kinds.Number,
+    value : 12345,
+}
+
+[src]
+return 12345;
+==================================
+[node]
+{
+    type : Types.Return,
+    nodes : [{
+            type : Types.Var,
+            kind : Kinds.Integer,
+            value : 'amount',
+        }
+    ]
+}
+
+[src]
+return amount;
+==================================

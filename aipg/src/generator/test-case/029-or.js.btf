@@ -1,0 +1,31 @@
+[node]
+{
+    type : Types.Or,
+    nodes : [{
+        type : Types.GreaterThan,
+        nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'cnt',
+            },{
+                type : Types.Literal,
+                kind : Kinds.Integer,
+                value : 999,
+        }]
+    },{
+        type : Types.LessThan,
+        nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'amount',
+            },{
+                type : Types.Literal,
+                kind : Kinds.Integer,
+                value : 123,
+        }]
+    }]
+}
+
+[src]
+cnt > 999 || amount < 123
+==================================
