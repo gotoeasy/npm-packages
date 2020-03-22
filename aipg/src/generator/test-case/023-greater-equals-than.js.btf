@@ -1,6 +1,6 @@
 [node]
 {
-    type : Types.Equal,
+    type : Types.GreaterEqualsThan,
     nodes : [{
             type : Types.Var,
             kind : Kinds.Integer,
@@ -12,5 +12,5 @@
 }
 
 [src]
-cnt == 999
+cnt >= 999
 ==================================

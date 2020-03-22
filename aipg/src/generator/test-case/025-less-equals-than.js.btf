@@ -1,6 +1,6 @@
 [node]
 {
-    type : 'LessEqualThan',
+    type : 'LessEqualsThan',
     nodes : [{
             type : 'Var',
             kind : 'Integer',

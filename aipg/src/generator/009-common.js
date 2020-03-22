@@ -1,5 +1,9 @@
 gen.on('代码生成', function (node){
-    return gen.at(node.type, node);
+    let rs = gen.at(node.type, node);
+    if (!rs) {
+        console.warn('generator not found', '..........', node.type);
+    }
+    return rs;
 });
 
 gen.on('查找子节点', function (node, type){

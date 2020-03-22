@@ -57,7 +57,7 @@ cnt > 999 && amount < 123
     },{
         type : Types.Or,
         nodes : [{
-            type : Types.Equal,
+            type : Types.Equals,
             nodes : [{
                     type : Types.Var,
                     value : 'abc',
@@ -67,7 +67,7 @@ cnt > 999 && amount < 123
                     value : 'abc',
             }]
         },{
-            type : Types.ExactEqual,
+            type : Types.ExactEquals,
             nodes : [{
                     type : Types.Var,
                     value : 'note',

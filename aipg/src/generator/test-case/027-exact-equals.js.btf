@@ -1,6 +1,6 @@
 [node]
 {
-    type : Types.ExactEqual,
+    type : Types.ExactEquals,
     nodes : [{
             type : Types.Var,
             kind : Kinds.Integer,

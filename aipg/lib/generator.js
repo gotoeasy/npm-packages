@@ -3,24 +3,30 @@
 const Types = {
     Var: "Var", // 变量
     Literal: "Literal", // 常数
+    Call: "Call", // 调用
+    Condition: "Condition", // 条件
+    Body: "Body", // 内容
+    Statement: "Statement", // 语句
+    IfElseStatement: "IfElseStatement", // IfElse语句
     Break: "Break", // break
     Continue: "Continue", // continue
     Return: "Return", // return
     If: "If", // if
-    GreaterThan: "GreaterThan", // 大于
-    GreaterEqualThan: "GreaterEqualThan", // 大于等于
-    LessThan: "LessThan", // 小于
-    LessEqualThan: "LessEqualThan", // 小于等于
-    Equal: "Equal", // 等于
-    ExactEqual: "ExactEqual", // 严格等于
-    And: "And", // 并且
-    Or: "Or", // 或者
-    Add: "Add", // 加
-    Subtract: "Subtract", // 减
-    Multiply: "Multiply", // 乘
-    Divide: "Divide", // 除
-    Condition: "Condition", // 条件
-    Body: "Body", // 内容
+    ElseIf: "ElseIf", // else if
+    Else: "Else", // else
+    GreaterThan: "GreaterThan", // >
+    GreaterEqualsThan: "GreaterEqualsThan", // >=
+    LessThan: "LessThan", // <
+    LessEqualsThan: "LessEqualsThan", // <=
+    Equal: "Equal", // =
+    Equals: "Equals", // ==
+    ExactEquals: "ExactEquals", // ===
+    And: "And", // &&
+    Or: "Or", // ||
+    Add: "Add", // +
+    Subtract: "Subtract", // -
+    Multiply: "Multiply", // *
+    Divide: "Divide", // /
 };
 
 /* ------- 001-consts-kinds ------- */
@@ -93,7 +99,11 @@ function Generator() {
 
 /* ------- 009-common ------- */
 gen.on("代码生成", function (node) {
-    return gen.at(node.type, node);
+    let rs = gen.at(node.type, node);
+    if (!rs) {
+        console.warn("generator not found", "..........", node.type);
+    }
+    return rs;
 });
 
 gen.on("查找子节点", function (node, type) {
@@ -146,11 +156,24 @@ gen.on(Types.Return, function (node) {
     }
 });
 
-/* ------- 021-if ------- */
+/* ------- 021-if-else ------- */
 gen.on(Types.If, function (node) {
     let condition = gen.at("代码生成", gen.at("查找子节点", node, Types.Condition));
     let body = gen.at("代码生成", gen.at("查找子节点", node, Types.Body));
     return `if ( ${condition} ){\r\n    ${body}\r\n}`;
+});
+
+gen.on(Types.ElseIf, function (node) {
+    let condition = gen.at("代码生成", gen.at("查找子节点", node, Types.Condition));
+    let body = gen.at("代码生成", gen.at("查找子节点", node, Types.Body));
+    return `else if ( ${condition} ){\r\n    ${body}\r\n}`;
+});
+
+gen.on(Types.Else, function (node) {
+    let ary = [];
+    node.nodes.forEach((nd) => ary.push(gen.at("代码生成", nd)));
+    let body = ary.join("\r\n");
+    return `else {\r\n    ${body}\r\n}`;
 });
 
 gen.on(Types.Condition, function (node) {
@@ -171,8 +194,8 @@ gen.on(Types.GreaterThan, function (node) {
     return `${left} > ${right}`;
 });
 
-/* ------- 023-greater-equal-than ------- */
-gen.on(Types.GreaterEqualThan, function (node) {
+/* ------- 023-greater-equals-than ------- */
+gen.on(Types.GreaterEqualsThan, function (node) {
     let left = gen.at("代码生成", node.nodes[0]);
     let right = gen.at("代码生成", node.nodes[1]);
     return `${left} >= ${right}`;
@@ -185,22 +208,22 @@ gen.on(Types.LessThan, function (node) {
     return `${left} < ${right}`;
 });
 
-/* ------- 025-less-equal-than ------- */
-gen.on(Types.LessEqualThan, function (node) {
+/* ------- 025-less-equals-than ------- */
+gen.on(Types.LessEqualsThan, function (node) {
     let left = gen.at("代码生成", node.nodes[0]);
     let right = gen.at("代码生成", node.nodes[1]);
     return `${left} <= ${right}`;
 });
 
-/* ------- 026-equal ------- */
-gen.on(Types.Equal, function (node) {
+/* ------- 026-equals ------- */
+gen.on(Types.Equals, function (node) {
     let left = gen.at("代码生成", node.nodes[0]);
     let right = gen.at("代码生成", node.nodes[1]);
     return `${left} == ${right}`;
 });
 
-/* ------- 027-exact-equal ------- */
-gen.on(Types.ExactEqual, function (node) {
+/* ------- 027-exact-equals ------- */
+gen.on(Types.ExactEquals, function (node) {
     let left = gen.at("代码生成", node.nodes[0]);
     let right = gen.at("代码生成", node.nodes[1]);
     return `${left} === ${right}`;
@@ -264,6 +287,33 @@ gen.on(Types.Divide, function (node) {
         ary.push(rs);
     }
     return ary.join(" / ");
+});
+
+/* ------- 035-equal ------- */
+gen.on(Types.Equal, function (node) {
+    let left = gen.at("代码生成", node.nodes[0]);
+    let right = gen.at("代码生成", node.nodes[1]);
+    return `${left} = ${right}`;
+});
+
+/* ------- 041-if-else-statement ------- */
+gen.on(Types.IfElseStatement, function (node) {
+    let ary = [];
+    node.nodes.forEach((nd) => ary.push(gen.at("代码生成", nd)));
+    return ary.join("\r\n");
+});
+
+/* ------- 042-statement ------- */
+gen.on(Types.Statement, function (node) {
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        let rs = gen.at("代码生成", nd);
+        if (nd.type === Types.Equal || nd.type === Types.Call) {
+            rs = rs + ";";
+        }
+        ary.push(rs);
+    });
+    return ary.join("\r\n");
 });
 
 /* ------- 999-exports ------- */

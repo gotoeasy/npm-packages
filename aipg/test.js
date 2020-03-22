@@ -8,24 +8,30 @@ const generator = require("./lib/generator");
 const Types = {
     Var: "Var", // 变量
     Literal: "Literal", // 常数
+    Call: "Call", // 调用
+    Condition: "Condition", // 条件
+    Body: "Body", // 内容
+    Statement: "Statement", // 语句
+    IfElseStatement: "IfElseStatement", // IfElse语句
     Break: "Break", // break
     Continue: "Continue", // continue
     Return: "Return", // return
     If: "If", // if
-    GreaterThan: "GreaterThan", // 大于
-    GreaterEqualThan: "GreaterEqualThan", // 大于等于
-    LessThan: "LessThan", // 小于
-    LessEqualThan: "LessEqualThan", // 小于等于
-    Equal: "Equal", // 等于
-    ExactEqual: "ExactEqual", // 严格等于
-    And: "And", // 并且
-    Or: "Or", // 或者
-    Add: "Add", // 加
-    Subtract: "Subtract", // 减
-    Multiply: "Multiply", // 乘
-    Divide: "Divide", // 除
-    Condition: "Condition", // 条件
-    Body: "Body", // 内容
+    ElseIf: "ElseIf", // else if
+    Else: "Else", // else
+    GreaterThan: "GreaterThan", // >
+    GreaterEqualsThan: "GreaterEqualsThan", // >=
+    LessThan: "LessThan", // <
+    LessEqualsThan: "LessEqualsThan", // <=
+    Equal: "Equal", // =
+    Equals: "Equals", // ==
+    ExactEquals: "ExactEquals", // ===
+    And: "And", // &&
+    Or: "Or", // ||
+    Add: "Add", // +
+    Subtract: "Subtract", // -
+    Multiply: "Multiply", // *
+    Divide: "Divide", // /
 };
 
 // 数据类型定义
@@ -153,7 +159,7 @@ test("generator: 015-return.js - case 5", (t) => {
     t.is(src, oTest.src);
 });
 
-test("generator: 021-if.js", (t) => {
+test("generator: 021-if-else.js - case 1", (t) => {
     let node = {
         type: Types.If,
         nodes: [
@@ -199,6 +205,79 @@ test("generator: 021-if.js", (t) => {
     t.is(src, oTest.src);
 });
 
+test("generator: 021-if-else.js - case 2", (t) => {
+    let node = {
+        type: Types.ElseIf,
+        nodes: [
+            {
+                type: Types.Condition,
+                nodes: [
+                    {
+                        type: Types.GreaterThan,
+                        nodes: [
+                            {
+                                type: Types.Var,
+                                kind: Kinds.Integer,
+                                value: "amount",
+                            },
+                            {
+                                type: Types.Literal,
+                                value: 0,
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                type: Types.Body,
+                nodes: [
+                    {
+                        type: Types.Return,
+                        nodes: [
+                            {
+                                type: Types.Var,
+                                kind: Kinds.Integer,
+                                value: "amount",
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = { src: "else if ( amount > 0 ){\r\n    return amount;\r\n}" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 021-if-else.js - case 3", (t) => {
+    let node = {
+        type: Types.Else,
+        nodes: [
+            {
+                type: Types.Body,
+                nodes: [
+                    {
+                        type: Types.Return,
+                        nodes: [
+                            {
+                                type: Types.Var,
+                                kind: Kinds.Integer,
+                                value: "amount",
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = { src: "else {\r\n    return amount;\r\n}" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
 test("generator: 022-greater-than.js", (t) => {
     let node = {
         type: Types.GreaterThan,
@@ -220,9 +299,9 @@ test("generator: 022-greater-than.js", (t) => {
     t.is(src, oTest.src);
 });
 
-test("generator: 023-greater-equal-than.js", (t) => {
+test("generator: 023-greater-equals-than.js", (t) => {
     let node = {
-        type: Types.GreaterEqualThan,
+        type: Types.GreaterEqualsThan,
         nodes: [
             {
                 type: Types.Var,
@@ -262,9 +341,9 @@ test("generator: 024-less-than.js", (t) => {
     t.is(src, oTest.src);
 });
 
-test("generator: 025-less-equal-than.js", (t) => {
+test("generator: 025-less-equals-than.js", (t) => {
     let node = {
-        type: "LessEqualThan",
+        type: "LessEqualsThan",
         nodes: [
             {
                 type: "Var",
@@ -283,9 +362,9 @@ test("generator: 025-less-equal-than.js", (t) => {
     t.is(src, oTest.src);
 });
 
-test("generator: 026-equal.js", (t) => {
+test("generator: 026-equals.js", (t) => {
     let node = {
-        type: Types.Equal,
+        type: Types.Equals,
         nodes: [
             {
                 type: Types.Var,
@@ -304,9 +383,9 @@ test("generator: 026-equal.js", (t) => {
     t.is(src, oTest.src);
 });
 
-test("generator: 027-exact-equal.js", (t) => {
+test("generator: 027-exact-equals.js", (t) => {
     let node = {
-        type: Types.ExactEqual,
+        type: Types.ExactEquals,
         nodes: [
             {
                 type: Types.Var,
@@ -405,7 +484,7 @@ test("generator: 028-and.js - case 2", (t) => {
                 type: Types.Or,
                 nodes: [
                     {
-                        type: Types.Equal,
+                        type: Types.Equals,
                         nodes: [
                             {
                                 type: Types.Var,
@@ -419,7 +498,7 @@ test("generator: 028-and.js - case 2", (t) => {
                         ],
                     },
                     {
-                        type: Types.ExactEqual,
+                        type: Types.ExactEquals,
                         nodes: [
                             {
                                 type: Types.Var,
@@ -678,6 +757,255 @@ test("generator: 034-divide.js - case 2", (t) => {
     };
 
     let oTest = { src: "cnt1 / (cnt1 + cnt2) / (cnt1 - cnt2)" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 035-equal.js", (t) => {
+    let node = {
+        type: Types.Equal,
+        nodes: [
+            {
+                type: Types.Var,
+                kind: Kinds.Integer,
+                value: "cnt",
+            },
+            {
+                type: Types.Literal,
+                value: 123,
+            },
+        ],
+    };
+
+    let oTest = { src: "cnt = 123" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 041-if-else-statement.js - case 1", (t) => {
+    let node = {
+        type: Types.IfElseStatement,
+        nodes: [
+            {
+                type: Types.If,
+                nodes: [
+                    {
+                        type: Types.Condition,
+                        nodes: [
+                            {
+                                type: Types.GreaterThan,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "amount",
+                                    },
+                                    {
+                                        type: Types.Literal,
+                                        value: 0,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: Types.Body,
+                        nodes: [
+                            {
+                                type: Types.Return,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "amount",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                type: Types.ElseIf,
+                nodes: [
+                    {
+                        type: Types.Condition,
+                        nodes: [
+                            {
+                                type: Types.LessEqualsThan,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "count",
+                                    },
+                                    {
+                                        type: Types.Literal,
+                                        value: 0,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: Types.Body,
+                        nodes: [
+                            {
+                                type: Types.Return,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        value: "count",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = { src: "if ( amount > 0 ){\r\n    return amount;\r\n}\r\nelse if ( count <= 0 ){\r\n    return count;\r\n}" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 041-if-else-statement.js - case 2", (t) => {
+    let node = {
+        type: Types.IfElseStatement,
+        nodes: [
+            {
+                type: Types.If,
+                nodes: [
+                    {
+                        type: Types.Condition,
+                        nodes: [
+                            {
+                                type: Types.GreaterThan,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "amount",
+                                    },
+                                    {
+                                        type: Types.Literal,
+                                        value: 0,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: Types.Body,
+                        nodes: [
+                            {
+                                type: Types.Return,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "amount",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                type: Types.ElseIf,
+                nodes: [
+                    {
+                        type: Types.Condition,
+                        nodes: [
+                            {
+                                type: Types.LessEqualsThan,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "count",
+                                    },
+                                    {
+                                        type: Types.Literal,
+                                        value: 0,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: Types.Body,
+                        nodes: [
+                            {
+                                type: Types.Return,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        value: "count",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                type: Types.Else,
+                nodes: [
+                    {
+                        type: Types.Return,
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = {
+        src: "if ( amount > 0 ){\r\n    return amount;\r\n}\r\nelse if ( count <= 0 ){\r\n    return count;\r\n}\r\nelse {\r\n    return;\r\n}",
+    };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 042-statement.js", (t) => {
+    let node = {
+        type: Types.Statement,
+        nodes: [
+            {
+                type: Types.Equal,
+                nodes: [
+                    {
+                        type: Types.Var,
+                        kind: Kinds.Integer,
+                        value: "cnt",
+                    },
+                    {
+                        type: Types.Literal,
+                        value: 123,
+                    },
+                ],
+            },
+            {
+                type: Types.Equal,
+                nodes: [
+                    {
+                        type: Types.Var,
+                        kind: Kinds.Integer,
+                        value: "cnt",
+                    },
+                    {
+                        type: Types.Literal,
+                        value: 123,
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = { src: "cnt = 123;\r\ncnt = 123;" };
     let src = generator(node);
     t.is(src, oTest.src);
 });

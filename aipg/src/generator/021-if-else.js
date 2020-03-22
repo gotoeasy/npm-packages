@@ -4,6 +4,19 @@ gen.on(Types.If, function (node){
     return `if ( ${condition} ){\r\n    ${body}\r\n}`;
 });
 
+gen.on(Types.ElseIf, function (node){
+    let condition = gen.at('代码生成', gen.at('查找子节点', node, Types.Condition));
+    let body = gen.at('代码生成', gen.at('查找子节点', node, Types.Body));
+    return `else if ( ${condition} ){\r\n    ${body}\r\n}`;
+});
+
+gen.on(Types.Else, function (node){
+    let ary = [];
+    node.nodes.forEach(nd => ary.push(gen.at('代码生成', nd)));
+    let body = ary.join('\r\n');
+    return `else {\r\n    ${body}\r\n}`;
+});
+
 gen.on(Types.Condition, function (node){
     // TODO
     return gen.at('代码生成', node.nodes[0]);
