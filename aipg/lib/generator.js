@@ -27,6 +27,10 @@ const Types = {
     Subtract: "Subtract", // -
     Multiply: "Multiply", // *
     Divide: "Divide", // /
+    LeftAddAdd: "LeftAddAdd", // ++i
+    RightAddAdd: "RightAddAdd", // i++
+    LeftSubtractSubtract: "LeftSubtractSubtract", // --i
+    RightSubtractSubtract: "RightSubtractSubtract", // i--
 };
 
 /* ------- 001-consts-kinds ------- */
@@ -64,19 +68,19 @@ function Generator() {
             return setFn ? [...setFn] : []; // 返回函数数组
         }
     };
-
+    /*
     // 卸载事件函数
     const off = (key, fn) => {
-        if (!map.has(key)) return;
+        if ( !map.has(key) ) return;
 
-        if (!fn) {
+        if ( !fn ) {
             map.delete(key);
             return;
         }
 
         map.get(key).delete(fn);
     };
-
+*/
     // 逐个执行函数，遇生成结果非空时停止执行并返回，无函数或结果全空时返回空串
     const at = (key, ...args) => {
         if (!map.has(key)) return ""; // 找不到时返回空串
@@ -93,12 +97,15 @@ function Generator() {
 
     // ------------- 对象方法 ------------
     this.on = on;
-    this.off = off;
+    //this.off = off;
     this.at = at;
 }
 
 /* ------- 009-common ------- */
 gen.on("代码生成", function (node) {
+    if (!node || !node.type) {
+        return "";
+    }
     let rs = gen.at(node.type, node);
     if (!rs) {
         console.warn("generator not found", "..........", node.type);
@@ -296,6 +303,30 @@ gen.on(Types.Equal, function (node) {
     return `${left} = ${right}`;
 });
 
+/* ------- 036-left-add-add ------- */
+gen.on(Types.LeftAddAdd, function (node) {
+    let rs = gen.at("代码生成", node.nodes[0]);
+    return `++${rs}`;
+});
+
+/* ------- 037-right-add-add ------- */
+gen.on(Types.RightAddAdd, function (node) {
+    let rs = gen.at("代码生成", node.nodes[0]);
+    return `${rs}++`;
+});
+
+/* ------- 038-left-subtract-subtract ------- */
+gen.on(Types.LeftSubtractSubtract, function (node) {
+    let rs = gen.at("代码生成", node.nodes[0]);
+    return `--${rs}`;
+});
+
+/* ------- 039-right-subtract-subtract ------- */
+gen.on(Types.RightSubtractSubtract, function (node) {
+    let rs = gen.at("代码生成", node.nodes[0]);
+    return `${rs}--`;
+});
+
 /* ------- 041-if-else-statement ------- */
 gen.on(Types.IfElseStatement, function (node) {
     let ary = [];
@@ -305,6 +336,7 @@ gen.on(Types.IfElseStatement, function (node) {
 
 /* ------- 042-statement ------- */
 gen.on(Types.Statement, function (node) {
+    // TODO 什么时候加分号？
     let ary = [];
     node.nodes.forEach((nd) => {
         let rs = gen.at("代码生成", nd);
@@ -314,6 +346,21 @@ gen.on(Types.Statement, function (node) {
         ary.push(rs);
     });
     return ary.join("\r\n");
+});
+
+/* ------- 051-call ------- */
+gen.on(Types.Call, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return `${node.value}()`;
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+
+    // TODO 参数
+    return `${node.value}(${ary.join(", ")})`;
 });
 
 /* ------- 999-exports ------- */

@@ -26,4 +26,8 @@ const Types = {
     Subtract                : 'Subtract',                       // -
     Multiply                : 'Multiply',                       // *
     Divide                  : 'Divide',                         // /
+    LeftAddAdd              : 'LeftAddAdd',                     // ++i
+    RightAddAdd             : 'RightAddAdd',                    // i++
+    LeftSubtractSubtract    : 'LeftSubtractSubtract',           // --i
+    RightSubtractSubtract   : 'RightSubtractSubtract',          // i--
 };

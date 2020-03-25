@@ -1,0 +1,9 @@
+[node]
+{
+    type : Types.Call,
+    value : 'fnTest',
+}
+
+[src]
+fnTest()
+==================================

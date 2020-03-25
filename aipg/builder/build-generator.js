@@ -54,7 +54,7 @@ function buildGeneratorTest(packageFile){
         let docs = btf.getDocuments();
         let idx = docs.length > 1 ? 1 : 0;
         docs.forEach(doc => {
-
+            // 拼装测试脚本
             let node = doc.getText('node');
             if (node) {
                 let src = doc.getText('src');

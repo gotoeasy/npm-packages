@@ -24,7 +24,7 @@ function Generator(){
             return setFn ? [...setFn] : [];                                         // 返回函数数组
         }
     };
-
+/*
     // 卸载事件函数
     const off = (key, fn) => {
         if ( !map.has(key) ) return;
@@ -36,7 +36,7 @@ function Generator(){
 
         map.get(key).delete(fn);
     };
-
+*/
     // 逐个执行函数，遇生成结果非空时停止执行并返回，无函数或结果全空时返回空串
     const at = (key, ...args) => {
         if ( !map.has(key) ) return '';                                             // 找不到时返回空串
@@ -53,6 +53,6 @@ function Generator(){
 
     // ------------- 对象方法 ------------
     this.on = on;
-    this.off = off;
+    //this.off = off;
     this.at = at;
 }

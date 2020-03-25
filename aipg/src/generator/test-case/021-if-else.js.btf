@@ -96,3 +96,38 @@ else {
     return amount;
 }
 ==================================
+[node] // 错误节点测试覆盖率
+{
+    type : Types.If,
+    nodes : [{
+            type : Types.Condition,
+            nodes : [{
+                type : Types.GreaterThan,
+                nodes : [{
+                        type : Types.Var,
+                        kind : Kinds.Integer,
+                        value : 'amount',
+                    },{
+                        type : Types.Literal,
+                        value : 0,
+                    }]
+            }]
+        }
+    ]
+}
+
+[src]
+if ( amount > 0 ){
+    
+}
+==================================
+[node] // 错误节点测试覆盖率
+{
+    type : Types.If,
+}
+
+[src]
+if (  ){
+    
+}
+==================================

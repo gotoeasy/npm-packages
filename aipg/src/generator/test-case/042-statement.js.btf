@@ -21,6 +21,21 @@
                     type : Types.Literal,
                     value : 123,
             }]
+        },{
+            type : Types.Call,
+            value : 'fnTest',
+        },{
+            type : Types.Call,
+            value : 'fnTest2',
+            nodes : [],
+        },{
+            type : Types.Call,
+            value : 'fnTest3',
+            nodes : [{
+                type : Types.Var,
+                kind : Kinds.Integer,
+                value : 'cnt',
+            }],
     }]
 
 }
@@ -28,4 +43,42 @@
 [src]
 cnt = 123;
 cnt = 123;
+fnTest();
+fnTest2();
+fnTest3(cnt);
+==================================
+[node]
+{
+    type : Types.Statement,
+    nodes : [{
+        type : Types.If,
+        nodes : [{
+                type : Types.Condition,
+                nodes : [{
+                    type : Types.GreaterThan,
+                    nodes : [{
+                            type : Types.Var,
+                            kind : Kinds.Integer,
+                            value : 'amount',
+                        },{
+                            type : Types.Literal,
+                            value : 0,
+                        }]
+                }]
+            },{
+                type : Types.Body,
+                nodes : [{
+                        type : Types.Return,
+                    }            
+                ]
+            }
+        ]
+    }]
+
+}
+
+[src]
+if ( amount > 0 ){
+    return;
+}
 ==================================

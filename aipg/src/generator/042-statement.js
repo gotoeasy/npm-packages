@@ -1,4 +1,5 @@
 gen.on(Types.Statement, function (node){
+    // TODO 什么时候加分号？
     let ary = [];
     node.nodes.forEach(nd => {
         let rs = gen.at('代码生成', nd);

@@ -1,0 +1,13 @@
+[node]
+{
+    type : Types.LeftSubtractSubtract,
+    nodes : [{
+            type : Types.Var,
+            kind : Kinds.Integer,
+            value : 'cnt',
+    }]
+}
+
+[src]
+--cnt
+==================================

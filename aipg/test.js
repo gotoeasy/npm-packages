@@ -32,6 +32,10 @@ const Types = {
     Subtract: "Subtract", // -
     Multiply: "Multiply", // *
     Divide: "Divide", // /
+    LeftAddAdd: "LeftAddAdd", // ++i
+    RightAddAdd: "RightAddAdd", // i++
+    LeftSubtractSubtract: "LeftSubtractSubtract", // --i
+    RightSubtractSubtract: "RightSubtractSubtract", // i--
 };
 
 // 数据类型定义
@@ -41,6 +45,20 @@ const Kinds = {
     Number: "Number", // 数值
     Integer: "Integer", // Integer
 };
+
+test("generator: 008-generator.js - case 1", (t) => {
+    let node = undefined;
+    let oTest = { src: "" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 008-generator.js - case 2", (t) => {
+    let node = "xxxxxx";
+    let oTest = { src: "" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
 
 test("generator: 011-var.js", (t) => {
     let node = {
@@ -274,6 +292,47 @@ test("generator: 021-if-else.js - case 3", (t) => {
     };
 
     let oTest = { src: "else {\r\n    return amount;\r\n}" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 021-if-else.js - case 4", (t) => {
+    let node = {
+        type: Types.If,
+        nodes: [
+            {
+                type: Types.Condition,
+                nodes: [
+                    {
+                        type: Types.GreaterThan,
+                        nodes: [
+                            {
+                                type: Types.Var,
+                                kind: Kinds.Integer,
+                                value: "amount",
+                            },
+                            {
+                                type: Types.Literal,
+                                value: 0,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = { src: "if ( amount > 0 ){\r\n    \r\n}" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 021-if-else.js - case 5", (t) => {
+    let node = {
+        type: Types.If,
+    };
+
+    let oTest = { src: "if (  ){\r\n    \r\n}" };
     let src = generator(node);
     t.is(src, oTest.src);
 });
@@ -782,6 +841,74 @@ test("generator: 035-equal.js", (t) => {
     t.is(src, oTest.src);
 });
 
+test("generator: 036-left-add-add.js", (t) => {
+    let node = {
+        type: Types.LeftAddAdd,
+        nodes: [
+            {
+                type: Types.Var,
+                kind: Kinds.Integer,
+                value: "cnt",
+            },
+        ],
+    };
+
+    let oTest = { src: "++cnt" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 037-right-add-add.js", (t) => {
+    let node = {
+        type: Types.RightAddAdd,
+        nodes: [
+            {
+                type: Types.Var,
+                kind: Kinds.Integer,
+                value: "cnt",
+            },
+        ],
+    };
+
+    let oTest = { src: "cnt++" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 038-left-subtract-subtract.js", (t) => {
+    let node = {
+        type: Types.LeftSubtractSubtract,
+        nodes: [
+            {
+                type: Types.Var,
+                kind: Kinds.Integer,
+                value: "cnt",
+            },
+        ],
+    };
+
+    let oTest = { src: "--cnt" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 039-right-subtract-subtract.js", (t) => {
+    let node = {
+        type: Types.RightSubtractSubtract,
+        nodes: [
+            {
+                type: Types.Var,
+                kind: Kinds.Integer,
+                value: "cnt",
+            },
+        ],
+    };
+
+    let oTest = { src: "cnt--" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
 test("generator: 041-if-else-statement.js - case 1", (t) => {
     let node = {
         type: Types.IfElseStatement,
@@ -970,7 +1097,7 @@ test("generator: 041-if-else-statement.js - case 2", (t) => {
     t.is(src, oTest.src);
 });
 
-test("generator: 042-statement.js", (t) => {
+test("generator: 042-statement.js - case 1", (t) => {
     let node = {
         type: Types.Statement,
         nodes: [
@@ -1002,10 +1129,85 @@ test("generator: 042-statement.js", (t) => {
                     },
                 ],
             },
+            {
+                type: Types.Call,
+                value: "fnTest",
+            },
+            {
+                type: Types.Call,
+                value: "fnTest2",
+                nodes: [],
+            },
+            {
+                type: Types.Call,
+                value: "fnTest3",
+                nodes: [
+                    {
+                        type: Types.Var,
+                        kind: Kinds.Integer,
+                        value: "cnt",
+                    },
+                ],
+            },
         ],
     };
 
-    let oTest = { src: "cnt = 123;\r\ncnt = 123;" };
+    let oTest = { src: "cnt = 123;\r\ncnt = 123;\r\nfnTest();\r\nfnTest2();\r\nfnTest3(cnt);" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 042-statement.js - case 2", (t) => {
+    let node = {
+        type: Types.Statement,
+        nodes: [
+            {
+                type: Types.If,
+                nodes: [
+                    {
+                        type: Types.Condition,
+                        nodes: [
+                            {
+                                type: Types.GreaterThan,
+                                nodes: [
+                                    {
+                                        type: Types.Var,
+                                        kind: Kinds.Integer,
+                                        value: "amount",
+                                    },
+                                    {
+                                        type: Types.Literal,
+                                        value: 0,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        type: Types.Body,
+                        nodes: [
+                            {
+                                type: Types.Return,
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    };
+
+    let oTest = { src: "if ( amount > 0 ){\r\n    return;\r\n}" };
+    let src = generator(node);
+    t.is(src, oTest.src);
+});
+
+test("generator: 051-call.js", (t) => {
+    let node = {
+        type: Types.Call,
+        value: "fnTest",
+    };
+
+    let oTest = { src: "fnTest()" };
     let src = generator(node);
     t.is(src, oTest.src);
 });
