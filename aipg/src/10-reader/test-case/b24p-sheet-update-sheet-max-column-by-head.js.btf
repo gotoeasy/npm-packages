@@ -1,0 +1,6 @@
+[test]
+async t => {
+    let rs = await reader({file: './test/reader/{FILE_NAME}.xlsx'});
+
+    t.is(rs.Sheets[0].maxColumn, 20);
+}
