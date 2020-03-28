@@ -3,7 +3,6 @@
     context.input                                       // 存放输入对象信息
     context.input.file                                  // 输入文件
     context.input.hashcode                              // 输入文件的哈希码
-    context.result                                      // 存放结果对象信息
 
     context.workbook                                    // 存放Excel的workbook对象
     context.Sheets[]                                    // 存放Excel的Sheet对象信息数组
@@ -16,5 +15,13 @@
     context.Sheets[].maxRow                             // Sheet最大行
     context.Sheets[].maxHeadColumn                      // Sheet头部最大行
     context.Sheets[].maxHeadRow                         // Sheet头部最大列
+
+    context.Sheets[].Head                               // Sheet头部信息
+    context.Sheets[].Sestions                           // Sheet章节信息
+
+    context.result                                      // 存放结果对象信息
+    context.result.sheets                               // Excel的Sheet对象信息数组
+    context.result.sheets[].head                        // Excel的Sheet头部信息
+    context.result.sheets[].sestions                    // Excel的Sheet章节信息
 
 */

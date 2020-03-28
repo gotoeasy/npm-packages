@@ -73,3 +73,40 @@ test("reader: b24p-sheet-update-sheet-max-column-by-head.js", async (t) => {
 
     t.is(rs.Sheets[0].maxColumn, 20);
 });
+
+test("reader: c11p-sheet-parse-head.js", async (t) => {
+    let rs = await reader({ file: "./test/reader/c11p-sheet-parse-head.js.xlsx" });
+
+    t.is(rs.Sheets[0].Head.length, 2);
+    t.is(rs.Sheets[0].Head[0][0].cell, "A1");
+    t.is(rs.Sheets[0].Head[0][0].value, "AAA");
+    t.is(rs.Sheets[0].Head[0][1].cell, "C1");
+    t.is(rs.Sheets[0].Head[0][2].cell, "E1");
+    t.is(rs.Sheets[0].Head[0][3].cell, "G1");
+    t.is(rs.Sheets[0].Head[0][4].cell, "H1");
+
+    t.is(rs.Sheets[0].Head[1][0].cell, "A2");
+    t.is(rs.Sheets[0].Head[1][1].cell, "C2");
+});
+
+test("reader: d11p-sheet-parse-sections.js", async (t) => {
+    let rs = await reader({ file: "./test/reader/d11p-sheet-parse-sections.js.xlsx" });
+
+    // console.info(JSON.stringify(rs,null,2));
+
+    t.is(rs.Sheets[0].Sestions.nodes.length, 2);
+
+    t.is(rs.Sheets[0].Sestions.nodes[0].values[0].value, "A1");
+    t.is(rs.Sheets[0].Sestions.nodes[0].nodes[0].values[0].value, "A1-1");
+    t.is(rs.Sheets[0].Sestions.nodes[0].nodes[0].values[1].value, "A1-2");
+
+    t.is(rs.Sheets[0].Sestions.nodes[1].values[0].value, "A2");
+    t.is(rs.Sheets[0].Sestions.nodes[1].nodes[0].values[0].value, "A2-1");
+});
+
+test("reader: d21p-excel-close.js", async (t) => {
+    let rs = await reader({ file: "./test/reader/d21p-excel-close.js.xlsx" });
+
+    t.is(rs.Sheets[0].Sestions.nodes[0].values[0].value, "1、hello world服务");
+    t.is(rs.Sheets[0].Sestions.nodes[0].nodes[0].values[0].value, "返回“Hello ”+参数");
+});

@@ -1,0 +1,7 @@
+[test]
+async t => {
+    let rs = await reader({file: './test/reader/{FILE_NAME}.xlsx'});
+
+    t.is(rs.Sheets[0].Sestions.nodes[0].values[0].value, '1、hello world服务');
+    t.is(rs.Sheets[0].Sestions.nodes[0].nodes[0].values[0].value, '返回“Hello ”+参数');
+}

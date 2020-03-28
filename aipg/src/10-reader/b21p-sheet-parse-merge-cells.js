@@ -11,13 +11,12 @@ bus.on('阅读器插件', function(){
         }
     });
 
-}());
-
-function getMapMergeCell(sheet){
-    let map = new Map();
-    let oMergeCells = sheet._mergeCells;
-    for (let addr in oMergeCells) {
-        map.set(addr.split(':')[0], bus.at('地址转换', addr));      // 首单元格作为键，值为地址信息对象
+    function getMapMergeCell(sheet){
+        let map = new Map();
+        let oMergeCells = sheet._mergeCells;
+        for (let addr in oMergeCells) {
+            map.set(addr.split(':')[0], bus.at('地址转换', addr));      // 首单元格作为键，值为地址信息对象
+        }
+        return map;
     }
-    return map;
-}
+}());
