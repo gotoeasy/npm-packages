@@ -1,10 +1,12 @@
+const gen = require("@gotoeasy/bus").newInstance();
+
 gen.on('代码生成', function (node){
     if (!node || !node.type) {
         return '';
     }
     let rs = gen.at(node.type, node);
     if (!rs) {
-        console.warn('generator not found', '..........', node.type);
+        throw new Error("generator not found  ..........  " + node.type);
     }
     return rs;
 });

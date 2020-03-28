@@ -3,7 +3,7 @@ const test = require("ava");
 // ----------------------------------------------
 // generator测试
 // ----------------------------------------------
-const generator = require("./lib/generator");
+const generator = require("../lib/generator");
 // 节点类型定义
 const Types = {
     Var: "Var", // 变量
@@ -46,18 +46,10 @@ const Kinds = {
     Integer: "Integer", // Integer
 };
 
-test("generator: 008-generator.js - case 1", (t) => {
-    let node = undefined;
-    let oTest = { src: "" };
-    let src = generator(node);
-    t.is(src, oTest.src);
-});
-
-test("generator: 008-generator.js - case 2", (t) => {
-    let node = "xxxxxx";
-    let oTest = { src: "" };
-    let src = generator(node);
-    t.is(src, oTest.src);
+test("generator: 009-common.js", (t) => {
+    t.is("", generator());
+    t.is("", generator({}));
+    t.throws(() => generator({ type: "12345" }));
 });
 
 test("generator: 011-var.js", (t) => {

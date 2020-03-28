@@ -7,7 +7,7 @@ module.exports = function (){
     let packageFile = File.resolve(__dirname, '../package.json');
 
     let ary = [];
-    let files = File.files(File.path(packageFile), 'src/generator/**.js');
+    let files = File.files(File.path(packageFile), 'src/90-generator/**.js');
     files.sort();
 
     files.forEach(f => {
@@ -34,7 +34,7 @@ module.exports = function (){
 
 function buildGeneratorTest(packageFile){
     let ary = [];
-    let files = File.files(File.path(packageFile), 'src/generator/**.btf');
+    let files = File.files(File.path(packageFile), 'src/90-generator/**.btf');
     files.sort();
 
 
@@ -43,9 +43,9 @@ function buildGeneratorTest(packageFile){
     ary.push(`// ----------------------------------------------`);
     ary.push(`// generator测试`);
     ary.push(`// ----------------------------------------------`);
-    ary.push(`const generator = require('./lib/generator');`);
+    ary.push(`const generator = require('../lib/generator');`);
 
-    let constFiles = File.files(File.path(packageFile), 'src/generator/*-consts-*.js');
+    let constFiles = File.files(File.path(packageFile), 'src/90-generator/*-consts-*.js');
     constFiles.forEach(f => ary.push(File.read(f)));
 
     files.forEach(f => {
@@ -55,24 +55,31 @@ function buildGeneratorTest(packageFile){
         let idx = docs.length > 1 ? 1 : 0;
         docs.forEach(doc => {
             // 拼装测试脚本
-            let node = doc.getText('node');
-            if (node) {
-                let src = doc.getText('src');
-                let obj = {src};
-                let note = idx ? ` - case ${idx++}` : '';
-
+            let note = idx ? ` - case ${idx++}` : '';
+            let testjs = doc.getText('test');
+            if (testjs) {
                 ary.push(``);
-                ary.push(`test('generator: ${name}${note}', t => {`);
-                ary.push(`let node = ${node}`);
-                ary.push(`let oTest = ${JSON.stringify(obj)}`);
-                ary.push(`let src = generator(node);`);
-                ary.push(`t.is(src, oTest.src);`);
-                ary.push(`});`);
+                ary.push(`test('generator: ${name}${note}', ${testjs});`);
+            }else{
+                let node = doc.getText('node');
+                if (node) {
+                    let src = doc.getText('src');
+                    let obj = {src};
+
+                    ary.push(``);
+                    ary.push(`test('generator: ${name}${note}', t => {`);
+                    ary.push(`let node = ${node}`);
+                    ary.push(`let oTest = ${JSON.stringify(obj)}`);
+                    ary.push(`let src = generator(node);`);
+                    ary.push(`t.is(src, oTest.src);`);
+                    ary.push(`});`);
+                }
             }
+
         });
 
     });
-    let testFile = File.resolve(__dirname, '../test.js');
+    let testFile = File.resolve(__dirname, '../test/test-generator.js');
     let js = ary.join('\r\n');
     try{
         js = csjs.formatJs(js);                                                     // 便于确认代码，格式化代码且不删除注释
