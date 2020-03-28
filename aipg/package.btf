@@ -8,7 +8,7 @@ aipg
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/bus = 0.2.*
+@gotoeasy/bus = 1.0.*
 @gotoeasy/postobject = 0.3.*
 xlsx-populate = *
 office-document-properties = *

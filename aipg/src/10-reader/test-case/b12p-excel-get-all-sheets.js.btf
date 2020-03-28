@@ -1,0 +1,9 @@
+[test]
+async t => {
+    let rs = await reader({file: './test/reader/{FILE_NAME}.xlsx'});
+    t.is(rs.Sheets.length, 3);
+    t.is(rs.Sheets[0].name, 'Sheet1');
+    t.is(rs.Sheets[1].name, 'Sheet2');
+    t.is(rs.Sheets[1].hidden, true);
+    t.is(rs.Sheets[2].name, 'Sheet3');
+}

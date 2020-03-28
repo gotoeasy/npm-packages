@@ -1,3 +1,3 @@
-
-// 构建代码 generator
+// 构建代码
+require('./builder/build-reader')();
 require('./builder/build-generator')();
