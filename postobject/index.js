@@ -22,10 +22,12 @@ async function process(object, opts={}){
     object && root.addChild(createNode.bind(this)(object));
     
     let result = {};
-    for ( let i=0,plugin; plugin=this.plugins[i++]; ) {
+    for ( let i=0,plugin,name; plugin=this.plugins[i++]; ) {
+        name = weakmap.get(plugin);
         opts.log && (sTime = new Date().getTime());
         await plugin.bind(this)(root, result);
-        opts.log && ((time = new Date().getTime() - sTime) > 30) && console.info(`${weakmap.get(plugin)} : ${time}ms`);
+        opts.json && opts.json[name] && (opts.json[name] = JSON.stringify(root, null, 2));                  // 若需要，导出插件处理后的json字符串
+        opts.log && ((time = new Date().getTime() - sTime) > 30) && console.info(`${name} : ${time}ms`);
     }
     return result;
 }
