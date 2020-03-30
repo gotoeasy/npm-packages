@@ -1,24 +1,26 @@
 [test]
 async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
-    let rsParser = await parser(rsReader.result);
 
-    //require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', JSON.stringify(rsParser.root(), null, 2));
+    let opts = {json:{'{FILE_NAME}':true}};
+    let rsParser = await parser(rsReader.result, opts);
 
-    let has = false;
-    await rsParser.root().walk( NodeTypes.SheetSection, (node, object) => {
-        has = true;
-    }, {readonly: true});
+   // require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
 
-    t.is(has, true);
+    let json_result = {json_result};
+
+    t.is(opts.json['{FILE_NAME}'], JSON.stringify(json_result, null, 2));
 }
+
+
 -------------------- rsParser.root --------------------
+[json_result]
 {
   "type": "root",
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/b01p-fix-node-type.js.xlsx"
+        "file": "./test/parser/{FILE_NAME}.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -46,9 +48,7 @@ async t => {
                   "cell": "B2",
                   "seq": "01",
                   "orig": "1"
-                },
-                "cell": "B2",
-                "seq": "01"
+                }
               },
               "type": "SheetSection",
               "nodes": [
@@ -60,9 +60,7 @@ async t => {
                         "value": "返回“Hello ”+参数"
                       }
                     ],
-                    "Seq": null,
-                    "cell": "C4",
-                    "seq": null
+                    "Seq": null
                   },
                   "type": "SheetSection"
                 }
@@ -74,3 +72,4 @@ async t => {
     }
   ]
 }
+-------------------------

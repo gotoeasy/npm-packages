@@ -4,7 +4,8 @@ const Node = require('./lib/Node')
 const weakmap = new WeakMap();
 
 postobject.plugin = (name, callback) => {
-    weakmap.set(callback, require('path').parse(name).name);
+    weakmap.set(callback, name);
+    callback.name = name;
     return callback;
 }
 
@@ -23,7 +24,7 @@ async function process(object, opts={}){
     
     let result = {};
     for ( let i=0,plugin,name; plugin=this.plugins[i++]; ) {
-        name = weakmap.get(plugin);
+        name = weakmap.get(plugin) || '*';
         opts.log && (sTime = new Date().getTime());
         await plugin.bind(this)(root, result);
         opts.json && opts.json[name] && (opts.json[name] = JSON.stringify(root, null, 2));                  // 若需要，导出插件处理后的json字符串

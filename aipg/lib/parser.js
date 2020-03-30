@@ -21,9 +21,9 @@ const NodeTypes = {
 const bus = require("@gotoeasy/bus").newInstance();
 const postobject = require("@gotoeasy/postobject");
 
-module.exports = async function (oSheet) {
+module.exports = async function (oSheet, opts) {
     let plugins = bus.on("解析器插件"); // 用bus.on而不是bus.at
-    let context = await postobject(plugins).process(oSheet);
+    let context = await postobject(plugins).process(oSheet, opts);
     return context;
 };
 
@@ -32,7 +32,7 @@ bus.on(
     "解析器插件",
     (function () {
         // 初始化节点的章节类型
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("b01p-fix-node-type.js", async function (root, context) {
             await root.walk(
                 (node, object) => {
                     if (node.type === NodeTypes.Unknown) {
@@ -51,7 +51,7 @@ bus.on(
     "解析器插件",
     (function () {
         // 初始化节点的章节类型
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("b02p-fix-node-data.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -89,7 +89,7 @@ bus.on(
     "解析器插件",
     (function () {
         // 句型匹配
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("c01p-match-sentence.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -133,7 +133,7 @@ bus.on(
     "解析器插件",
     (function () {
         // 初始化节点的章节类型
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("d01p-filter-match-result.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -160,7 +160,7 @@ bus.on(
 bus.on(
     "解析器插件",
     (function () {
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("e01p-fix-node-type-by-match-result.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -178,7 +178,7 @@ bus.on(
 bus.on(
     "解析器插件",
     (function () {
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("f01p-node-add-child-by-match-result.js", async function (root, context) {
             await root.walk((node, object) => {
                 if (node.type === NodeTypes.UnMatch || !object.matchs || object.matchs.length !== 1) return;
 
@@ -199,7 +199,7 @@ bus.on(
     "解析器插件",
     (function () {
         // 解析结果添加接口方便查看节点
-        return postobject.plugin(/**/ __filename /**/, async function (root, context) {
+        return postobject.plugin("z01p-export-root-to-result.js", async function (root, context) {
             context.root = () => root;
         });
     })()

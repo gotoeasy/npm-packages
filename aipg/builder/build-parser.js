@@ -15,7 +15,7 @@ module.exports = function (){
         let name = File.name(f);
         let src = File.read(f);
         ary.push(`/* ------- ${name} ------- */`);
-        ary.push(src);
+        ary.push(src.replace(/\/\*\*\/__filename\/\*\*\//, `'${File.filename(f)}'`));
     });
 
     let js = ary.join('\r\n');
@@ -68,8 +68,8 @@ function buildGeneratorTest(packageFile){
             // 拼装测试脚本
             let note = idx ? ` - case ${idx++}` : '';
             let testjs = doc.getText('test');
-            let root_json = doc.getText('root_json');
-            testjs = testjs.replace(/\{ROOT_JSON\}/g, root_json);
+            let json_result = doc.getText('json_result');
+            testjs = testjs.replace(/\{json_result\}/g, json_result);
             testjs = testjs.replace(/\{FILE_NAME\}/g, name);
             ary.push(``);
             ary.push(`test('parser: ${name}${note}', ${testjs});`);
