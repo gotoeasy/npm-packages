@@ -12,7 +12,6 @@ bus.on('阅读器插件', function(){
             context.input.hashcode = object.hashcode;   // 文件哈希码
         }, {readonly: true});
 
-
     });
 
 }());

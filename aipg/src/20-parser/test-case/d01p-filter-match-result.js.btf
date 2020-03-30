@@ -1,0 +1,11 @@
+[test]
+async t => {
+    let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
+    let rsParser = await parser(rsReader.result);
+
+    require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', JSON.stringify(rsParser.root(), null, 2));
+
+
+    t.is(1, 1);
+}
+-------------------- rsParser.root --------------------

@@ -7,6 +7,11 @@ const SheetType = {
     SheetProcess: "SheetProcess", // 详细处理
     SheetEdit: "SheetEdit", // 编辑明细
     SheetOther: "SheetOther", // 其他
+
+    Excel: "Excel", // Excel
+    Sheet: "Sheet", // Sheet
+    SheetHead: "SheetHead", // SheetHead
+    SheetSection: "SheetSection", // SheetSection
 };
 
 /* ------- a090-reuires-exports ------- */
@@ -39,12 +44,9 @@ module.exports = async function (input) {
     context.Sheets[].maxHeadRow                         // Sheet头部最大列
 
     context.Sheets[].Head                               // Sheet头部信息
-    context.Sheets[].Sestions                           // Sheet章节信息
+    context.Sheets[].Sections                           // Sheet章节信息
 
     context.result                                      // 存放结果对象信息
-    context.result.sheets                               // Excel的Sheet对象信息数组
-    context.result.sheets[].head                        // Excel的Sheet头部信息
-    context.result.sheets[].sestions                    // Excel的Sheet章节信息
 
 */
 
@@ -761,7 +763,7 @@ bus.on(
                 if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
                 sheet = context.workbook.sheet(oSheet.name);
-                oSheet.Sestions = bus.at("读取章节", sheet, oSheet);
+                oSheet.Sections = bus.at("读取章节", sheet, oSheet);
             }
         });
     })()
@@ -1060,6 +1062,31 @@ bus.on("整理子章节", function (oParent, contents, index) {
         return bus.at("整理子章节", oSec, contents, i); // 继续按顺序整理
     }
 });
+
+/* ------- e11p-parse-result ------- */
+bus.on(
+    "阅读器插件",
+    (function () {
+        // 整理有效Sheet的内容存入context.result
+        return postobject.plugin(/**/ __filename /**/, function (root, context) {
+            let oExcel = { type: SheetType.Excel, file: context.input.file, nodes: [] };
+
+            for (let i = 0, oSheet, sheet; (oSheet = context.Sheets[i++]); ) {
+                if (oSheet.ignore) continue; // 跳过忽略的Sheet
+
+                let type = oSheet.type;
+                let name = oSheet.name;
+                let nodes = [];
+                oExcel.nodes.push({ type, name, nodes }); // Sheet
+
+                nodes.push({ type: SheetType.SheetHead, header: oSheet.Head }); // SheetHead
+                oSheet.Sections && oSheet.Sections.nodes && nodes.push(...oSheet.Sections.nodes); // Sections
+            }
+
+            context.result = oExcel;
+        });
+    })()
+);
 
 /* ------- z99m-utils ------- */
 // 工具函数

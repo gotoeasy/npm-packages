@@ -6,4 +6,9 @@ const SheetType = {
     SheetProcess            : 'SheetProcess',                   // 详细处理
     SheetEdit               : 'SheetEdit',                      // 编辑明细
     SheetOther              : 'SheetOther',                     // 其他
+
+    Excel                   : 'Excel',                          // Excel
+    Sheet                   : 'Sheet',                          // Sheet
+    SheetHead               : 'SheetHead',                      // SheetHead
+    SheetSection            : 'SheetSection',                   // SheetSection
 };

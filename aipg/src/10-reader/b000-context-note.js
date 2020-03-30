@@ -17,11 +17,8 @@
     context.Sheets[].maxHeadRow                         // Sheet头部最大列
 
     context.Sheets[].Head                               // Sheet头部信息
-    context.Sheets[].Sestions                           // Sheet章节信息
+    context.Sheets[].Sections                           // Sheet章节信息
 
     context.result                                      // 存放结果对象信息
-    context.result.sheets                               // Excel的Sheet对象信息数组
-    context.result.sheets[].head                        // Excel的Sheet头部信息
-    context.result.sheets[].sestions                    // Excel的Sheet章节信息
 
 */

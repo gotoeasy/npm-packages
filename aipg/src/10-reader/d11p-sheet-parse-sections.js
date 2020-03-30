@@ -7,7 +7,7 @@ bus.on('阅读器插件', function(){
             if ( oSheet.ignore ) continue;                              // 跳过忽略的Sheet
 
             sheet = context.workbook.sheet(oSheet.name);
-            oSheet.Sestions = bus.at('读取章节', sheet, oSheet);
+            oSheet.Sections = bus.at('读取章节', sheet, oSheet);
         }
 
     });

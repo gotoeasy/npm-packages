@@ -8,7 +8,7 @@ module.exports = function (){
     let packageFile = File.resolve(__dirname, '../package.json');
 
     let ary = [];
-    let files = File.files(File.path(packageFile), 'src/10-reader/**.js');
+    let files = File.files(File.path(packageFile), 'src/20-parser/**.js');
     files.sort();
 
     files.forEach(f => {
@@ -24,36 +24,39 @@ module.exports = function (){
     }catch(e){
         console.error(e)
     }
-    let jsFile = File.resolve(__dirname, '../lib/reader.js');
+    let jsFile = File.resolve(__dirname, '../lib/parser.js');
     File.write(jsFile, js);
 
     // 构建生成测试代码
     buildGeneratorTest(packageFile);
 
     // 复制测试用的excel文件
-    let excels = File.files(File.path(packageFile), 'src/10-reader/test-case/*.xlsx');
-    File.mkdir(File.path(File.resolve(__dirname, `../test/reader/tmp.txt`)));
+    let excels = File.files(File.path(packageFile), 'src/20-parser/test-case/*.xlsx');
+    File.mkdir(File.path(File.resolve(__dirname, `../test/parser/tmp.txt`)));
     excels.forEach(f => {
-        let to = File.resolve(__dirname, `../test/reader/${File.filename(f)}`);
+        let to = File.resolve(__dirname, `../test/parser/${File.filename(f)}`);
         fs.copyFileSync(f, to);
     });
 
-    console.info('lib/reader.js', '......', 'OK');
+    console.info('lib/parser.js', '......', 'OK');
 }
 
 function buildGeneratorTest(packageFile){
     let ary = [];
-    let files = File.files(File.path(packageFile), 'src/10-reader/**.btf');
+    let files = File.files(File.path(packageFile), 'src/20-parser/**.btf');
     files.sort();
+
 
     ary.push(`const test = require('ava');`);
     ary.push(``);
     ary.push(`// ----------------------------------------------`);
-    ary.push(`// reader测试`);
+    ary.push(`// parser测试`);
     ary.push(`// ----------------------------------------------`);
+    ary.push(`const postobject = require('@gotoeasy/postobject');`);
     ary.push(`const reader = require('../lib/reader');`);
+    ary.push(`const parser = require('../lib/parser');`);
 
-    let constFiles = File.files(File.path(packageFile), 'src/10-reader/*-consts-*.js');
+    let constFiles = File.files(File.path(packageFile), 'src/20-parser/*-consts-*.js');
     constFiles.forEach(f => ary.push(File.read(f)));
 
     files.forEach(f => {
@@ -65,30 +68,16 @@ function buildGeneratorTest(packageFile){
             // 拼装测试脚本
             let note = idx ? ` - case ${idx++}` : '';
             let testjs = doc.getText('test');
-            if (testjs) {
-                ary.push(``);
-                testjs = testjs.replace(/\{FILE_NAME\}/g, name);
-                ary.push(`test('reader: ${name}${note}', ${testjs});`);
-            }else{
-                let node = doc.getText('node');
-                if (node) {
-                    let src = doc.getText('src');
-                    let obj = {src};
-
-                    ary.push(``);
-                    ary.push(`test('reader: ${name}${note}', t => {`);
-                    ary.push(`let node = ${node}`);
-                    ary.push(`let oTest = ${JSON.stringify(obj)}`);
-                    ary.push(`let src = reader(node);`);
-                    ary.push(`t.is(src, oTest.src);`);
-                    ary.push(`});`);
-                }
-            }
+            let root_json = doc.getText('root_json');
+            testjs = testjs.replace(/\{ROOT_JSON\}/g, root_json);
+            testjs = testjs.replace(/\{FILE_NAME\}/g, name);
+            ary.push(``);
+            ary.push(`test('parser: ${name}${note}', ${testjs});`);
 
         });
 
     });
-    let testFile = File.resolve(__dirname, '../test/test-reader.js');
+    let testFile = File.resolve(__dirname, '../test/test-parser.js');
     let js = ary.join('\r\n');
     try{
         js = csjs.formatJs(js);                                                     // 便于确认代码，格式化代码且不删除注释
