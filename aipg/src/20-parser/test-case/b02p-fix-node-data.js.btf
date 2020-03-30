@@ -1,20 +1,25 @@
 [test]
 async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
-    let rsParser = await parser(rsReader.result);
 
-    //require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', JSON.stringify(rsParser.root(), null, 2));
+    let opts = {json:{'{FILE_NAME}':true}};
+    let rsParser = await parser(rsReader.result, opts);
 
+    //require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
 
-    t.is(1, 1);
+    let json_result = {json_result};
+
+    t.is(opts.json['{FILE_NAME}'], JSON.stringify(json_result, null, 2));
+    //t.is(1, 1);
 }
 -------------------- rsParser.root --------------------
+[json_result]
 {
   "type": "root",
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/b02p-fix-node-data.js.xlsx"
+        "file": "./test/parser/{FILE_NAME}.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -54,3 +59,4 @@ async t => {
     }
   ]
 }
+------------------------

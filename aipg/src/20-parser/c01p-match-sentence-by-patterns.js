@@ -1,11 +1,8 @@
-const patterns = [];
-patterns.push({type: 'Return', regexp: /^(?:返回)\s*(?:[:：]+)(.+)(?:[．.。]?)$/});   // 返回:NNNNNNNNNN
-patterns.push({type: 'Add', regexp: /^(.+)(?:[+＋]+)(.+)$/});   // NNN + NNN
-patterns.push({type: 'String', regexp: /^(?:“)(.*)(?:”)$/});   // “NNNNNN”
-
 bus.on('解析器插件', function(){
     
-    // 句型匹配
+    const patterns = require('./patterns');
+
+    // 每个章节，用全部预设句型进行匹配
     return postobject.plugin(/**/__filename/**/, async function(root, context){
 
         await root.walk( NodeTypes.SheetSection, (node, object) => {
@@ -23,10 +20,13 @@ bus.on('解析器插件', function(){
 
         let rs = [];
         for (let i=0,pattern,match; pattern=patterns[i++]; ) {
-            match = value.match(pattern.regexp);                    // 匹配句型
+            match = value.match(pattern.regexp);                        // 匹配句型
             if (!match) continue;
 
-            if (pattern.type === NodeTypes.String || pattern.type === NodeTypes.Number || pattern.type === NodeTypes.Var) {
+            if (pattern.type === NodeTypes.String                       // 字符串肯定是叶节点了
+                || pattern.type === NodeTypes.Number                    // 数值肯定是叶节点了
+                || pattern.type === NodeTypes.Var                       // 变量肯定是叶节点了
+                ) {
                 rs.push({type: pattern.type, value: match[1]});
             }else{
                 let ary = [];

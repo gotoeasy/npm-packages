@@ -79,17 +79,14 @@ bus.on(
     })()
 );
 
-/* ------- c01p-match-sentence ------- */
-const patterns = [];
-patterns.push({ type: "Return", regexp: /^(?:返回)\s*(?:[:：]+)(.+)(?:[．.。]?)$/ }); // 返回:NNNNNNNNNN
-patterns.push({ type: "Add", regexp: /^(.+)(?:[+＋]+)(.+)$/ }); // NNN + NNN
-patterns.push({ type: "String", regexp: /^(?:“)(.*)(?:”)$/ }); // “NNNNNN”
-
+/* ------- c01p-match-sentence-by-patterns ------- */
 bus.on(
     "解析器插件",
     (function () {
-        // 句型匹配
-        return postobject.plugin("c01p-match-sentence.js", async function (root, context) {
+        const patterns = require("./patterns");
+
+        // 每个章节，用全部预设句型进行匹配
+        return postobject.plugin("c01p-match-sentence-by-patterns.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -109,7 +106,11 @@ bus.on(
                 match = value.match(pattern.regexp); // 匹配句型
                 if (!match) continue;
 
-                if (pattern.type === NodeTypes.String || pattern.type === NodeTypes.Number || pattern.type === NodeTypes.Var) {
+                if (
+                    pattern.type === NodeTypes.String || // 字符串肯定是叶节点了
+                    pattern.type === NodeTypes.Number || // 数值肯定是叶节点了
+                    pattern.type === NodeTypes.Var // 变量肯定是叶节点了
+                ) {
                     rs.push({ type: pattern.type, value: match[1] });
                 } else {
                     let ary = [];
@@ -132,7 +133,7 @@ bus.on(
 bus.on(
     "解析器插件",
     (function () {
-        // 初始化节点的章节类型
+        // 过滤句型匹配结果，处理独占性匹配
         return postobject.plugin("d01p-filter-match-result.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
@@ -143,7 +144,7 @@ bus.on(
                     for (let i = 0, match; (match = object.matchs[i++]); ) {
                         if (match.type === NodeTypes.Return) {
                             ary = [match];
-                            break;
+                            break; // Return句型有独占性，其他即使匹配也忽略掉
                         }
                     }
                     if (ary) {
@@ -156,11 +157,11 @@ bus.on(
     })()
 );
 
-/* ------- e01p-fix-node-type-by-match-result ------- */
+/* ------- e01p-fix-node-type-if-match-only-one ------- */
 bus.on(
     "解析器插件",
     (function () {
-        return postobject.plugin("e01p-fix-node-type-by-match-result.js", async function (root, context) {
+        return postobject.plugin("e01p-fix-node-type-if-match-only-one.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -174,11 +175,11 @@ bus.on(
     })()
 );
 
-/* ------- f01p-node-add-child-by-match-result ------- */
+/* ------- f01p-fix-child-node-if-match-only-one ------- */
 bus.on(
     "解析器插件",
     (function () {
-        return postobject.plugin("f01p-node-add-child-by-match-result.js", async function (root, context) {
+        return postobject.plugin("f01p-fix-child-node-if-match-only-one.js", async function (root, context) {
             await root.walk((node, object) => {
                 if (node.type === NodeTypes.UnMatch || !object.matchs || object.matchs.length !== 1) return;
 
@@ -187,8 +188,8 @@ bus.on(
                     let oChild = this.createNode(oMatch);
                     node.addChild(oChild);
                 }
-                // TODO
-                //delete object.matchs;
+
+                delete object.matchs;
             });
         });
     })()

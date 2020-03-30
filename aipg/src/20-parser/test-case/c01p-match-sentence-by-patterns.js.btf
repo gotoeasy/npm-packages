@@ -72,6 +72,24 @@ async t => {
                             ]
                           }
                         ]
+                      },
+                      {
+                        "type": "Add",
+                        "matchs": [
+                          {
+                            "type": "Return",
+                            "matchs": [
+                              {
+                                "type": "String",
+                                "value": "Hello "
+                              }
+                            ]
+                          },
+                          {
+                            "type": "UnMatch",
+                            "value": "参数"
+                          }
+                        ]
                       }
                     ]
                   },
@@ -85,4 +103,4 @@ async t => {
     }
   ]
 }
-----------------------
+------------------------

@@ -10,9 +10,8 @@ bus.on('解析器插件', function(){
                 let oChild = this.createNode(oMatch);
                 node.addChild( oChild );
             }
-// TODO
-            //delete object.matchs;
 
+            delete object.matchs;
         });
 
     });
