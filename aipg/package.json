@@ -3,7 +3,7 @@
   "version": "0.0.6",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/bus": "0.2.*",
+    "@gotoeasy/bus": "1.0.*",
     "@gotoeasy/postobject": "0.3.*",
     "xlsx-populate": "*",
     "office-document-properties": "*"
