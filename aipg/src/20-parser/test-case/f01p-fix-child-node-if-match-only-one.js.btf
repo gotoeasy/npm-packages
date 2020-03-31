@@ -5,7 +5,7 @@ async t => {
     let opts = {json:{'{FILE_NAME}':true}};
     let rsParser = await parser(rsReader.result, opts);
 
-    //require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
+    require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
 
     let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
 
@@ -38,15 +38,9 @@ async t => {
               "object": {
                 "cell": "B2",
                 "value": "hello world服务",
-                "seq": "01",
-                "matchs": [
-                  {
-                    "type": "UnMatch",
-                    "value": "hello world服务"
-                  }
-                ]
+                "seq": "01"
               },
-              "type": "UnMatch",
+              "type": "Comment",
               "nodes": [
                 {
                   "object": {

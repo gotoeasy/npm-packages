@@ -5,17 +5,19 @@ async t => {
     let opts = {json:{'{FILE_NAME}':true}};
     let rsParser = await parser(rsReader.result, opts);
 
+    require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
+    t.is(1,1)
+
     let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
 
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].value, 'hello world服务');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].type, 'UnMatch');
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.value, 'hello world服务');
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].type, 'Comment');
 
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].value, 'hello world服务');
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.value, 'hello world服务');
     t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].type, 'Return');
     t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].type, 'Add');
     t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[0].type, 'String');
     t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[0].value, 'Hello ');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[1].type, 'UnMatch');
     t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[1].value, '参数');
 
     t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[1].type, 'Add');
@@ -50,8 +52,8 @@ async t => {
                 "seq": "01",
                 "matchs": [
                   {
-                    "type": "UnMatch",
-                    "value": "hello world服务"
+                    "type": "Comment",
+                    "matchs": []
                   }
                 ]
               },

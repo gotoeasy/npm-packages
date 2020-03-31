@@ -50,7 +50,7 @@ bus.on(
 bus.on(
     "解析器插件",
     (function () {
-        // 初始化节点的章节类型
+        // 整理章节内容
         return postobject.plugin("b02p-fix-node-data.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
@@ -161,6 +161,7 @@ bus.on(
 bus.on(
     "解析器插件",
     (function () {
+        // 再次整理精确匹配的节点类型
         return postobject.plugin("e01p-fix-node-type-if-match-only-one.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
@@ -179,6 +180,7 @@ bus.on(
 bus.on(
     "解析器插件",
     (function () {
+        // 根据匹配结果，整理成相应子节点
         return postobject.plugin("f01p-fix-child-node-if-match-only-one.js", async function (root, context) {
             await root.walk((node, object) => {
                 if (node.type === NodeTypes.UnMatch || !object.matchs || object.matchs.length !== 1) return;
