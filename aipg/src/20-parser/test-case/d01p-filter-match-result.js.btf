@@ -5,21 +5,17 @@ async t => {
     let opts = {json:{'{FILE_NAME}':true}};
     let rsParser = await parser(rsReader.result, opts);
 
-    //require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
+    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
 
-    let json_result = {json_result};
-
-    t.is(opts.json['{FILE_NAME}'], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs.length, 1);
 }
 -------------------- rsParser.root --------------------
-[json_result]
 {
   "type": "root",
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/{FILE_NAME}.xlsx"
+        "file": "./test/parser/d01p-filter-match-result.js.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -85,4 +81,3 @@ async t => {
     }
   ]
 }
-----------------------

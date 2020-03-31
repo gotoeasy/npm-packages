@@ -7,19 +7,18 @@ async t => {
 
     //require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
 
-    let json_result = {json_result};
+    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
 
-    t.is(opts.json['{FILE_NAME}'], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].type, NodeTypes.Return);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].nodes[0].type, NodeTypes.Add);
 }
 -------------------- rsParser.root --------------------
-[json_result]
 {
   "type": "root",
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/{FILE_NAME}.xlsx"
+        "file": "./test/parser/f01p-fix-child-node-if-match-only-one.js.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -53,7 +52,7 @@ async t => {
                   "object": {
                     "cell": "C4",
                     "value": "返回:\t“Hello ” + 参数",
-                    "seq": null,
+                    "seq": null
                   },
                   "type": "Return",
                   "nodes": [
@@ -83,4 +82,3 @@ async t => {
     }
   ]
 }
-----------------------

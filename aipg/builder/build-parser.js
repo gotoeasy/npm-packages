@@ -68,8 +68,6 @@ function buildGeneratorTest(packageFile){
             // 拼装测试脚本
             let note = idx ? ` - case ${idx++}` : '';
             let testjs = doc.getText('test');
-            let json_result = doc.getText('json_result');
-            testjs = testjs.replace(/\{json_result\}/g, json_result);
             testjs = testjs.replace(/\{FILE_NAME\}/g, name);
             ary.push(``);
             ary.push(`test('parser: ${name}${note}', ${testjs});`);

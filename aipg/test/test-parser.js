@@ -30,67 +30,10 @@ test("parser: b01p-fix-node-type.js", async (t) => {
     let opts = { json: { "b01p-fix-node-type.js": true } };
     let rsParser = await parser(rsReader.result, opts);
 
-    // require('@gotoeasy/file').write('e:/1/b01p-fix-node-type.js.json', opts.json['b01p-fix-node-type.js']);
+    let oJosn = JSON.parse(opts.json["b01p-fix-node-type.js"]);
 
-    let json_result = {
-        type: "root",
-        nodes: [
-            {
-                object: {
-                    file: "./test/parser/b01p-fix-node-type.js.xlsx",
-                },
-                type: "Excel",
-                nodes: [
-                    {
-                        object: {
-                            name: "Sheet1",
-                        },
-                        type: "SheetOther",
-                        nodes: [
-                            {
-                                object: {
-                                    header: [],
-                                },
-                                type: "SheetHead",
-                            },
-                            {
-                                object: {
-                                    values: [
-                                        {
-                                            cell: "B2",
-                                            value: "1、hello world服务",
-                                        },
-                                    ],
-                                    Seq: {
-                                        cell: "B2",
-                                        seq: "01",
-                                        orig: "1",
-                                    },
-                                },
-                                type: "SheetSection",
-                                nodes: [
-                                    {
-                                        object: {
-                                            values: [
-                                                {
-                                                    cell: "C4",
-                                                    value: "返回“Hello ”+参数",
-                                                },
-                                            ],
-                                            Seq: null,
-                                        },
-                                        type: "SheetSection",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-
-    t.is(opts.json["b01p-fix-node-type.js"], JSON.stringify(json_result, null, 2));
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.values[0].value, "1、hello world服务");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.values[0].value, "返回“Hello ”+参数");
 });
 
 test("parser: b02p-fix-node-data.js", async (t) => {
@@ -99,56 +42,10 @@ test("parser: b02p-fix-node-data.js", async (t) => {
     let opts = { json: { "b02p-fix-node-data.js": true } };
     let rsParser = await parser(rsReader.result, opts);
 
-    //require('@gotoeasy/file').write('e:/1/b02p-fix-node-data.js.json', opts.json['b02p-fix-node-data.js']);
+    let oJosn = JSON.parse(opts.json["b02p-fix-node-data.js"]);
 
-    let json_result = {
-        type: "root",
-        nodes: [
-            {
-                object: {
-                    file: "./test/parser/b02p-fix-node-data.js.xlsx",
-                },
-                type: "Excel",
-                nodes: [
-                    {
-                        object: {
-                            name: "Sheet1",
-                        },
-                        type: "SheetOther",
-                        nodes: [
-                            {
-                                object: {
-                                    header: [],
-                                },
-                                type: "SheetHead",
-                            },
-                            {
-                                object: {
-                                    cell: "B2",
-                                    value: "hello world服务",
-                                    seq: "01",
-                                },
-                                type: "SheetSection",
-                                nodes: [
-                                    {
-                                        object: {
-                                            cell: "C4",
-                                            value: "返回:\t“Hello ” + 参数",
-                                            seq: null,
-                                        },
-                                        type: "SheetSection",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-
-    t.is(opts.json["b02p-fix-node-data.js"], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.value, "hello world服务");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.value, "返回:\t“Hello ” + 参数");
 });
 
 test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
@@ -157,100 +54,21 @@ test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
     let opts = { json: { "c01p-match-sentence-by-patterns.js": true } };
     let rsParser = await parser(rsReader.result, opts);
 
-    //require('@gotoeasy/file').write('e:/1/c01p-match-sentence-by-patterns.js.json', opts.json['c01p-match-sentence-by-patterns.js']);
+    let oJosn = JSON.parse(opts.json["c01p-match-sentence-by-patterns.js"]);
 
-    let json_result = {
-        type: "root",
-        nodes: [
-            {
-                object: {
-                    file: "./test/parser/c01p-match-sentence-by-patterns.js.xlsx",
-                },
-                type: "Excel",
-                nodes: [
-                    {
-                        object: {
-                            name: "Sheet1",
-                        },
-                        type: "SheetOther",
-                        nodes: [
-                            {
-                                object: {
-                                    header: [],
-                                },
-                                type: "SheetHead",
-                            },
-                            {
-                                object: {
-                                    cell: "B2",
-                                    value: "hello world服务",
-                                    seq: "01",
-                                    matchs: [
-                                        {
-                                            type: "UnMatch",
-                                            value: "hello world服务",
-                                        },
-                                    ],
-                                },
-                                type: "SheetSection",
-                                nodes: [
-                                    {
-                                        object: {
-                                            cell: "C4",
-                                            value: "返回:\t“Hello ” + 参数",
-                                            seq: null,
-                                            matchs: [
-                                                {
-                                                    type: "Return",
-                                                    matchs: [
-                                                        {
-                                                            type: "Add",
-                                                            matchs: [
-                                                                {
-                                                                    type: "String",
-                                                                    value: "Hello ",
-                                                                },
-                                                                {
-                                                                    type: "UnMatch",
-                                                                    value: "参数",
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                                {
-                                                    type: "Add",
-                                                    matchs: [
-                                                        {
-                                                            type: "Return",
-                                                            matchs: [
-                                                                {
-                                                                    type: "String",
-                                                                    value: "Hello ",
-                                                                },
-                                                            ],
-                                                        },
-                                                        {
-                                                            type: "UnMatch",
-                                                            value: "参数",
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        type: "SheetSection",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].value, "hello world服务");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].type, "UnMatch");
 
-    t.is(opts.json["c01p-match-sentence-by-patterns.js"], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].value, "hello world服务");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].type, "Return");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].type, "Add");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[0].type, "String");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[0].value, "Hello ");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[1].type, "UnMatch");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[1].value, "参数");
+
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[1].type, "Add");
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[1].matchs[0].type, "Return");
 });
 
 test("parser: d01p-filter-match-result.js", async (t) => {
@@ -259,82 +77,9 @@ test("parser: d01p-filter-match-result.js", async (t) => {
     let opts = { json: { "d01p-filter-match-result.js": true } };
     let rsParser = await parser(rsReader.result, opts);
 
-    //require('@gotoeasy/file').write('e:/1/d01p-filter-match-result.js.json', opts.json['d01p-filter-match-result.js']);
+    let oJosn = JSON.parse(opts.json["d01p-filter-match-result.js"]);
 
-    let json_result = {
-        type: "root",
-        nodes: [
-            {
-                object: {
-                    file: "./test/parser/d01p-filter-match-result.js.xlsx",
-                },
-                type: "Excel",
-                nodes: [
-                    {
-                        object: {
-                            name: "Sheet1",
-                        },
-                        type: "SheetOther",
-                        nodes: [
-                            {
-                                object: {
-                                    header: [],
-                                },
-                                type: "SheetHead",
-                            },
-                            {
-                                object: {
-                                    cell: "B2",
-                                    value: "hello world服务",
-                                    seq: "01",
-                                    matchs: [
-                                        {
-                                            type: "UnMatch",
-                                            value: "hello world服务",
-                                        },
-                                    ],
-                                },
-                                type: "SheetSection",
-                                nodes: [
-                                    {
-                                        object: {
-                                            cell: "C4",
-                                            value: "返回:\t“Hello ” + 参数",
-                                            seq: null,
-                                            matchs: [
-                                                {
-                                                    type: "Return",
-                                                    matchs: [
-                                                        {
-                                                            type: "Add",
-                                                            matchs: [
-                                                                {
-                                                                    type: "String",
-                                                                    value: "Hello ",
-                                                                },
-                                                                {
-                                                                    type: "UnMatch",
-                                                                    value: "参数",
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        type: "SheetSection",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-
-    t.is(opts.json["d01p-filter-match-result.js"], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs.length, 1);
 });
 
 test("parser: e01p-fix-node-type-if-match-only-one.js", async (t) => {
@@ -343,82 +88,9 @@ test("parser: e01p-fix-node-type-if-match-only-one.js", async (t) => {
     let opts = { json: { "e01p-fix-node-type-if-match-only-one.js": true } };
     let rsParser = await parser(rsReader.result, opts);
 
-    //require('@gotoeasy/file').write('e:/1/e01p-fix-node-type-if-match-only-one.js.json', opts.json['e01p-fix-node-type-if-match-only-one.js']);
+    let oJosn = JSON.parse(opts.json["e01p-fix-node-type-if-match-only-one.js"]);
 
-    let json_result = {
-        type: "root",
-        nodes: [
-            {
-                object: {
-                    file: "./test/parser/e01p-fix-node-type-if-match-only-one.js.xlsx",
-                },
-                type: "Excel",
-                nodes: [
-                    {
-                        object: {
-                            name: "Sheet1",
-                        },
-                        type: "SheetOther",
-                        nodes: [
-                            {
-                                object: {
-                                    header: [],
-                                },
-                                type: "SheetHead",
-                            },
-                            {
-                                object: {
-                                    cell: "B2",
-                                    value: "hello world服务",
-                                    seq: "01",
-                                    matchs: [
-                                        {
-                                            type: "UnMatch",
-                                            value: "hello world服务",
-                                        },
-                                    ],
-                                },
-                                type: "UnMatch",
-                                nodes: [
-                                    {
-                                        object: {
-                                            cell: "C4",
-                                            value: "返回:\t“Hello ” + 参数",
-                                            seq: null,
-                                            matchs: [
-                                                {
-                                                    type: "Return",
-                                                    matchs: [
-                                                        {
-                                                            type: "Add",
-                                                            matchs: [
-                                                                {
-                                                                    type: "String",
-                                                                    value: "Hello ",
-                                                                },
-                                                                {
-                                                                    type: "UnMatch",
-                                                                    value: "参数",
-                                                                },
-                                                            ],
-                                                        },
-                                                    ],
-                                                },
-                                            ],
-                                        },
-                                        type: "Return",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
-
-    t.is(opts.json["e01p-fix-node-type-if-match-only-one.js"], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].type, NodeTypes.UnMatch);
 });
 
 test("parser: f01p-fix-child-node-if-match-only-one.js", async (t) => {
@@ -429,76 +101,8 @@ test("parser: f01p-fix-child-node-if-match-only-one.js", async (t) => {
 
     //require('@gotoeasy/file').write('e:/1/f01p-fix-child-node-if-match-only-one.js.json', opts.json['f01p-fix-child-node-if-match-only-one.js']);
 
-    let json_result = {
-        type: "root",
-        nodes: [
-            {
-                object: {
-                    file: "./test/parser/f01p-fix-child-node-if-match-only-one.js.xlsx",
-                },
-                type: "Excel",
-                nodes: [
-                    {
-                        object: {
-                            name: "Sheet1",
-                        },
-                        type: "SheetOther",
-                        nodes: [
-                            {
-                                object: {
-                                    header: [],
-                                },
-                                type: "SheetHead",
-                            },
-                            {
-                                object: {
-                                    cell: "B2",
-                                    value: "hello world服务",
-                                    seq: "01",
-                                    matchs: [
-                                        {
-                                            type: "UnMatch",
-                                            value: "hello world服务",
-                                        },
-                                    ],
-                                },
-                                type: "UnMatch",
-                                nodes: [
-                                    {
-                                        object: {
-                                            cell: "C4",
-                                            value: "返回:\t“Hello ” + 参数",
-                                            seq: null,
-                                        },
-                                        type: "Return",
-                                        nodes: [
-                                            {
-                                                object: {
-                                                    type: "Add",
-                                                    matchs: [
-                                                        {
-                                                            type: "String",
-                                                            value: "Hello ",
-                                                        },
-                                                        {
-                                                            type: "UnMatch",
-                                                            value: "参数",
-                                                        },
-                                                    ],
-                                                },
-                                                type: "Add",
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    };
+    let oJosn = JSON.parse(opts.json["f01p-fix-child-node-if-match-only-one.js"]);
 
-    t.is(opts.json["f01p-fix-child-node-if-match-only-one.js"], JSON.stringify(json_result, null, 2));
-    //t.is(1, 1);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].type, NodeTypes.Return);
+    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].nodes[0].type, NodeTypes.Add);
 });
