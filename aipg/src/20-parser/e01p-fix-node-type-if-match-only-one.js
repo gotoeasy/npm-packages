@@ -1,5 +1,6 @@
 bus.on('解析器插件', function(){
     
+    // 再次整理精确匹配的节点类型
     return postobject.plugin(/**/__filename/**/, async function(root, context){
 
         await root.walk( NodeTypes.SheetSection, (node, object) => {
