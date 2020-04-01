@@ -5,5 +5,5 @@ patterns.push({type: 'Return', regexp: /^(?:返回)\s*(?:[:：]+)(.+)(?:[．.。
 patterns.push({type: 'Add', regexp: /^(.+)(?:[+＋]+)(.+)$/});   // NNN + NNN
 patterns.push({type: 'String', regexp: /^(?:“)(.*)(?:”)$/});   // “NNNNNN”
 
-patterns.push({type: 'Comment', regexp: /^(.*)(?:服务)(?:[.。．]?)$/});   // “NNNNNN服务”
+patterns.push({type: 'Note', regexp: /^(.*)(?:服务)(?:[.。．]?)$/});   // “NNNNNN服务”
 patterns.push({type: 'ParameterOnlyOne', regexp: /^(参数)$/});   // “参数”

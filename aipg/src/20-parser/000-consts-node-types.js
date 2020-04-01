@@ -13,6 +13,9 @@ const NodeTypes = {
     Number                  : 'Number',                         // Number
     Var                     : 'Var',                            // Var
 
+    Note                    : 'Note',                           // 说明性文字
+    MethodNote              : 'MethodNote',                     // 方法的说明
+
     UnMatch                 : 'UnMatch',                        // UnMatch
 
 };

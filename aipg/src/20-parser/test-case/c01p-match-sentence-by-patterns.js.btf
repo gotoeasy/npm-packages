@@ -2,28 +2,23 @@
 async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
-    let opts = {json:{'{FILE_NAME}':true}};
-    let rsParser = await parser(rsReader.result, opts);
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        await root.walk( NodeTypes.SheetSection, (node, object) => {
+            if (object.value === 'hello world服务'){
+                t.is(object.matchs[0].type, NodeTypes.Note);
+            }else{
+                t.is(object.matchs.length >= 2, true);
+            }
 
-    require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
-    t.is(1,1)
+        }, {readonly: true});
 
-    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
+       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+    }};
 
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.value, 'hello world服务');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.matchs[0].type, 'Comment');
+    await parser(rsReader.result, opts);
 
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].object.value, 'hello world服务');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].type, 'Return');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].type, 'Add');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[0].type, 'String');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[0].value, 'Hello ');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[0].matchs[0].matchs[1].value, '参数');
-
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[1].type, 'Add');
-    t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs[1].matchs[0].type, 'Return');
 }
--------------------- rsParser.root --------------------
+-----------------------------------------
 {
   "type": "root",
   "nodes": [
@@ -52,7 +47,7 @@ async t => {
                 "seq": "01",
                 "matchs": [
                   {
-                    "type": "Comment",
+                    "type": "Note",
                     "matchs": []
                   }
                 ]
@@ -80,24 +75,6 @@ async t => {
                                 "value": "参数"
                               }
                             ]
-                          }
-                        ]
-                      },
-                      {
-                        "type": "Add",
-                        "matchs": [
-                          {
-                            "type": "Return",
-                            "matchs": [
-                              {
-                                "type": "String",
-                                "value": "Hello "
-                              }
-                            ]
-                          },
-                          {
-                            "type": "UnMatch",
-                            "value": "参数"
                           }
                         ]
                       }
