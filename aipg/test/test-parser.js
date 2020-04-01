@@ -8,9 +8,9 @@ const postobject = require("@gotoeasy/postobject");
 const reader = require("../lib/reader");
 const parser = require("../lib/parser");
 function writeJson(btfFile, root) {
-    let ary = File.read(btfFile).split("-----------------------------------------\r\n");
+    let ary = File.read(btfFile).split("-------------------- JSON --------------------");
     ary[1] = JSON.stringify(root, null, 2);
-    File.write(btfFile, ary.join("-----------------------------------------\r\n"));
+    File.write(btfFile, ary.join("-------------------- JSON --------------------\n"));
 }
 const NodeTypes = {
     root: "root", // 根节点类型
@@ -33,6 +33,31 @@ const NodeTypes = {
     UnMatch: "UnMatch", // UnMatch
 };
 
+test("parser: b01p-fix-node-type.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/b01p-fix-node-type.js.xlsx" });
+
+    let opts = {
+        "b01p-fix-node-type.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.SheetSection,
+                (node, object) => {
+                    if (object.values[0].cell === "B2") {
+                        t.is(object.values[0].value, "1、hello world服务");
+                    }
+                    if (object.values[0].cell === "C4") {
+                        t.is(object.values[0].value, "返回“Hello ”+参数");
+                    }
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/b01p-fix-node-type.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
 test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
     let rsReader = await reader({ file: "./test/parser/c01p-match-sentence-by-patterns.js.xlsx" });
 
@@ -50,7 +75,7 @@ test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
                 { readonly: true }
             );
 
-            writeJson("./src/20-parser/test-case/c01p-match-sentence-by-patterns.js.btf", root);
+            //writeJson('./src/20-parser/test-case/c01p-match-sentence-by-patterns.js.btf', root);
         },
     };
 

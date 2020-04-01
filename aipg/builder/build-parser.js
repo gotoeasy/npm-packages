@@ -57,9 +57,9 @@ function buildGeneratorTest(packageFile){
     ary.push(`const reader = require('../lib/reader');`);
     ary.push(`const parser = require('../lib/parser');`);
     ary.push(`function writeJson(btfFile, root){`);
-    ary.push(`    let ary = File.read(btfFile).split('-----------------------------------------\\r\\n');`);
+    ary.push(`    let ary = File.read(btfFile).split('-------------------- JSON --------------------');`);
     ary.push(`    ary[1] = JSON.stringify(root, null, 2);`);
-    ary.push(`    File.write(btfFile, ary.join('-----------------------------------------\\r\\n'));`);
+    ary.push(`    File.write(btfFile, ary.join('-------------------- JSON --------------------\\n'));`);
     ary.push(`}`);
 
     let constFiles = File.files(File.path(packageFile), 'src/20-parser/*-consts-*.js');

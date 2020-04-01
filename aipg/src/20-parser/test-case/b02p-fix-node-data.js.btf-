@@ -1,0 +1,59 @@
+[test]
+async t => {
+    let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
+
+    let opts = {json:{'{FILE_NAME}':true}};
+    let rsParser = await parser(rsReader.result, opts);
+
+    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
+
+    t.is(1, 1);
+    //t.is(oJosn.nodes[0].nodes[0].nodes[1].object.value, 'hello world服务');
+    //t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.value, '返回:\t“Hello ” + 参数');
+}
+-------------------- rsParser.root --------------------
+{
+  "type": "root",
+  "nodes": [
+    {
+      "object": {
+        "file": "./test/parser/b02p-fix-node-data.js.xlsx"
+      },
+      "type": "Excel",
+      "nodes": [
+        {
+          "object": {
+            "name": "Sheet1"
+          },
+          "type": "SheetOther",
+          "nodes": [
+            {
+              "object": {
+                "header": []
+              },
+              "type": "SheetHead"
+            },
+            {
+              "object": {
+                "cell": "B2",
+                "value": "hello world服务",
+                "seq": "01"
+              },
+              "type": "SheetSection",
+              "nodes": [
+                {
+                  "object": {
+                    "cell": "C4",
+                    "value": "返回:\t“Hello ” + 参数",
+                    "seq": null
+                  },
+                  "type": "SheetSection"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -2,29 +2,21 @@
 async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
-    let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.SheetSection, (node, object) => {
-            if (object.value === 'hello world服务'){
-                t.is(object.matchs[0].type, NodeTypes.Note);
-            }else{
-                t.is(object.matchs.length >= 2, true);
-            }
+    let opts = {json:{'{FILE_NAME}':true}};
+    let rsParser = await parser(rsReader.result, opts);
 
-        }, {readonly: true});
+    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
 
-       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
-    }};
-
-    await parser(rsReader.result, opts);
-
+    t.is(1, 1);
+    //t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs.length, 1);
 }
--------------------- JSON --------------------
+-------------------- rsParser.root --------------------
 {
   "type": "root",
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/c01p-match-sentence-by-patterns.js.xlsx"
+        "file": "./test/parser/d01p-filter-match-result.js.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -47,8 +39,8 @@ async t => {
                 "seq": "01",
                 "matchs": [
                   {
-                    "type": "Note",
-                    "matchs": []
+                    "type": "UnMatch",
+                    "value": "hello world服务"
                   }
                 ]
               },

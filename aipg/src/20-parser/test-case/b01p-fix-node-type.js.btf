@@ -1,0 +1,66 @@
+[test]
+async t => {
+    let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
+
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        await root.walk( NodeTypes.SheetSection, (node, object) => {
+            if (object.values[0].cell === 'B2'){
+                t.is(object.values[0].value, '1、hello world服务');
+            }
+            if (object.values[0].cell === 'C4'){
+                t.is(object.values[0].value, '返回“Hello ”+参数');
+            }
+        }, {readonly: true});
+
+       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+    }};
+
+    await parser(rsReader.result, opts);
+
+}
+-------------------- JSON --------------------
+{
+  "type": "root",
+  "nodes": [
+    {
+      "object": {
+        "file": "./test/parser/b01p-fix-node-type.js.xlsx"
+      },
+      "type": "Excel",
+      "nodes": [
+        {
+          "object": {
+            "name": "Sheet1"
+          },
+          "type": "SheetOther",
+          "nodes": [
+            {
+              "object": {
+                "header": []
+              },
+              "type": "SheetHead"
+            },
+            {
+              "object": {
+                "cell": "B2",
+                "value": "hello world服务",
+                "seq": "01"
+              },
+              "type": "SheetSection",
+              "nodes": [
+                {
+                  "object": {
+                    "cell": "C4",
+                    "value": "返回“Hello ”+参数",
+                    "seq": null
+                  },
+                  "type": "SheetSection"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
