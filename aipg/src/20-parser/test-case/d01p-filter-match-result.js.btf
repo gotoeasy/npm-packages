@@ -2,15 +2,19 @@
 async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
-    let opts = {json:{'{FILE_NAME}':true}};
-    let rsParser = await parser(rsReader.result, opts);
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        await root.walk( NodeTypes.Excel, (node, object) => {
+            t.is(1, 1);
+        }, {readonly: true});
 
-    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
+       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+    }};
 
-    t.is(1, 1);
-    //t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].object.matchs.length, 1);
+    await parser(rsReader.result, opts);
+
 }
--------------------- rsParser.root --------------------
+
+-------------------- JSON --------------------
 {
   "type": "root",
   "nodes": [
@@ -39,12 +43,12 @@ async t => {
                 "seq": "01",
                 "matchs": [
                   {
-                    "type": "UnMatch",
-                    "value": "hello world服务"
+                    "type": "Note",
+                    "matchs": []
                   }
                 ]
               },
-              "type": "SheetSection",
+              "type": "Note",
               "nodes": [
                 {
                   "object": {
@@ -72,7 +76,7 @@ async t => {
                       }
                     ]
                   },
-                  "type": "SheetSection"
+                  "type": "Return"
                 }
               ]
             }

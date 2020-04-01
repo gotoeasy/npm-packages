@@ -58,6 +58,31 @@ test("parser: b01p-fix-node-type.js", async (t) => {
     await parser(rsReader.result, opts);
 });
 
+test("parser: b02p-fix-node-data.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/b02p-fix-node-data.js.xlsx" });
+
+    let opts = {
+        "b02p-fix-node-data.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.SheetSection,
+                (node, object) => {
+                    if (object.cell === "B2") {
+                        t.is(object.value, "hello world服务");
+                    }
+                    if (object.cell === "C4") {
+                        t.is(object.value, "返回:\t“Hello ” + 参数");
+                    }
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/b02p-fix-node-data.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
 test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
     let rsReader = await reader({ file: "./test/parser/c01p-match-sentence-by-patterns.js.xlsx" });
 
@@ -76,6 +101,66 @@ test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
             );
 
             //writeJson('./src/20-parser/test-case/c01p-match-sentence-by-patterns.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
+test("parser: d01p-filter-match-result.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/d01p-filter-match-result.js.xlsx" });
+
+    let opts = {
+        "d01p-filter-match-result.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.Excel,
+                (node, object) => {
+                    t.is(1, 1);
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/d01p-filter-match-result.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
+test("parser: e01p-fix-node-type-if-match-only-one.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/e01p-fix-node-type-if-match-only-one.js.xlsx" });
+
+    let opts = {
+        "e01p-fix-node-type-if-match-only-one.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.Return,
+                (node, object) => {
+                    t.is(object.cell, "C4");
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/e01p-fix-node-type-if-match-only-one.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
+test("parser: f01p-fix-child-node-if-match-only-one.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/f01p-fix-child-node-if-match-only-one.js.xlsx" });
+
+    let opts = {
+        "f01p-fix-child-node-if-match-only-one.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.Add,
+                (node, object) => {
+                    t.is(object.matchs.length, 2);
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/f01p-fix-child-node-if-match-only-one.js.btf', root);
         },
     };
 

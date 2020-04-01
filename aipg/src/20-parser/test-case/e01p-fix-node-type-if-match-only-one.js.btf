@@ -3,13 +3,8 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.SheetSection, (node, object) => {
-            if (object.values[0].cell === 'B2'){
-                t.is(object.values[0].value, '1、hello world服务');
-            }
-            if (object.values[0].cell === 'C4'){
-                t.is(object.values[0].value, '返回“Hello ”+参数');
-            }
+        await root.walk( NodeTypes.Return, (node, object) => {
+            t.is(object.cell, 'C4');
         }, {readonly: true});
 
        //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
@@ -24,7 +19,7 @@ async t => {
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/b01p-fix-node-type.js.xlsx"
+        "file": "./test/parser/e01p-fix-node-type-if-match-only-one.js.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -46,15 +41,33 @@ async t => {
                 "value": "hello world服务",
                 "seq": "01"
               },
-              "type": "SheetSection",
+              "type": "Note",
               "nodes": [
                 {
                   "object": {
                     "cell": "C4",
-                    "value": "返回“Hello ”+参数",
+                    "value": "返回:\t“Hello ” + 参数",
                     "seq": null
                   },
-                  "type": "SheetSection"
+                  "type": "Return",
+                  "nodes": [
+                    {
+                      "object": {
+                        "type": "Add",
+                        "matchs": [
+                          {
+                            "type": "String",
+                            "value": "Hello "
+                          },
+                          {
+                            "type": "UnMatch",
+                            "value": "参数"
+                          }
+                        ]
+                      },
+                      "type": "Add"
+                    }
+                  ]
                 }
               ]
             }

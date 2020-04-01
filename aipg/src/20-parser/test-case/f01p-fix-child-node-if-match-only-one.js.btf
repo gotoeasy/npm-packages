@@ -2,18 +2,18 @@
 async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
-    let opts = {json:{'{FILE_NAME}':true}};
-    let rsParser = await parser(rsReader.result, opts);
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        await root.walk( NodeTypes.Add, (node, object) => {
+            t.is(object.matchs.length, 2);
+        }, {readonly: true});
 
-    require('@gotoeasy/file').write('e:/1/{FILE_NAME}.json', opts.json['{FILE_NAME}']);
+       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+    }};
 
-    let oJosn = JSON.parse(opts.json['{FILE_NAME}']);
+    await parser(rsReader.result, opts);
 
-    t.is(1, 1);
-    //t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].type, NodeTypes.Return);
-    //t.is(oJosn.nodes[0].nodes[0].nodes[1].nodes[0].nodes[0].type, NodeTypes.Add);
 }
--------------------- rsParser.root --------------------
+-------------------- JSON --------------------
 {
   "type": "root",
   "nodes": [
@@ -41,7 +41,7 @@ async t => {
                 "value": "hello world服务",
                 "seq": "01"
               },
-              "type": "Comment",
+              "type": "Note",
               "nodes": [
                 {
                   "object": {
