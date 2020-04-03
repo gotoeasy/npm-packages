@@ -83,11 +83,11 @@ test("parser: b02p-fix-node-data.js", async (t) => {
     await parser(rsReader.result, opts);
 });
 
-test("parser: c01p-match-section-by-all-patterns.js", async (t) => {
-    let rsReader = await reader({ file: "./test/parser/c01p-match-section-by-all-patterns.js.xlsx" });
+test("parser: c01p-match-sentence-by-patterns.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/c01p-match-sentence-by-patterns.js.xlsx" });
 
     let opts = {
-        "c01p-match-section-by-all-patterns.js": async (root, context) => {
+        "c01p-match-sentence-by-patterns.js": async (root, context) => {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
@@ -100,7 +100,7 @@ test("parser: c01p-match-section-by-all-patterns.js", async (t) => {
                 { readonly: true }
             );
 
-            writeJson("./src/20-parser/test-case/c01p-match-section-by-all-patterns.js.btf", root);
+            //writeJson('./src/20-parser/test-case/c01p-match-sentence-by-patterns.js.btf', root);
         },
     };
 
@@ -113,14 +113,79 @@ test("parser: d01p-filter-match-result.js", async (t) => {
     let opts = {
         "d01p-filter-match-result.js": async (root, context) => {
             await root.walk(
-                NodeTypes.SheetSection,
+                NodeTypes.Excel,
                 (node, object) => {
-                    t.is(object.matchs.length, 1);
+                    t.is(1, 1);
                 },
                 { readonly: true }
             );
 
-            writeJson("./src/20-parser/test-case/d01p-filter-match-result.js.btf", root);
+            //writeJson('./src/20-parser/test-case/d01p-filter-match-result.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
+test("parser: e01p-fix-node-type-if-match-only-one.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/e01p-fix-node-type-if-match-only-one.js.xlsx" });
+
+    let opts = {
+        "e01p-fix-node-type-if-match-only-one.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.Return,
+                (node, object) => {
+                    t.is(object.cell, "C4");
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/e01p-fix-node-type-if-match-only-one.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
+test("parser: f01p-fix-child-node-if-match-only-one.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/f01p-fix-child-node-if-match-only-one.js.xlsx" });
+
+    let opts = {
+        "f01p-fix-child-node-if-match-only-one.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.Add,
+                (node, object) => {
+                    t.is(object.matchs.length, 2);
+                },
+                { readonly: true }
+            );
+
+            //writeJson('./src/20-parser/test-case/f01p-fix-child-node-if-match-only-one.js.btf', root);
+        },
+    };
+
+    await parser(rsReader.result, opts);
+});
+
+test("parser: g01p-fix-node-type-method-note.js", async (t) => {
+    let rsReader = await reader({ file: "./test/parser/g01p-fix-node-type-method-note.js.xlsx" });
+
+    let opts = {
+        "g01p-fix-node-type-method-note.js": async (root, context) => {
+            await root.walk(
+                NodeTypes.MethodNote,
+                (node, object) => {
+                    t.is(1, 1);
+                },
+                { readonly: true }
+            );
+
+            let generator = require("../lib/generator");
+            let src = generator(root);
+            console.info("------------------", src);
+            t.is(!!src, true);
+
+            //writeJson('./src/20-parser/test-case/g01p-fix-node-type-method-note.js.btf', root);
         },
     };
 

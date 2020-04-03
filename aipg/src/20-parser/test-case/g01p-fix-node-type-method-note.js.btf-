@@ -1,0 +1,84 @@
+[test]
+async t => {
+    let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
+
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        await root.walk( NodeTypes.MethodNote, (node, object) => {
+            t.is(1, 1);
+        }, {readonly: true});
+        
+            let generator = require('../lib/generator');
+            let src = generator(root)
+            console.info('------------------', src);
+            t.is(!!src, true);
+
+       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+    }};
+
+    await parser(rsReader.result, opts);
+
+}
+-------------------- JSON --------------------
+{
+  "type": "root",
+  "nodes": [
+    {
+      "object": {
+        "file": "./test/parser/g01p-fix-node-type-method-note.js.xlsx"
+      },
+      "type": "Excel",
+      "nodes": [
+        {
+          "object": {
+            "name": "Sheet1"
+          },
+          "type": "SheetOther",
+          "nodes": [
+            {
+              "object": {
+                "header": []
+              },
+              "type": "SheetHead"
+            },
+            {
+              "object": {
+                "cell": "B2",
+                "value": "hello world服务",
+                "seq": "01"
+              },
+              "type": "MethodNote",
+              "nodes": [
+                {
+                  "object": {
+                    "cell": "C4",
+                    "value": "返回:\t“Hello ” + 参数",
+                    "seq": null
+                  },
+                  "type": "Return",
+                  "nodes": [
+                    {
+                      "object": {
+                        "type": "Add",
+                        "matchs": [
+                          {
+                            "type": "String",
+                            "value": "Hello "
+                          },
+                          {
+                            "type": "UnMatch",
+                            "value": "参数"
+                          }
+                        ]
+                      },
+                      "type": "Add"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

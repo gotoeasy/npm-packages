@@ -6,6 +6,7 @@ const Types = {
     Call: "Call", // 调用
     Condition: "Condition", // 条件
     Body: "Body", // 内容
+    Method: "Method", // 方法
     Statement: "Statement", // 语句
     IfElseStatement: "IfElseStatement", // IfElse语句
     Break: "Break", // break
@@ -31,6 +32,12 @@ const Types = {
     RightAddAdd: "RightAddAdd", // i++
     LeftSubtractSubtract: "LeftSubtractSubtract", // --i
     RightSubtractSubtract: "RightSubtractSubtract", // i--
+
+    root: "root", // root
+    Excel: "Excel", // Excel
+    SheetHead: "SheetHead", // SheetHead
+    SheetOther: "SheetOther", // SheetOther
+    MethodNote: "MethodNote", // MethodNote
 };
 
 /* ------- 001-consts-kinds ------- */
@@ -51,7 +58,7 @@ gen.on("代码生成", function (node) {
     }
     let rs = gen.at(node.type, node);
     if (!rs) {
-        throw new Error("generator not found  ..........  " + node.type);
+        //throw new Error("generator not found  ..........  " + node.type);
     }
     return rs;
 });
@@ -304,6 +311,83 @@ gen.on(Types.Call, function (node) {
 
     // TODO 参数
     return `${node.value}(${ary.join(", ")})`;
+});
+
+/* ------- 061-method ------- */
+gen.on(Types.Method, function (node) {
+    let object = node.object;
+    let prefix = "public";
+    let returnType = object.returnType || "void";
+    let methodName = object.methodName;
+    let params = [];
+    object.parameters.forEach((p) => {
+        ary.push(p.type + " " + p.name);
+    });
+    let param = ary.join(", ");
+
+    // 方法
+    return `${prefix} ${returnType} ${methodName}(${param})`;
+});
+
+/* ------- 910-blank-node ------- */
+gen.on(Types.root, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
+});
+
+gen.on(Types.Excel, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
+});
+
+gen.on(Types.SheetOther, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
+});
+
+gen.on(Types.MethodNote, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
+});
+
+gen.on(Types.SheetHead, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
 });
 
 /* ------- 999-exports ------- */

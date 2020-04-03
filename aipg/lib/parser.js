@@ -82,50 +82,60 @@ bus.on(
     })()
 );
 
-/* ------- c01p-match-sentence-by-patterns ------- */
+/* ------- c01p-match-section-by-all-patterns ------- */
 bus.on(
     "解析器插件",
     (function () {
         const patterns = require("./patterns");
 
         // 每个章节，用全部预设句型进行匹配
-        return postobject.plugin("c01p-match-sentence-by-patterns.js", async function (root, context) {
+        return postobject.plugin("c01p-match-section-by-all-patterns.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
-                    for (let i = 0, pattern, match; (pattern = patterns[i++]); ) {
-                        object.matchs = matchText(object.value);
-                    }
+                    //  let ary = matchAllPatterns(object.value);
+
+                    object.matchs = [...matchAllPatterns(object.value)];
                 },
                 { readonly: true }
             );
         });
 
-        function matchText(value) {
-            value = value.trim();
-
-            let rs = [];
-            for (let i = 0, pattern, match; (pattern = patterns[i++]); ) {
-                match = value.match(pattern.regexp); // 匹配句型
-                if (!match) continue;
-
-                if (
-                    pattern.type === NodeTypes.String || // 字符串肯定是叶节点了
-                    pattern.type === NodeTypes.Number || // 数值肯定是叶节点了
-                    pattern.type === NodeTypes.Var // 变量肯定是叶节点了
-                ) {
-                    rs.push({ type: pattern.type, value: match[1] });
-                } else {
-                    let ary = [];
-                    for (let j = 1; j < match.length; j++) {
-                        ary.push(...matchText(match[j])); // 匹配句型中的全部元素
-                    }
-                    rs.push({ type: pattern.type, matchs: ary });
-                }
+        function matchAllPatterns(value) {
+            let ary = [];
+            for (let i = 0, pattern, rs; (pattern = patterns[i++]); ) {
+                rs = matchTextPattern(value, pattern);
+                rs && ary.push(rs);
             }
 
-            if (!rs.length) {
-                rs.push({ type: NodeTypes.UnMatch, value });
+            if (ary.length) {
+                return ary;
+            } else {
+                return [{ type: NodeTypes.UnMatch, value }];
+            }
+        }
+
+        function matchTextPattern(value, pattern) {
+            value = value.trim();
+            let match = value.match(pattern.regexp); // 匹配句型
+            if (!match) return null;
+
+            let rs;
+            if (match.length === 1) {
+                rs = { type: pattern.type, value };
+            } else if (match.length === 2) {
+                if (pattern.leaf) {
+                    rs = { type: pattern.type, value: match[1] };
+                } else {
+                    let matchs = matchAllPatterns(match[1]);
+                    rs = { type: pattern.type, matchs };
+                }
+            } else {
+                let matchs = [];
+                for (let j = 1, ary; j < match.length; j++) {
+                    matchs.push(matchAllPatterns(match[j]));
+                }
+                rs = { type: pattern.type, matchs };
             }
             return rs;
         }
@@ -141,62 +151,69 @@ bus.on(
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
-                    if (object.matchs.length < 2) return;
-
-                    let ary = null;
-                    for (let i = 0, match; (match = object.matchs[i++]); ) {
-                        if (match.type === NodeTypes.Return) {
-                            ary = [match];
-                            break; // Return句型有独占性，其他即使匹配也忽略掉
-                        }
-                    }
-                    if (ary) {
-                        object.matchs = ary;
-                    }
+                    filterMatchResults(object.matchs); // 过滤匹配结果
                 },
                 { readonly: true }
             );
         });
+
+        function filterMatchResults(matchs) {
+            if (!matchs) return; // 叶节点
+
+            if (!(Array.isArray(matchs) || matchs instanceof Array)) {
+                return filterMatchResults(matchs.matchs); // 非数组，子节点继续
+            }
+
+            matchs.length > 1 && filterMatchs(matchs); // 过滤
+
+            matchs.forEach((ary) => filterMatchResults(ary)); // 子节点继续过滤
+        }
+
+        function filterMatchs(matchs) {
+            // 过滤
+            let oReturn = null;
+            for (let i = 0, match; (match = matchs[i++]); ) {
+                if (match.type === NodeTypes.Return) {
+                    oReturn = match;
+                    break; // Return句型有独占性，其他即使匹配也忽略掉
+                }
+            }
+            if (oReturn) {
+                matchs.length = 0;
+                matchs.push([oReturn]);
+            }
+        }
     })()
 );
 
-/* ------- e01p-fix-node-type-if-match-only-one ------- */
+/* ------- e01p-check-match-result ------- */
 bus.on(
     "解析器插件",
     (function () {
-        // 再次整理精确匹配的节点类型
-        return postobject.plugin("e01p-fix-node-type-if-match-only-one.js", async function (root, context) {
+        // 检查匹配结果
+        return postobject.plugin("e01p-check-match-result.js", async function (root, context) {
             await root.walk(
                 NodeTypes.SheetSection,
                 (node, object) => {
-                    if (object.matchs && object.matchs.length === 1) {
-                        node.type = object.matchs[0].type; // 精确匹配到一个句型，节点类型直接替换
+                    let warn = [];
+                    checkMatchResults(object.matchs, warn);
+                    if (warn.length) {
+                        console.info("[TODO]", JSON.stringify({ object, warn }, null, 2));
                     }
                 },
                 { readonly: true }
             );
         });
-    })()
-);
 
-/* ------- f01p-fix-child-node-if-match-only-one ------- */
-bus.on(
-    "解析器插件",
-    (function () {
-        // 根据匹配结果，整理成相应子节点
-        return postobject.plugin("f01p-fix-child-node-if-match-only-one.js", async function (root, context) {
-            await root.walk((node, object) => {
-                if (node.type === NodeTypes.UnMatch || !object.matchs || object.matchs.length !== 1) return;
+        function checkMatchResults(matchs, ary) {
+            if (!matchs || !matchs.length) return;
 
-                let matchs = object.matchs[0].matchs || [];
-                for (let i = 0, oMatch; (oMatch = matchs[i++]); ) {
-                    let oChild = this.createNode(oMatch);
-                    node.addChild(oChild);
-                }
+            if (matchs.length > 1) {
+                ary.push(matchs);
+            }
 
-                delete object.matchs;
-            });
-        });
+            matchs.forEach((match) => checkMatchResults(match.matchs, ary));
+        }
     })()
 );
 
@@ -210,3 +227,8 @@ bus.on(
         });
     })()
 );
+
+/* ------- z90m-guess-method-name ------- */
+bus.on("方法名", function (txt, opts) {
+    return "todo";
+});

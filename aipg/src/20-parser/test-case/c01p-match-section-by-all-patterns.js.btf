@@ -12,7 +12,7 @@ async t => {
 
         }, {readonly: true});
 
-       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+       writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
     }};
 
     await parser(rsReader.result, opts);
@@ -24,7 +24,7 @@ async t => {
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/c01p-match-sentence-by-patterns.js.xlsx"
+        "file": "./test/parser/c01p-match-section-by-all-patterns.js.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -48,7 +48,7 @@ async t => {
                 "matchs": [
                   {
                     "type": "Note",
-                    "matchs": []
+                    "value": "hello world"
                   }
                 ]
               },
@@ -60,24 +60,30 @@ async t => {
                     "value": "返回:\t“Hello ” + 参数",
                     "seq": null,
                     "matchs": [
-                      {
-                        "type": "Return",
-                        "matchs": [
-                          {
-                            "type": "Add",
-                            "matchs": [
-                              {
-                                "type": "String",
-                                "value": "Hello "
-                              },
-                              {
-                                "type": "UnMatch",
-                                "value": "参数"
-                              }
-                            ]
-                          }
-                        ]
-                      }
+                      [
+                        {
+                          "type": "Return",
+                          "matchs": [
+                            {
+                              "type": "Add",
+                              "matchs": [
+                                [
+                                  {
+                                    "type": "String",
+                                    "value": "Hello "
+                                  }
+                                ],
+                                [
+                                  {
+                                    "type": "ParameterOnlyOne",
+                                    "value": "参数"
+                                  }
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ]
                     ]
                   },
                   "type": "SheetSection"

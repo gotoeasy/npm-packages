@@ -5,6 +5,7 @@ const Types = {
     Call                    : 'Call',                           // 调用
     Condition               : 'Condition',                      // 条件
     Body                    : 'Body',                           // 内容
+    Method                  : 'Method',                         // 方法
     Statement               : 'Statement',                      // 语句
     IfElseStatement         : 'IfElseStatement',                // IfElse语句
     Break                   : 'Break',                          // break
@@ -30,4 +31,10 @@ const Types = {
     RightAddAdd             : 'RightAddAdd',                    // i++
     LeftSubtractSubtract    : 'LeftSubtractSubtract',           // --i
     RightSubtractSubtract   : 'RightSubtractSubtract',          // i--
+
+    root                    : 'root',                           // root
+    Excel                   : 'Excel',                          // Excel
+    SheetHead               : 'SheetHead',                      // SheetHead
+    SheetOther              : 'SheetOther',                     // SheetOther
+    MethodNote              : 'MethodNote',                     // MethodNote
 };

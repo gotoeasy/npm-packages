@@ -3,17 +3,16 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.Excel, (node, object) => {
-            t.is(1, 1);
+        await root.walk( NodeTypes.SheetSection, (node, object) => {
+            t.is(object.matchs.length, 1);
         }, {readonly: true});
 
-       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+       writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
     }};
 
     await parser(rsReader.result, opts);
 
 }
-
 -------------------- JSON --------------------
 {
   "type": "root",
@@ -44,11 +43,11 @@ async t => {
                 "matchs": [
                   {
                     "type": "Note",
-                    "matchs": []
+                    "value": "hello world"
                   }
                 ]
               },
-              "type": "Note",
+              "type": "SheetSection",
               "nodes": [
                 {
                   "object": {
@@ -56,27 +55,33 @@ async t => {
                     "value": "返回:\t“Hello ” + 参数",
                     "seq": null,
                     "matchs": [
-                      {
-                        "type": "Return",
-                        "matchs": [
-                          {
-                            "type": "Add",
-                            "matchs": [
-                              {
-                                "type": "String",
-                                "value": "Hello "
-                              },
-                              {
-                                "type": "UnMatch",
-                                "value": "参数"
-                              }
-                            ]
-                          }
-                        ]
-                      }
+                      [
+                        {
+                          "type": "Return",
+                          "matchs": [
+                            {
+                              "type": "Add",
+                              "matchs": [
+                                [
+                                  {
+                                    "type": "String",
+                                    "value": "Hello "
+                                  }
+                                ],
+                                [
+                                  {
+                                    "type": "ParameterOnlyOne",
+                                    "value": "参数"
+                                  }
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ]
                     ]
                   },
-                  "type": "Return"
+                  "type": "SheetSection"
                 }
               ]
             }
