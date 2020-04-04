@@ -124,7 +124,7 @@ function isString(obj){
 }
 
 function isFunction(obj){
-    return _toString(obj) === '[object Function]';
+    return _toString(obj).indexOf('Function') > 0;
 }
 
 function isArray(obj){
