@@ -1,4 +1,5 @@
-const gen = require("@gotoeasy/bus").newInstance();
+const Types = require("./types");
+const gen = require('@gotoeasy/bus').newInstance();
 
 gen.on('代码生成', function (node){
     if (!node || !node.type) {

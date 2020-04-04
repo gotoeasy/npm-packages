@@ -2,12 +2,11 @@
 {
     type : Types.Equals,
     nodes : [{
-            type : Types.Var,
-            kind : Kinds.Integer,
-            value : 'cnt',
+            type : Types.Integer,
+            object : {value : 'cnt'},
         },{
             type : Types.Literal,
-            value : 999,
+            object : {value : 999},
     }]
 }
 

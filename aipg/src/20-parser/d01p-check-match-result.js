@@ -1,16 +1,17 @@
 bus.on('解析器插件', function(){
     
-    // 检查匹配结果
+    // TODO 检查匹配结果
     return postobject.plugin(/**/__filename/**/, async function(root, context){
-
-        await root.walk( NodeTypes.SheetSection, (node, object) => {
+/*
+        await root.walk( Types.SheetSection, (node, object) => {
             let warn = [];
-            checkMatchResults(object.matchs, warn);
+         //   checkMatchResults(object.matchs, warn);
             if (warn.length) {
-                console.info('[TODO]', JSON.stringify({object, warn}, null, 2));
+                console.info('[TODO]');
+                //console.info('[TODO]', JSON.stringify({object, warn}, null, 2));
             }
         }, {readonly: true});
-
+*/
     });
 
     function checkMatchResults(matchs, ary){

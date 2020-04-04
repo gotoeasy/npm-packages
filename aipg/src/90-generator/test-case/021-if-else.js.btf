@@ -7,11 +7,10 @@
                 type : Types.GreaterThan,
                 nodes : [{
                         type : Types.Var,
-                        kind : Kinds.Integer,
-                        value : 'amount',
+                        object : {value : 'amount'},
                     },{
-                        type : Types.Literal,
-                        value : 0,
+                        type : Types.Number,
+                        object : {value : 0},
                     }]
             }]
         },{
@@ -19,9 +18,8 @@
             nodes : [{
                     type : Types.Return,
                     nodes : [{
-                            type : Types.Var,
-                            kind : Kinds.Integer,
-                            value : 'amount',
+                            type : Types.Integer,
+                            object : {value : 'amount'},
                         }
                     ]
                 }            
@@ -43,12 +41,11 @@ if ( amount > 0 ){
             nodes : [{
                 type : Types.GreaterThan,
                 nodes : [{
-                        type : Types.Var,
-                        kind : Kinds.Integer,
-                        value : 'amount',
+                        type : Types.Integer,
+                        object : {value : 'amount'},
                     },{
-                        type : Types.Literal,
-                        value : 0,
+                        type : Types.Number,
+                        object : {value : 0},
                     }]
             }]
         },{
@@ -56,9 +53,8 @@ if ( amount > 0 ){
             nodes : [{
                     type : Types.Return,
                     nodes : [{
-                            type : Types.Var,
-                            kind : Kinds.Integer,
-                            value : 'amount',
+                            type : Types.Integer,
+                            object : {value : 'amount'},
                         }
                     ]
                 }            
@@ -80,9 +76,8 @@ else if ( amount > 0 ){
             nodes : [{
                     type : Types.Return,
                     nodes : [{
-                            type : Types.Var,
-                            kind : Kinds.Integer,
-                            value : 'amount',
+                            type : Types.Integer,
+                            object : {value : 'amount'},
                         }
                     ]
                 }            
@@ -104,12 +99,11 @@ else {
             nodes : [{
                 type : Types.GreaterThan,
                 nodes : [{
-                        type : Types.Var,
-                        kind : Kinds.Integer,
-                        value : 'amount',
+                        type : Types.Integer,
+                        object : {value : 'amount'},
                     },{
-                        type : Types.Literal,
-                        value : 0,
+                        type : Types.Number,
+                        object : {value : 0},
                     }]
             }]
         }

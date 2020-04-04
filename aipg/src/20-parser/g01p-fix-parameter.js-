@@ -1,0 +1,18 @@
+bus.on('解析器插件', function(){
+    
+    // 反推方法参数
+    return postobject.plugin(/**/__filename/**/, async function(root, context){
+
+        await root.walk( Types.Parameter, (node, object) => {
+
+            let parentNode;
+            node.parent();
+
+        });
+
+    });
+
+
+
+}());
+

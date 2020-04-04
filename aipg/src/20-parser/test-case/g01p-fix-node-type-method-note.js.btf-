@@ -3,7 +3,7 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.MethodNote, (node, object) => {
+        await root.walk( Types.MethodNote, (node, object) => {
             t.is(1, 1);
         }, {readonly: true});
         

@@ -9,8 +9,7 @@ return;
 [node]
 {
     type : Types.Return,
-    kind : Kinds.Var,
-    value : 'cnt',
+    object : {value : 'cnt'},
 }
 
 [src]
@@ -19,8 +18,11 @@ return cnt;
 [node]
 {
     type : Types.Return,
-    kind : Kinds.String,
-    value : 'abcd',
+    nodes : [{
+            type : Types.String,
+            object : {value : 'abcd'}
+        }
+    ]
 }
 
 [src]
@@ -29,8 +31,11 @@ return "abcd";
 [node]
 {
     type : Types.Return,
-    kind : Kinds.Number,
-    value : 12345,
+    nodes : [{
+            type : Types.Number,
+            object : {value : '12345'}
+        }
+    ]
 }
 
 [src]
@@ -41,8 +46,7 @@ return 12345;
     type : Types.Return,
     nodes : [{
             type : Types.Var,
-            kind : Kinds.Integer,
-            value : 'amount',
+            object : {value : 'amount'}
         }
     ]
 }

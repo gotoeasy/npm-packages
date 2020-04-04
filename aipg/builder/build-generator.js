@@ -43,6 +43,7 @@ function buildGeneratorTest(packageFile){
     ary.push(`// ----------------------------------------------`);
     ary.push(`// generator测试`);
     ary.push(`// ----------------------------------------------`);
+    ary.push(`const Types = require('../lib/types');`);
     ary.push(`const generator = require('../lib/generator');`);
 
     let constFiles = File.files(File.path(packageFile), 'src/90-generator/*-consts-*.js');

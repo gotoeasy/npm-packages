@@ -3,7 +3,7 @@ bus.on('解析器插件', function(){
     // 整理章节内容
     return postobject.plugin(/**/__filename/**/, async function(root, context){
 
-        await root.walk( NodeTypes.SheetSection, (node, object) => {
+        await root.walk( Types.SheetSection, (node, object) => {
 
             // cell
             object.cell = object.values[0].cell;                                // 起始单元格

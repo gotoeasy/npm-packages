@@ -3,7 +3,7 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.SheetSection, (node, object) => {
+        await root.walk( Types.SheetSection, (node, object) => {
             if (object.values[0].cell === 'B2'){
                 t.is(object.values[0].value, '1、hello world服务');
             }

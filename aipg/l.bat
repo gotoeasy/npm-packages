@@ -1,0 +1,2 @@
+@node build
+@npm test

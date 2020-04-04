@@ -1,7 +1,7 @@
 [node]
 {
     type : Types.Call,
-    value : 'fnTest',
+    object : {value : 'fnTest'},
 }
 
 [src]

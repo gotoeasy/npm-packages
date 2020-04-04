@@ -1,4 +1,4 @@
 gen.on(Types.Var, function (node){
     // TODO
-    return `${node.value}`;
+    return `${node.object.value}`;
 });

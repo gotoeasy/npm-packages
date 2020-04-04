@@ -3,15 +3,13 @@
     type : Types.Add,
     nodes : [{
             type : Types.Var,
-            kind : Kinds.Integer,
-            value : 'cnt1',
+            object : {value : 'cnt1'},
         },{
             type : Types.Var,
-            kind : Kinds.Integer,
-            value : 'cnt2',
+            object : {value : 'cnt2'},
         },{
             type : Types.Literal,
-            value : 123,
+            object : {value : '123'},
     }]
 }
 

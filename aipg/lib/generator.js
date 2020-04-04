@@ -1,55 +1,5 @@
-/* ------- 000-consts-types ------- */
-// 节点类型定义
-const Types = {
-    Var: "Var", // 变量
-    Literal: "Literal", // 常数
-    Call: "Call", // 调用
-    Condition: "Condition", // 条件
-    Body: "Body", // 内容
-    Method: "Method", // 方法
-    Statement: "Statement", // 语句
-    IfElseStatement: "IfElseStatement", // IfElse语句
-    Break: "Break", // break
-    Continue: "Continue", // continue
-    Return: "Return", // return
-    If: "If", // if
-    ElseIf: "ElseIf", // else if
-    Else: "Else", // else
-    GreaterThan: "GreaterThan", // >
-    GreaterEqualsThan: "GreaterEqualsThan", // >=
-    LessThan: "LessThan", // <
-    LessEqualsThan: "LessEqualsThan", // <=
-    Equal: "Equal", // =
-    Equals: "Equals", // ==
-    ExactEquals: "ExactEquals", // ===
-    And: "And", // &&
-    Or: "Or", // ||
-    Add: "Add", // +
-    Subtract: "Subtract", // -
-    Multiply: "Multiply", // *
-    Divide: "Divide", // /
-    LeftAddAdd: "LeftAddAdd", // ++i
-    RightAddAdd: "RightAddAdd", // i++
-    LeftSubtractSubtract: "LeftSubtractSubtract", // --i
-    RightSubtractSubtract: "RightSubtractSubtract", // i--
-
-    root: "root", // root
-    Excel: "Excel", // Excel
-    SheetHead: "SheetHead", // SheetHead
-    SheetOther: "SheetOther", // SheetOther
-    MethodNote: "MethodNote", // MethodNote
-};
-
-/* ------- 001-consts-kinds ------- */
-// 数据类型定义
-const Kinds = {
-    String: "String", // 字符串
-    Var: "Var", // 变量
-    Number: "Number", // 数值
-    Integer: "Integer", // Integer
-};
-
 /* ------- 009-common ------- */
+const Types = require("./types");
 const gen = require("@gotoeasy/bus").newInstance();
 
 gen.on("代码生成", function (node) {
@@ -76,15 +26,24 @@ gen.on("查找子节点", function (node, type) {
 /* ------- 011-var ------- */
 gen.on(Types.Var, function (node) {
     // TODO
-    return `${node.value}`;
+    return `${node.object.value}`;
 });
 
 /* ------- 012-literal ------- */
+gen.on(Types.String, function (node) {
+    return `"${node.object.value}"`;
+});
+
+gen.on(Types.Number, function (node) {
+    return `${node.object.value}`;
+});
+
+gen.on(Types.Integer, function (node) {
+    return `${node.object.value}`;
+});
+
 gen.on(Types.Literal, function (node) {
-    if (node.kind === "String") {
-        return `"${node.value}"`;
-    }
-    return `${node.value}`;
+    return `${node.object.value}`;
 });
 
 /* ------- 013-break ------- */
@@ -103,13 +62,13 @@ gen.on(Types.Return, function (node) {
         let rs = gen.at("代码生成", node.nodes[0]);
         return `return ${rs};`;
     } else {
-        if (node.value == null) {
+        if (!node.object) {
             return `return;`;
         }
-        if (node.kind === Kinds.String) {
-            return `return "${node.value}";`;
+        if (node.object.value == null) {
+            return `return;`;
         }
-        return `return ${node.value};`;
+        return `return ${node.object.value};`;
     }
 });
 
@@ -301,7 +260,7 @@ gen.on(Types.Statement, function (node) {
 /* ------- 051-call ------- */
 gen.on(Types.Call, function (node) {
     if (!node.nodes || !node.nodes.length) {
-        return `${node.value}()`;
+        return `${node.object.value}()`;
     }
 
     let ary = [];
@@ -310,27 +269,48 @@ gen.on(Types.Call, function (node) {
     });
 
     // TODO 参数
-    return `${node.value}(${ary.join(", ")})`;
+    return `${node.object.value}(${ary.join(", ")})`;
 });
 
 /* ------- 061-method ------- */
 gen.on(Types.Method, function (node) {
     let object = node.object;
     let prefix = "public";
-    let returnType = object.returnType || "void";
-    let methodName = object.methodName;
+    let returnType = object.returnType;
+    let methodName = object.methodNmae;
     let params = [];
     object.parameters.forEach((p) => {
-        ary.push(p.type + " " + p.name);
+        params.push(p.type + " " + p.value);
     });
-    let param = ary.join(", ");
+    let param = params.join(", ");
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    let sub = ary.join("\r\n");
 
     // 方法
-    return `${prefix} ${returnType} ${methodName}(${param})`;
+    return `${prefix} ${returnType} ${methodName}(${param}) {\r\n ${sub}\r\n}`;
+});
+
+/* ------- 071-class ------- */
+gen.on(Types.SheetOther, function (node) {
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+
+    let className = "HelloWorld";
+
+    // 方法
+    return `public class ${className} {
+        ${ary.join("\r\n")}
+    }`;
 });
 
 /* ------- 910-blank-node ------- */
-gen.on(Types.root, function (node) {
+gen.on(Types.Root, function (node) {
     if (!node.nodes || !node.nodes.length) {
         return "";
     }
@@ -367,6 +347,18 @@ gen.on(Types.SheetOther, function (node) {
 });
 
 gen.on(Types.MethodNote, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
+});
+
+gen.on(Types.Note, function (node) {
     if (!node.nodes || !node.nodes.length) {
         return "";
     }

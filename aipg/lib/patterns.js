@@ -6,4 +6,4 @@ patterns.push({type: 'Add', regexp: /^(.+)(?:[+＋]+)(.+)$/});   // NNN + NNN
 patterns.push({type: 'String', regexp: /^(?:“)(.*)(?:”)$/, leaf: true});   // “NNNNNN”
 
 patterns.push({type: 'Note', regexp: /^(.*)(?:服务)(?:[.。．]?)$/, leaf: true});   // “NNNNNN服务”
-patterns.push({type: 'ParameterOnlyOne', regexp: /^(参数)$/, leaf: true});   // “参数”
+patterns.push({type: 'Parameter', regexp: /^(参数)$/, leaf: true});   // “参数”

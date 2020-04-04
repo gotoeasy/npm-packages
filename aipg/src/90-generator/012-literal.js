@@ -1,6 +1,15 @@
+gen.on(Types.String, function (node){
+    return `"${node.object.value}"`;
+});
+
+gen.on(Types.Number, function (node){
+    return `${node.object.value}`;
+});
+
+gen.on(Types.Integer, function (node){
+    return `${node.object.value}`;
+});
+
 gen.on(Types.Literal, function (node){
-    if (node.kind === 'String') {
-        return `"${node.value}"`;
-    }
-    return `${node.value}`;
+    return `${node.object.value}`;
 });

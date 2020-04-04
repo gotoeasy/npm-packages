@@ -2,9 +2,8 @@
 {
     type : Types.RightAddAdd,
     nodes : [{
-            type : Types.Var,
-            kind : Kinds.Integer,
-            value : 'cnt',
+            type : Types.Integer,
+            object : {value : 'cnt'},
     }]
 }
 

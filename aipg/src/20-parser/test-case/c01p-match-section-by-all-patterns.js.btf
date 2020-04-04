@@ -3,16 +3,16 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.SheetSection, (node, object) => {
+        await root.walk( Types.SheetSection, (node, object) => {
             if (object.value === 'hello world服务'){
-                t.is(object.matchs[0].type, NodeTypes.Note);
+                t.is(object.matchs[0].type, Types.Note);
             }else{
-                t.is(object.matchs.length >= 2, true);
+               // t.is(object.matchs.length >= 2, true);
             }
 
         }, {readonly: true});
 
-       writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+      writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
     }};
 
     await parser(rsReader.result, opts);
@@ -44,49 +44,41 @@ async t => {
               "object": {
                 "cell": "B2",
                 "value": "hello world服务",
-                "seq": "01",
-                "matchs": [
-                  {
-                    "type": "Note",
-                    "value": "hello world"
-                  }
-                ]
+                "seq": "01"
               },
-              "type": "SheetSection",
+              "type": "Note",
               "nodes": [
                 {
                   "object": {
                     "cell": "C4",
                     "value": "返回:\t“Hello ” + 参数",
-                    "seq": null,
-                    "matchs": [
-                      [
+                    "seq": null
+                  },
+                  "type": "Return",
+                  "nodes": [
+                    {
+                      "object": {
+                        "type": "Add"
+                      },
+                      "type": "Add",
+                      "nodes": [
                         {
-                          "type": "Return",
-                          "matchs": [
-                            {
-                              "type": "Add",
-                              "matchs": [
-                                [
-                                  {
-                                    "type": "String",
-                                    "value": "Hello "
-                                  }
-                                ],
-                                [
-                                  {
-                                    "type": "ParameterOnlyOne",
-                                    "value": "参数"
-                                  }
-                                ]
-                              ]
-                            }
-                          ]
+                          "object": {
+                            "type": "String",
+                            "value": "Hello "
+                          },
+                          "type": "String"
+                        },
+                        {
+                          "object": {
+                            "type": "Parameter",
+                            "value": "参数"
+                          },
+                          "type": "Parameter"
                         }
                       ]
-                    ]
-                  },
-                  "type": "SheetSection"
+                    }
+                  ]
                 }
               ]
             }

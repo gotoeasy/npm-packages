@@ -4,8 +4,8 @@ bus.on('解析器插件', function(){
     return postobject.plugin(/**/__filename/**/, async function(root, context){
 
         await root.walk( (node, object) => {
-            if (node.type === NodeTypes.Unknown) {
-                node.type = NodeTypes.SheetSection;             // 仅章节没有类型
+            if (node.type === Types.Unknown) {
+                node.type = Types.SheetSection;             // 仅章节没有类型
             }
             delete object.type;                                 // 数据不存放type
         }, {readonly: true});

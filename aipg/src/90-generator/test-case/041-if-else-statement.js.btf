@@ -9,11 +9,10 @@
                     type : Types.GreaterThan,
                     nodes : [{
                             type : Types.Var,
-                            kind : Kinds.Integer,
-                            value : 'amount',
+                            object : {value : 'amount'},
                         },{
                             type : Types.Literal,
-                            value : 0,
+                            object : {value : '0'},
                         }]
                 }]
             },{
@@ -22,8 +21,7 @@
                         type : Types.Return,
                         nodes : [{
                                 type : Types.Var,
-                                kind : Kinds.Integer,
-                                value : 'amount',
+                                object : {value : 'amount'},
                             }
                         ]
                     }            
@@ -38,11 +36,10 @@
                         type : Types.LessEqualsThan,
                         nodes : [{
                                 type : Types.Var,
-                                kind : Kinds.Integer,
-                                value : 'count',
+                                object : {value : 'count'},
                             },{
                                 type : Types.Literal,
-                                value : 0,
+                                object : {value : '0'},
                             }]
                     }]
                 },{
@@ -51,7 +48,7 @@
                             type : Types.Return,
                             nodes : [{
                                     type : Types.Var,
-                                    value : 'count',
+                                    object : {value : 'count'},
                                 }
                             ]
                         }
@@ -81,11 +78,10 @@ else if ( count <= 0 ){
                     type : Types.GreaterThan,
                     nodes : [{
                             type : Types.Var,
-                            kind : Kinds.Integer,
-                            value : 'amount',
+                            object : {value : 'amount'},
                         },{
                             type : Types.Literal,
-                            value : 0,
+                            object : {value : '0'},
                         }]
                 }]
             },{
@@ -94,8 +90,7 @@ else if ( count <= 0 ){
                         type : Types.Return,
                         nodes : [{
                                 type : Types.Var,
-                                kind : Kinds.Integer,
-                                value : 'amount',
+                                object : {value : 'amount'},
                             }
                         ]
                     }            
@@ -110,11 +105,10 @@ else if ( count <= 0 ){
                         type : Types.LessEqualsThan,
                         nodes : [{
                                 type : Types.Var,
-                                kind : Kinds.Integer,
-                                value : 'count',
+                                object : {value : 'count'},
                             },{
                                 type : Types.Literal,
-                                value : 0,
+                                object : {value : '0'},
                             }]
                     }]
                 },{
@@ -123,7 +117,7 @@ else if ( count <= 0 ){
                             type : Types.Return,
                             nodes : [{
                                     type : Types.Var,
-                                    value : 'count',
+                                    object : {value : 'count'},
                                 }
                             ]
                         }

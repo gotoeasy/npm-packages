@@ -1,22 +1,7 @@
-/* ------- a00-consts-sheet-types ------- */
-// Sheet类型【SheetType】
-const SheetType = {
-    SheetVersion: "SheetVersion", // 修订履历
-    SheetPageLayout: "SheetPageLayout", // 页面布局
-    SheetPageItems: "SheetPageItems", // 页面项目
-    SheetProcess: "SheetProcess", // 详细处理
-    SheetEdit: "SheetEdit", // 编辑明细
-    SheetOther: "SheetOther", // 其他
-
-    Excel: "Excel", // Excel
-    Sheet: "Sheet", // Sheet
-    SheetHead: "SheetHead", // SheetHead
-    SheetSection: "SheetSection", // SheetSection
-};
-
 /* ------- a090-reuires-exports ------- */
 const bus = require("@gotoeasy/bus").newInstance();
 const postobject = require("@gotoeasy/postobject");
+const Types = require("./types");
 
 module.exports = async function (input) {
     let plugins = bus.on("阅读器插件"); // 用bus.on而不是bus.at
@@ -36,7 +21,7 @@ module.exports = async function (input) {
     context.Sheets[].name                               // Sheet名
     context.Sheets[].hidden                             // Sheet是否隐藏
     context.Sheets[].ignore                             // Sheet是否要忽略
-    context.Sheets[].type                               // Sheet类型【SheetType】
+    context.Sheets[].type                               // Sheet类型
     context.Sheets[].mapMergeCell                       // 所有合并单元格的地址信息，如 Map{'A1': {addr: 'A1:C2', startRow:1, endRow:2, startColumn:1, endColumn:3}}
     context.Sheets[].maxColumn                          // Sheet最大列
     context.Sheets[].maxRow                             // Sheet最大行
@@ -241,30 +226,30 @@ bus.on("是否忽略Sheet", function (name) {
 // 根据Sheet名判断Sheet类型
 bus.on("Sheet类型", function (name) {
     if (/^(变更履历|修订履历|修订版本|版本|版本履历)$/.test(name) || /^(変更履歴|改訂履歴)$/.test(name)) {
-        return SheetType.SheetVersion;
+        return Types.SheetVersion;
     }
 
     if (/^(页面设计|页面布局|布局|页面)$/.test(name) || /^(画面仕様|画面レイアウト|画面|レイアウト)$/.test(name)) {
-        return SheetType.SheetPageLayout;
+        return Types.SheetPageLayout;
     }
 
     if (
         /^(页面项目|页面项目设计|页面项目明细|页面项目说明|项目说明)$/.test(name) ||
         /^(画面アイテム|画面項目|画面アイテム说明|画面項目说明|画面詳細)$/.test(name)
     ) {
-        return SheetType.SheetPageItems;
+        return Types.SheetPageItems;
     }
 
     if (/^(详细处理|处理设计|处理说明)$/.test(name) || /^(処理仕様|詳細処理)$/.test(name)) {
-        return SheetType.SheetProcess;
+        return Types.SheetProcess;
     }
 
     if (/^编辑/.test(name) || /^編集/.test(name)) {
-        return SheetType.SheetEdit;
+        return Types.SheetEdit;
     }
 
     // 其他
-    return SheetType.SheetOther;
+    return Types.SheetOther;
 });
 
 /* ------- b99m-util-03-cell-address-converter ------- */
@@ -1069,7 +1054,7 @@ bus.on(
     (function () {
         // 整理有效Sheet的内容存入context.result
         return postobject.plugin(/**/ __filename /**/, function (root, context) {
-            let oExcel = { type: SheetType.Excel, file: context.input.file, nodes: [] };
+            let oExcel = { type: Types.Excel, file: context.input.file, nodes: [] };
 
             for (let i = 0, oSheet, sheet; (oSheet = context.Sheets[i++]); ) {
                 if (oSheet.ignore) continue; // 跳过忽略的Sheet
@@ -1079,7 +1064,7 @@ bus.on(
                 let nodes = [];
                 oExcel.nodes.push({ type, name, nodes }); // Sheet
 
-                nodes.push({ type: SheetType.SheetHead, header: oSheet.Head }); // SheetHead
+                nodes.push({ type: Types.SheetHead, header: oSheet.Head }); // SheetHead
                 oSheet.Sections && oSheet.Sections.nodes && nodes.push(...oSheet.Sections.nodes); // Sections
             }
 

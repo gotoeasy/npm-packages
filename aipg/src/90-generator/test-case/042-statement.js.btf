@@ -5,36 +5,33 @@
             type : Types.Equal,
             nodes : [{
                     type : Types.Var,
-                    kind : Kinds.Integer,
-                    value : 'cnt',
+                    object : {value : 'cnt'},
                 },{
                     type : Types.Literal,
-                    value : 123,
+                    object : {value : '123'},
             }]
         },{
             type : Types.Equal,
             nodes : [{
                     type : Types.Var,
-                    kind : Kinds.Integer,
-                    value : 'cnt',
+                    object : {value : 'cnt'},
                 },{
                     type : Types.Literal,
-                    value : 123,
+                    object : {value : 123},
             }]
         },{
             type : Types.Call,
-            value : 'fnTest',
+            object : {value : 'fnTest'},
         },{
             type : Types.Call,
-            value : 'fnTest2',
+            object : {value : 'fnTest2'},
             nodes : [],
         },{
             type : Types.Call,
-            value : 'fnTest3',
+            object : {value : 'fnTest3'},
             nodes : [{
                 type : Types.Var,
-                kind : Kinds.Integer,
-                value : 'cnt',
+                object : {value : 'cnt'},
             }],
     }]
 
@@ -58,11 +55,10 @@ fnTest3(cnt);
                     type : Types.GreaterThan,
                     nodes : [{
                             type : Types.Var,
-                            kind : Kinds.Integer,
-                            value : 'amount',
+                            object : {value : 'amount'},
                         },{
                             type : Types.Literal,
-                            value : 0,
+                            object : {value : 0},
                         }]
                 }]
             },{

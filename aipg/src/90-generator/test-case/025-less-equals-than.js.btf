@@ -2,12 +2,11 @@
 {
     type : 'LessEqualsThan',
     nodes : [{
-            type : 'Var',
-            kind : 'Integer',
-            value : 'cnt',
+            type : 'Integer',
+            object : {value : 'cnt'},
         },{
-            type : 'Literal',
-            value : 999,
+            type : 'Integer',
+            object : {value : 999},
     }]
 }
 

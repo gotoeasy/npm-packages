@@ -1,6 +1,6 @@
 gen.on(Types.Call, function (node){
     if (!node.nodes || !node.nodes.length) {
-        return `${node.value}()`;
+        return `${node.object.value}()`;
     }
 
     let ary = [];
@@ -9,5 +9,5 @@ gen.on(Types.Call, function (node){
     });
 
     // TODO 参数
-    return `${node.value}(${ary.join(', ')})`;
+    return `${node.object.value}(${ary.join(', ')})`;
 });

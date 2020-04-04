@@ -4,24 +4,20 @@
     nodes : [{
         type : Types.GreaterThan,
         nodes : [{
-                type : Types.Var,
-                kind : Kinds.Integer,
-                value : 'cnt',
+                type : Types.Integer,
+                object : {value : 'cnt'},
             },{
                 type : Types.Literal,
-                kind : Kinds.Integer,
-                value : 999,
+                object : {value : '999'},
         }]
     },{
         type : Types.LessThan,
         nodes : [{
-                type : Types.Var,
-                kind : Kinds.Integer,
-                value : 'amount',
+                type : Types.Literal,
+                object : {value : 'amount'},
             },{
                 type : Types.Literal,
-                kind : Kinds.Integer,
-                value : 123,
+                object : {value : '123'},
         }]
     }]
 }
@@ -35,24 +31,20 @@ cnt > 999 && amount < 123
     nodes : [{
         type : Types.GreaterThan,
         nodes : [{
-                type : Types.Var,
-                kind : Kinds.Integer,
-                value : 'cnt',
+                type : Types.Literal,
+                object : {value : 'cnt'},
             },{
                 type : Types.Literal,
-                kind : Kinds.Integer,
-                value : 999,
+                object : {value : '999'},
         }]
     },{
         type : Types.LessThan,
         nodes : [{
-                type : Types.Var,
-                kind : Kinds.Integer,
-                value : 'amount',
+                type : Types.Integer,
+                object : {value : 'amount'},
             },{
                 type : Types.Literal,
-                kind : Kinds.Integer,
-                value : 123,
+                object : {value : '123'},
         }]
     },{
         type : Types.Or,
@@ -60,21 +52,19 @@ cnt > 999 && amount < 123
             type : Types.Equals,
             nodes : [{
                     type : Types.Var,
-                    value : 'abc',
+                    object : {value : 'abc'},
                 },{
-                    type : Types.Literal,
-                    kind : Kinds.String,
-                    value : 'abc',
+                    type : Types.String,
+                    object : {value : 'abc'},
             }]
         },{
             type : Types.ExactEquals,
             nodes : [{
                     type : Types.Var,
-                    value : 'note',
+                    object : {value : 'note'},
                 },{
-                    type : Types.Literal,
-                    kind : Kinds.String,
-                    value : '123',
+                    type : Types.String,
+                    object : {value : '123'},
             }]
         }]
     }]

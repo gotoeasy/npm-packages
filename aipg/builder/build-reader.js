@@ -51,10 +51,8 @@ function buildGeneratorTest(packageFile){
     ary.push(`// ----------------------------------------------`);
     ary.push(`// reader测试`);
     ary.push(`// ----------------------------------------------`);
+    ary.push(`const Types = require('../lib/types');`);
     ary.push(`const reader = require('../lib/reader');`);
-
-    let constFiles = File.files(File.path(packageFile), 'src/10-reader/*-consts-*.js');
-    constFiles.forEach(f => ary.push(File.read(f)));
 
     files.forEach(f => {
         let name = File.name(f);

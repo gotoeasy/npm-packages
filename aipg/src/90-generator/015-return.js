@@ -4,12 +4,12 @@ gen.on(Types.Return, function (node){
         let rs = gen.at('代码生成', node.nodes[0]);
         return `return ${rs};`;
     }else{
-        if (node.value == null) {
+        if (!node.object) {
             return `return;`;
         }
-        if (node.kind === Kinds.String) {
-            return `return "${node.value}";`;
+        if (node.object.value == null) {
+            return `return;`;
         }
-        return `return ${node.value};`;
+        return `return ${node.object.value};`;
     }
 });

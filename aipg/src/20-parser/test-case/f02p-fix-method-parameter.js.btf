@@ -1,0 +1,93 @@
+[test]
+async t => {
+    let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
+
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        await root.walk( Types.Method, (node, object) => {
+            t.is(!!object.parameters, true);
+        }, {readonly: true});
+
+       writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+    }};
+
+    await parser(rsReader.result, opts);
+
+}
+-------------------- JSON --------------------
+{
+  "type": "root",
+  "nodes": [
+    {
+      "object": {
+        "file": "./test/parser/f02p-fix-method-parameter.js.xlsx"
+      },
+      "type": "Excel",
+      "nodes": [
+        {
+          "object": {
+            "name": "Sheet1"
+          },
+          "type": "SheetOther",
+          "nodes": [
+            {
+              "object": {
+                "header": []
+              },
+              "type": "SheetHead"
+            },
+            {
+              "object": {
+                "cell": "B2",
+                "value": "hello world服务",
+                "seq": "01",
+                "parameters": [
+                  {
+                    "type": "String",
+                    "name": "参数",
+                    "value": "arg"
+                  }
+                ]
+              },
+              "type": "Method",
+              "nodes": [
+                {
+                  "object": {
+                    "cell": "C4",
+                    "value": "返回:\t“Hello ” + 参数",
+                    "seq": null
+                  },
+                  "type": "Return",
+                  "nodes": [
+                    {
+                      "object": {
+                        "type": "Add"
+                      },
+                      "type": "Add",
+                      "nodes": [
+                        {
+                          "object": {
+                            "type": "String",
+                            "value": "Hello "
+                          },
+                          "type": "String"
+                        },
+                        {
+                          "object": {
+                            "type": "String",
+                            "value": "arg",
+                            "name": "参数"
+                          },
+                          "type": "Var"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

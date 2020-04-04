@@ -3,8 +3,7 @@
     type : Types.RightSubtractSubtract,
     nodes : [{
             type : Types.Var,
-            kind : Kinds.Integer,
-            value : 'cnt',
+            object : {value : 'cnt'},
     }]
 }
 

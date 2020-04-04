@@ -3,11 +3,11 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( NodeTypes.Add, (node, object) => {
-            t.is(object.matchs.length, 2);
+        await root.walk( Types.Method, (node, object) => {
+            t.is(1, 1);
         }, {readonly: true});
 
-       //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+       writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
     }};
 
     await parser(rsReader.result, opts);
@@ -19,7 +19,7 @@ async t => {
   "nodes": [
     {
       "object": {
-        "file": "./test/parser/f01p-fix-child-node-if-match-only-one.js.xlsx"
+        "file": "./test/parser/f01p-fix-method-by-note.js.xlsx"
       },
       "type": "Excel",
       "nodes": [
@@ -39,9 +39,16 @@ async t => {
               "object": {
                 "cell": "B2",
                 "value": "hello world服务",
-                "seq": "01"
+                "seq": "01",
+                "parameters": [
+                  {
+                    "type": null,
+                    "name": "参数",
+                    "value": "arg"
+                  }
+                ]
               },
-              "type": "Note",
+              "type": "Method",
               "nodes": [
                 {
                   "object": {
@@ -53,19 +60,26 @@ async t => {
                   "nodes": [
                     {
                       "object": {
-                        "type": "Add",
-                        "matchs": [
-                          {
+                        "type": "Add"
+                      },
+                      "type": "Add",
+                      "nodes": [
+                        {
+                          "object": {
                             "type": "String",
                             "value": "Hello "
                           },
-                          {
-                            "type": "UnMatch",
-                            "value": "参数"
-                          }
-                        ]
-                      },
-                      "type": "Add"
+                          "type": "String"
+                        },
+                        {
+                          "object": {
+                            "type": "Parameter",
+                            "value": "arg",
+                            "name": "参数"
+                          },
+                          "type": "Parameter"
+                        }
+                      ]
                     }
                   ]
                 }

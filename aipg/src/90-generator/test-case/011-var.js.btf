@@ -1,7 +1,7 @@
 [node]
 {
     type : Types.Var,
-    value : 'count',
+    object : {value : 'count'},
 }
 
 [src]

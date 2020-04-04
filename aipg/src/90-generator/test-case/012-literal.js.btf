@@ -1,8 +1,7 @@
 [node]
 {
-    type : Types.Literal,
-    kind : Kinds.String,
-    value : '12345',
+    type : Types.String,
+    object : {value : '12345'},
 }
 
 [src]
@@ -10,9 +9,19 @@
 =====================================================
 [node]
 {
-    type : Types.Literal,
-    value : '12345',
+    type : Types.Number,
+    object : {value : '12345'},
 }
 
 [src]
 12345
+=====================================================
+[node]
+{
+    type : Types.Integer,
+    object : {value : '12345'},
+}
+
+[src]
+12345
+-------------------
