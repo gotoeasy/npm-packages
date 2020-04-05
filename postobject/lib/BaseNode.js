@@ -112,6 +112,88 @@ class BaseNode{
         delete this.nodes;
     }
 
+    // 查找父节点
+    findParent(typeOrFnOrReg){
+        let node = this;
+        if (isFunction(typeOrFnOrReg)) {
+            while (node = node.parent) {
+                if (typeOrFnOrReg(node, node.object)) break;            // 找到
+                if (node.type === 'root') return null;                  // 找不到
+            }
+        }else if (isRegExp(typeOrFnOrReg)) {
+            while (node = node.parent) {
+                if (typeOrFnOrReg.test(node.type)) break;               // 找到
+                if (node.type === 'root') return null;                  // 找不到
+            }
+        }else{
+            while (node = node.parent) {
+                if (node.type === typeOrFnOrReg) break;                 // 找到
+                if (node.type === 'root') return null;                  // 找不到
+            }
+        }
+
+        return node;
+    }
+
+    // 查找兄弟节点
+    findBrother(typeOrFnOrReg){
+        let parent = this.parent;
+        if (!parent) return null;                                       // 找不到
+
+        let node = null;
+        if (isFunction(typeOrFnOrReg)) {
+            for (let i=0; node=parent.nodes[i++]; ) {
+                if (node === this) continue;
+                if (typeOrFnOrReg(node, node.object)) break;            // 找到
+            }
+        }else if (isRegExp(typeOrFnOrReg)) {
+            for (let i=0; node=parent.nodes[i++]; ) {
+                if (node === this) continue;
+                if (typeOrFnOrReg.test(node.type)) break;               // 找到
+            }
+        }else{
+            for (let i=0; node=parent.nodes[i++]; ) {
+                if (node === this) continue;
+                if (node.type === typeOrFnOrReg) break;                 // 找到
+            }
+        }
+
+        return node;
+    }
+
+    // 查找子孙节点
+    findChild(typeOrFnOrReg){
+        let parent = this.parent;
+        if (!parent) return null;                                       // 找不到
+
+        let node = null;
+
+        // 查找子节点
+        let nodes = this.nodes || [];
+        if (isFunction(typeOrFnOrReg)) {
+            for (let i=0; node=nodes[i++]; ) {
+                if (typeOrFnOrReg(node, node.object)) return node;      // 找到
+            }
+        }else if (isRegExp(typeOrFnOrReg)) {
+            for (let i=0; node=nodes[i++]; ) {
+                if (typeOrFnOrReg.test(node.type)) return node;         // 找到
+            }
+        }else{
+            for (let i=0; node=nodes[i++]; ) {
+                if (node.type === typeOrFnOrReg) return node;           // 找到
+            }
+        }
+
+        // 查找孙节点
+        for (let i=0; node=nodes[i++]; ) {
+            if (node = node.findChild(typeOrFnOrReg)) {
+                return node;                                            // 找到
+            }
+        }
+
+        return null;                                                    // 找不到
+    }
+
 }
 
 
