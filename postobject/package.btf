@@ -2,7 +2,7 @@
 @gotoeasy/postobject
 
 [version] // 版本号
-0.3.3
+0.4.1
 
 [main] // 入口文件
 index.js

@@ -1,4 +1,4 @@
-/* ------- 009-common ------- */
+/* ------- 000-common ------- */
 const Types = require("./types");
 const gen = require("@gotoeasy/bus").newInstance();
 
@@ -21,6 +21,21 @@ gen.on("查找子节点", function (node, type) {
         }
     }
     return null;
+});
+
+/* ------- 001-excel ------- */
+gen.on(Types.Excel, function (node) {
+    if (!node.nodes || !node.nodes.length) {
+        return "";
+    }
+
+    let ary = [];
+    ary.push(`public class ${node.object.className} {`);
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    ary.push("}");
+    return ary.join("\r\n");
 });
 
 /* ------- 011-var ------- */
@@ -294,35 +309,8 @@ gen.on(Types.Method, function (node) {
     return `${prefix} ${returnType} ${methodName}(${param}) {\r\n ${sub}\r\n}`;
 });
 
-/* ------- 071-class ------- */
-gen.on(Types.SheetOther, function (node) {
-    let ary = [];
-    node.nodes.forEach((nd) => {
-        ary.push(gen.at("代码生成", nd));
-    });
-
-    let className = "HelloWorld";
-
-    // 方法
-    return `public class ${className} {
-        ${ary.join("\r\n")}
-    }`;
-});
-
 /* ------- 910-blank-node ------- */
 gen.on(Types.Root, function (node) {
-    if (!node.nodes || !node.nodes.length) {
-        return "";
-    }
-
-    let ary = [];
-    node.nodes.forEach((nd) => {
-        ary.push(gen.at("代码生成", nd));
-    });
-    return ary.join("\r\n");
-});
-
-gen.on(Types.Excel, function (node) {
     if (!node.nodes || !node.nodes.length) {
         return "";
     }
@@ -384,13 +372,21 @@ gen.on(Types.SheetHead, function (node) {
 
 /* ------- 990-format ------- */
 gen.on("格式化代码", function (src, opts = {}) {
-    return src;
+    try {
+        return require("@gotoeasy/csjs").formatJava(src, opts);
+    } catch (e) {
+        console.error("format java src failed", e);
+        return src;
+    }
 });
 
 /* ------- 999-exports ------- */
 function print(node) {
     let src = gen.at("代码生成", node);
-    return gen.at("格式化代码", src);
+    if (node && (node.type === Types.Root || node.type === Types.Excel || (node.parent && node.parent.type === Types.Excel))) {
+        return gen.at("格式化代码", src);
+    }
+    return src;
 }
 
 module.exports = print;

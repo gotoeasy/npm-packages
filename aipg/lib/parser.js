@@ -207,12 +207,12 @@ bus.on(
     })()
 );
 
-/* ------- e01p-create-node-by-match-result ------- */
+/* ------- d01p-create-node-by-match-result ------- */
 bus.on(
     "解析器插件",
     (function () {
         // 根据匹配结果，整理成相应节点
-        return postobject.plugin("e01p-create-node-by-match-result.js", async function (root, context) {
+        return postobject.plugin("d01p-create-node-by-match-result.js", async function (root, context) {
             await root.walk(Types.SheetSection, (node, object) => {
                 let fnAddChild = (parent, obj) => {
                     let oChild = this.createNode(obj);
@@ -222,134 +222,76 @@ bus.on(
                     delete oChild.object.matchs;
                 };
 
-                if (object.matchs.length === 1) {
-                    if (!object.matchs[0].matchs) {
-                        node.type = object.matchs[0].type;
-                        delete object.matchs;
-                    } else {
-                        let oClone = node.clone();
-                        oClone.type = object.matchs[0].type;
-                        node.replaceWith(oClone);
+                let ndMatchs = this.createNode({ type: Types.MatchSections }); // 存放所有匹配结果
+                delete ndMatchs.object.type;
+                node.addChild(ndMatchs);
 
-                        object.matchs[0].matchs.forEach((m) => {
-                            fnAddChild(oClone, m);
-                        });
-                        delete oClone.object.matchs;
-                    }
-                } else {
-                    // TODO 多匹配？
+                object.matchs.forEach((mc) => {
+                    let ndMatch = this.createNode({ type: Types.MatchSection }); // 存放单个匹配结果
+                    delete ndMatch.object.type;
+                    ndMatchs.addChild(ndMatch);
+                    fnAddChild(ndMatch, mc);
+                });
+                delete object.matchs;
+
+                /*
+            if (object.matchs.length === 1) {
+                if (!object.matchs[0].matchs) {
+                    node.type = object.matchs[0].type;
+                    delete object.matchs;
+                }else{
+                    let oClone = node.clone();
+                    oClone.type = object.matchs[0].type;
+                    node.replaceWith(oClone);
+
+                    object.matchs[0].matchs.forEach(m => {
+                        fnAddChild(oClone, m);
+                    });
+                    delete oClone.object.matchs;
+
                 }
-            });
-        });
-    })()
-);
-
-/* ------- e10p-check-unmatch ------- */
-bus.on(
-    "解析器插件",
-    (function () {
-        // TODO 检查匹配结果
-        return postobject.plugin("e10p-check-unmatch.js", async function (root, context) {
-            require("@gotoeasy/file").write("e:/1/generator-unmmmm.json", JSON.stringify(root, null, 2));
-
-            await root.walk(
-                Types.UnMatch,
-                (node, object) => {
-                    let type = "不知所云";
-                    let cell = object.cell;
-                    let value = object.value;
-                    if (cell) {
-                        bus.at("QA", { type, cell, value });
-                    } else {
-                        let parentNode = node.parent;
-                        while (true) {
-                            if (parentNode.object.cell) {
-                                cell = parentNode.object.cell;
-                                break;
-                            } else if (parentNode.type === Types.Excel) {
-                                break; // 不应该完全找不到
-                            }
-                            parentNode = parentNode.parent;
-                        }
-                        bus.at("QA", { type, cell, value });
-                    }
-                },
-                { readonly: true }
-            );
-        });
-    })()
-);
-
-/* ------- e20p-check-mutil-match ------- */
-bus.on(
-    "解析器插件",
-    (function () {
-        // TODO 检查匹配结果
-        return postobject.plugin("e20p-check-mutil-match.js", async function (root, context) {
-            /*
-        await root.walk( Types.SheetSection, (node, object) => {
-            let warn = [];
-         //   checkMatchResults(object.matchs, warn);
-            if (warn.length) {
-                console.info('[TODO]');
-                //console.info('[TODO]', JSON.stringify({object, warn}, null, 2));
+            }else{
+                // TODO 多匹配？
             }
-        }, {readonly: true});
 */
+            });
         });
-
-        function checkMatchResults(matchs, ary) {
-            if (!matchs || !matchs.length) return;
-
-            if (matchs.length > 1) {
-                ary.push(matchs);
-            }
-
-            matchs.forEach((match) => checkMatchResults(match.matchs, ary));
-        }
     })()
 );
 
-/* ------- f01p-fix-method-by-note ------- */
+/* ------- e01p-fix-method-by-note ------- */
 bus.on(
     "解析器插件",
     (function () {
-        // 反推方法参数
-        return postobject.plugin("f01p-fix-method-by-note.js", async function (root, context) {
+        // 顶级方法节点
+        return postobject.plugin("e01p-fix-method-by-note.js", async function (root, context) {
             await root.walk(Types.Note, (node, object) => {
-                if (object.seq.length === 2) {
-                    node.type = Types.Method;
+                if (node.findParent(Types.SheetSection).parent.parent.type === Types.Excel) {
+                    node.type = Types.MethodNote;
+                    node.findParent(Types.SheetSection).object.type = Types.Method;
                 }
             });
         });
     })()
 );
 
-/* ------- f02p-fix-method-parameter ------- */
+/* ------- e02p-fix-method-parameter ------- */
 bus.on(
     "解析器插件",
     (function () {
         // 单个参数，反推初始化方法参数
-        return postobject.plugin("f02p-fix-method-parameter.js", async function (root, context) {
+        return postobject.plugin("e02p-fix-method-parameter.js", async function (root, context) {
             await root.walk(
                 Types.Parameter,
                 (node, object) => {
-                    let parentNode = node.parent;
-                    while (true) {
-                        if (parentNode.type === Types.Method) {
-                            let parameters = (parentNode.object.parameters = parentNode.object.parameters || []);
-                            if (!parameters.length) {
-                                object.name = object.value;
-                                let type = null; // 参数类型未知
-                                let name = object.name; // 参数名称
-                                let value = (object.value = "arg"); // 参数变量名
-                                parameters.push({ type, name, value });
-                                break;
-                            }
-                        } else if (parentNode.type === Types.Excel) {
-                            break; // 不应该完全找不到
-                        }
-                        parentNode = parentNode.parent;
+                    let ndMethod = node.findParent((nd, obj) => obj.type === Types.Method);
+                    let parameters = (ndMethod.object.parameters = ndMethod.object.parameters || []);
+                    if (!parameters.length) {
+                        object.name = object.value; // 参数名称
+                        let type = null; // 参数类型未知
+                        let name = object.name; // 参数名称
+                        let value = (object.value = "arg"); // 参数变量名
+                        parameters.push({ type, name, value });
                     }
                 },
                 { readonly: true }
@@ -358,32 +300,31 @@ bus.on(
     })()
 );
 
-/* ------- f03p-fix-method-parameter-type ------- */
+/* ------- e03p-fix-method-parameter-type ------- */
 bus.on(
     "解析器插件",
     (function () {
         // 单个参数，反推初始化方法参数
-        return postobject.plugin("f03p-fix-method-parameter-type.js", async function (root, context) {
+        return postobject.plugin("e03p-fix-method-parameter-type.js", async function (root, context) {
             await root.walk(
                 Types.Parameter,
                 (node, object) => {
-                    let ndMethod = node.findParent(Types.Method);
+                    let ndMethod = node.findParent((nd, obj) => obj.type === Types.Method);
                     let oParam = ndMethod.object.parameters[0];
 
-                    // -------------------------------
-                    // 方法已有参数类型定义时直接使用
-                    // -------------------------------
+                    // -------------------------------------
+                    // 【方法】已有参数类型定义时直接使用
+                    // -------------------------------------
                     if (oParam.type) {
                         node.type = Types.Var; // 设定节点类型为Var
                         object.type = oParam.type; // 设定参数类型
                         return;
                     }
 
-                    // -------------------------------
-                    // 尝试反推初始化方法参数
-                    // -------------------------------
+                    // -------------------------------------
+                    // 【加法】时，尝试参考兄弟节点推测类型
+                    // -------------------------------------
                     if (node.parent.type === Types.Add) {
-                        // 【加法】时，参考兄弟节点推定类型
                         let ndBrother = node.findBrother((nd) => nd !== this);
                         if (ndBrother && ndBrother.type) {
                             oParam.type = ndBrother.type; // 设定方法的参数类型
@@ -399,48 +340,18 @@ bus.on(
     })()
 );
 
-/* ------- f04p-fix-method-name ------- */
+/* ------- e04p-fix-method-return-type ------- */
 bus.on(
     "解析器插件",
     (function () {
         // 单个参数，反推初始化方法参数
-        return postobject.plugin("f04p-fix-method-name.js", async function (root, context) {
+        return postobject.plugin("e04p-fix-method-return-type.js", async function (root, context) {
             await root.walk(
-                Types.Method,
-                (node, object) => {
-                    if (/hello/i.test(object.value)) {
-                        object.methodNmae = "hello";
-                    }
-                },
-                { readonly: true }
-            );
-        });
-    })()
-);
-
-/* ------- f05p-fix-method-return-type ------- */
-bus.on(
-    "解析器插件",
-    (function () {
-        // 单个参数，反推初始化方法参数
-        return postobject.plugin("f05p-fix-method-return-type.js", async function (root, context) {
-            await root.walk(
-                Types.Method,
+                Types.SheetSection,
                 async (node, object) => {
-                    if (object.returnType) {
-                        return; // 已经有返回类型了
-                    }
+                    if (object.type !== Types.Method || object.returnType) return; // 非方法或已有返回类型
 
-                    let ndReturn;
-                    await node.walk(
-                        Types.Return,
-                        (nd) => {
-                            ndReturn = nd;
-                            return false;
-                        },
-                        { readonly: true }
-                    );
-
+                    let ndReturn = node.findChild(Types.Return);
                     if (!ndReturn) {
                         object.returnType = "void";
                         return; // void
@@ -465,6 +376,104 @@ bus.on(
     })()
 );
 
+/* ------- f01p-check-unmatch ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // TODO 检查匹配结果
+        return postobject.plugin("f01p-check-unmatch.js", async function (root, context) {
+            require("@gotoeasy/file").write("e:/1/generator-unmmmm.json", JSON.stringify(root, null, 2));
+
+            await root.walk(
+                Types.UnMatch,
+                (node, object) => {
+                    let ndExcel = node.findParent(Types.Excel);
+                    let ndSection = node.findParent(Types.SheetSection);
+                    ndSection.object.unmatch = true;
+
+                    let type = "不知所云";
+                    let file = ndExcel.object.file;
+                    let cell = ndSection.object.cell;
+                    let value = ndSection.object.value;
+                    bus.at("QA", { type, file, cell, value });
+                },
+                { readonly: true }
+            );
+        });
+    })()
+);
+
+/* ------- f02p-check-mutil-match ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // TODO 检查匹配结果
+        return postobject.plugin("f02p-check-mutil-match.js", async function (root, context) {
+            await root.walk(
+                Types.MatchSections,
+                (node, object) => {
+                    if (node.nodes.length < 2) return;
+
+                    let ndExcel = node.findParent(Types.Excel);
+                    let ndSection = node.findParent(Types.SheetSection);
+                    ndSection.object.unmatch = true;
+
+                    let type = "难以抉择";
+                    let file = ndExcel.object.file;
+                    let cell = ndSection.object.cell;
+                    let value = ndSection.object.value;
+                    bus.at("QA", { type, file, cell, value });
+                },
+                { readonly: true }
+            );
+        });
+    })()
+);
+
+/* ------- g01p-fix-method-name ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // 单个参数，反推初始化方法参数
+        return postobject.plugin("g01p-fix-method-name.js", async function (root, context) {
+            await root.walk(
+                Types.SheetSection,
+                (node, object) => {
+                    if (object.type !== Types.Method || object.methodName) return; // 非方法或已有方法名都略过
+
+                    if (/hello/i.test(object.value)) {
+                        object.methodName = "hello";
+                    } else {
+                        object.methodName = "todo"; // TODO
+                    }
+                },
+                { readonly: true }
+            );
+        });
+    })()
+);
+
+/* ------- g02p-fix-class-name ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // 单个参数，反推初始化方法参数
+        return postobject.plugin("g02p-fix-class-name.js", async function (root, context) {
+            await root.walk(
+                Types.SheetSection,
+                (node, object) => {
+                    // TODO
+
+                    if (/hello/i.test(object.value)) {
+                        node.findParent(Types.Excel).object.className = "HelloWorld";
+                    }
+                },
+                { readonly: true }
+            );
+        });
+    })()
+);
+
 /* ------- z01p-export-root-to-result ------- */
 bus.on(
     "解析器插件",
@@ -481,7 +490,7 @@ bus.on(
     "QA",
     (function (cnt = 0) {
         return function (obj) {
-            console.info(`[QA] ${++cnt}`, JSON.stringify(obj, null, 2));
+            console.info(`【QA】${++cnt}`, JSON.stringify(obj, null, 2));
         };
     })()
 );

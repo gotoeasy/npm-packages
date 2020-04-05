@@ -13,6 +13,19 @@ bus.on('解析器插件', function(){
                 delete oChild.object.matchs;
             };
 
+            let ndMatchs = this.createNode({type: Types.MatchSections});                    // 存放所有匹配结果
+            delete ndMatchs.object.type;
+            node.addChild( ndMatchs );
+
+            object.matchs.forEach(mc => {
+                let ndMatch = this.createNode({type: Types.MatchSection});                  // 存放单个匹配结果
+                delete ndMatch.object.type;
+                ndMatchs.addChild( ndMatch );
+                fnAddChild(ndMatch, mc);
+            });
+            delete object.matchs;
+
+/*
             if (object.matchs.length === 1) {
                 if (!object.matchs[0].matchs) {
                     node.type = object.matchs[0].type;
@@ -31,7 +44,7 @@ bus.on('解析器插件', function(){
             }else{
                 // TODO 多匹配？
             }
-
+*/
         });
 
     });

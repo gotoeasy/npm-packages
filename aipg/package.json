@@ -5,8 +5,9 @@
   "dependencies": {
     "@gotoeasy/bus": "1.0.*",
     "@gotoeasy/postobject": "0.3.*",
-    "xlsx-populate": "*",
-    "office-document-properties": "*"
+    "office-document-properties": "*",
+    "prettier-plugin-java": "^0.7.1",
+    "xlsx-populate": "*"
   },
   "devDependencies": {
     "@gotoeasy/csjs": "0.4.*",

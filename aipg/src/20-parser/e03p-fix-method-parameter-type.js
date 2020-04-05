@@ -5,7 +5,7 @@ bus.on('解析器插件', function(){
 
         await root.walk( Types.Parameter, (node, object) => {
 
-            let ndMethod = node.findParent(Types.Method);
+            let ndMethod = node.findParent((nd,obj)=>obj.type === Types.Method);
             let oParam = ndMethod.object.parameters[0];
 
             // -------------------------------------

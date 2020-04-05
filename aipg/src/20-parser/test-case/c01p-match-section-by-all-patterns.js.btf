@@ -3,7 +3,8 @@ async t => {
     let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
 
     let opts = {'{FILE_NAME}': async (root, context) => {
-        await root.walk( Types.SheetSection, (node, object) => {
+        let cloneRoot = root.clone();
+        await cloneRoot.walk( Types.SheetSection, (node, object) => {
             if (object.value === 'hello world服务'){
                 t.is(object.matchs[0].type, Types.Note);
             }else{
@@ -12,7 +13,7 @@ async t => {
 
         }, {readonly: true});
 
-      writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', root);
+      //writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', cloneRoot);
     }};
 
     await parser(rsReader.result, opts);
@@ -44,41 +45,43 @@ async t => {
               "object": {
                 "cell": "B2",
                 "value": "hello world服务",
-                "seq": "01"
+                "seq": "01",
+                "matchs": [
+                  {
+                    "type": "Note",
+                    "value": "hello world"
+                  }
+                ]
               },
-              "type": "Note",
+              "type": "SheetSection",
               "nodes": [
                 {
                   "object": {
                     "cell": "C4",
                     "value": "返回:\t“Hello ” + 参数",
-                    "seq": null
+                    "seq": null,
+                    "matchs": [
+                      {
+                        "type": "Return",
+                        "matchs": [
+                          {
+                            "type": "Add",
+                            "matchs": [
+                              {
+                                "type": "String",
+                                "value": "Hello "
+                              },
+                              {
+                                "type": "Parameter",
+                                "value": "参数"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
                   },
-                  "type": "Return",
-                  "nodes": [
-                    {
-                      "object": {
-                        "type": "Add"
-                      },
-                      "type": "Add",
-                      "nodes": [
-                        {
-                          "object": {
-                            "type": "String",
-                            "value": "Hello "
-                          },
-                          "type": "String"
-                        },
-                        {
-                          "object": {
-                            "type": "Parameter",
-                            "value": "参数"
-                          },
-                          "type": "Parameter"
-                        }
-                      ]
-                    }
-                  ]
+                  "type": "SheetSection"
                 }
               ]
             }

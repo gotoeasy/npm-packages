@@ -24,10 +24,11 @@ const Types = {
     LessEqualsThan          : 'LessEqualsThan',                 // <=
     LeftAddAdd              : 'LeftAddAdd',                     // ++i
     LeftSubtractSubtract    : 'LeftSubtractSubtract',           // --i
+    MatchSections           : 'MatchSections',                  // 段落匹配数组
+    MatchSection            : 'MatchSection',                   // 单个段落匹配
     Method                  : 'Method',                         // 方法
     MethodNote              : 'MethodNote',                     // 方法的说明
     MutilMatch              : 'MutilMatch',                     // MutilMatch
-    Method                  : 'Method',                         // 方法
     Multiply                : 'Multiply',                       // *
     Number                  : 'Number',                         // 数值
     Note                    : 'Note',                           // 说明性文字
@@ -45,7 +46,6 @@ const Types = {
     SheetProcess            : 'SheetProcess',                   // 详细处理
     SheetEdit               : 'SheetEdit',                      // 编辑明细
     SheetOther              : 'SheetOther',                     // 其他
-    SheetOther              : 'SheetOther',                     // SheetOther
     SheetHead               : 'SheetHead',                      // 头部
     SheetSection            : 'SheetSection',                   // 章节
     String                  : 'String',                         // String
@@ -54,8 +54,6 @@ const Types = {
     Unknown                 : 'Unknown',                        // Unknown
     UnMatch                 : 'UnMatch',                        // UnMatch
     Var                     : 'Var',                            // 变量
-
-
 };
 
 Object.freeze(Types);

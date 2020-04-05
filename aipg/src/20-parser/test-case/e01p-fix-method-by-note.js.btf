@@ -1,0 +1,126 @@
+[test]
+async t => {
+    let rsReader = await reader({file: './test/parser/{FILE_NAME}.xlsx'});
+
+    let opts = {'{FILE_NAME}': async (root, context) => {
+        let cloneRoot = root.clone();
+        await cloneRoot.walk( Types.MatchSection, (node, object) => {
+            t.is(1, 1);
+            //console.info(node.getChild(0))
+        }, {readonly: true});
+
+       writeJson('./src/20-parser/test-case/{FILE_NAME}.btf', cloneRoot);
+    }};
+
+    await parser(rsReader.result, opts);
+}
+-------------------- JSON --------------------
+{
+  "type": "root",
+  "nodes": [
+    {
+      "object": {
+        "file": "./test/parser/e01p-fix-method-by-note.js.xlsx"
+      },
+      "type": "Excel",
+      "nodes": [
+        {
+          "object": {
+            "name": "Sheet1"
+          },
+          "type": "SheetOther",
+          "nodes": [
+            {
+              "object": {
+                "header": []
+              },
+              "type": "SheetHead"
+            },
+            {
+              "object": {
+                "cell": "B2",
+                "value": "hello world服务",
+                "seq": "01",
+                "type": "Method"
+              },
+              "type": "SheetSection",
+              "nodes": [
+                {
+                  "object": {
+                    "cell": "C4",
+                    "value": "返回:\t“Hello ” + 参数",
+                    "seq": null
+                  },
+                  "type": "SheetSection",
+                  "nodes": [
+                    {
+                      "object": {},
+                      "type": "MatchSections",
+                      "nodes": [
+                        {
+                          "object": {},
+                          "type": "MatchSection",
+                          "nodes": [
+                            {
+                              "object": {
+                                "type": "Return"
+                              },
+                              "type": "Return",
+                              "nodes": [
+                                {
+                                  "object": {
+                                    "type": "Add"
+                                  },
+                                  "type": "Add",
+                                  "nodes": [
+                                    {
+                                      "object": {
+                                        "type": "String",
+                                        "value": "Hello "
+                                      },
+                                      "type": "String"
+                                    },
+                                    {
+                                      "object": {
+                                        "type": "Parameter",
+                                        "value": "参数"
+                                      },
+                                      "type": "Parameter"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "object": {},
+                  "type": "MatchSections",
+                  "nodes": [
+                    {
+                      "object": {},
+                      "type": "MatchSection",
+                      "nodes": [
+                        {
+                          "object": {
+                            "type": "Note",
+                            "value": "hello world"
+                          },
+                          "type": "MethodNote"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
