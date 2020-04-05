@@ -6,7 +6,8 @@ gen.on('代码生成', function (node){
         return '';
     }
     let rs = gen.at(node.type, node);
-    if (!rs) {
+    if (!rs && !gen.on(node.type)) {
+        console.info('找不到生成器：', node.type);
         //throw new Error("generator not found  ..........  " + node.type);
     }
     return rs;

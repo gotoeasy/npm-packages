@@ -12,7 +12,6 @@ gen.on(Types.Root, function (node){
 
 });
 
-
 gen.on(Types.SheetOther, function (node){
 
     if (!node.nodes || !node.nodes.length) {
@@ -56,15 +55,5 @@ gen.on(Types.Note, function (node){
 });
 
 gen.on(Types.SheetHead, function (node){
-
-    if (!node.nodes || !node.nodes.length) {
-        return '';
-    }
-
-    let ary = [];
-    node.nodes.forEach(nd => {
-        ary.push(gen.at('代码生成', nd));
-    });
-    return ary.join('\r\n');
-
+    return '';
 });
