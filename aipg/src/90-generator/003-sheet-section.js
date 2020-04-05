@@ -3,12 +3,21 @@ gen.on(Types.SheetSection, function (node){
     let ary = [];
     if (node.object.type === Types.Method) {
 
+        let comments = ['/*'];
+        comments.push(`* ${node.object.value}`);
+        comments.push('*');
         let params = [];
         let parameters = node.object.parameters;
         parameters.forEach(p=>{
             params.push(`${p.type} ${p.value}`);
+            comments.push(`* @param ${p.value} ${p.type} ${p.name}`);
         });
+        if (node.object.returnType) {
+            comments.push(`* @return ${node.object.returnType}`);
+        }
+        comments.push('*/');
 
+        ary.push(comments.join('\r\n'));
         ary.push(`public ${node.object.returnType} ${node.object.methodName}(${params.join(', ')}) {`);
         node.nodes.forEach(nd=>{
             if (nd.type === Types.SheetSection) {
