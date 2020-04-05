@@ -42,7 +42,7 @@ async t => {
                 "value": "hello world服务",
                 "seq": "01"
               },
-              "type": "Method",
+              "type": "Note",
               "nodes": [
                 {
                   "object": {

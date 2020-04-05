@@ -382,9 +382,15 @@ gen.on(Types.SheetHead, function (node) {
     return ary.join("\r\n");
 });
 
+/* ------- 990-format ------- */
+gen.on("格式化代码", function (src, opts = {}) {
+    return src;
+});
+
 /* ------- 999-exports ------- */
 function print(node) {
-    return gen.at("代码生成", node);
+    let src = gen.at("代码生成", node);
+    return gen.at("格式化代码", src);
 }
 
 module.exports = print;

@@ -207,36 +207,6 @@ bus.on(
     })()
 );
 
-/* ------- d01p-check-match-result ------- */
-bus.on(
-    "解析器插件",
-    (function () {
-        // TODO 检查匹配结果
-        return postobject.plugin("d01p-check-match-result.js", async function (root, context) {
-            /*
-        await root.walk( Types.SheetSection, (node, object) => {
-            let warn = [];
-         //   checkMatchResults(object.matchs, warn);
-            if (warn.length) {
-                console.info('[TODO]');
-                //console.info('[TODO]', JSON.stringify({object, warn}, null, 2));
-            }
-        }, {readonly: true});
-*/
-        });
-
-        function checkMatchResults(matchs, ary) {
-            if (!matchs || !matchs.length) return;
-
-            if (matchs.length > 1) {
-                ary.push(matchs);
-            }
-
-            matchs.forEach((match) => checkMatchResults(match.matchs, ary));
-        }
-    })()
-);
-
 /* ------- e01p-create-node-by-match-result ------- */
 bus.on(
     "解析器插件",
@@ -271,6 +241,72 @@ bus.on(
                 }
             });
         });
+    })()
+);
+
+/* ------- e10p-check-unmatch ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // TODO 检查匹配结果
+        return postobject.plugin("e10p-check-unmatch.js", async function (root, context) {
+            require("@gotoeasy/file").write("e:/1/generator-unmmmm.json", JSON.stringify(root, null, 2));
+
+            await root.walk(
+                Types.UnMatch,
+                (node, object) => {
+                    let type = "不知所云";
+                    let cell = object.cell;
+                    let value = object.value;
+                    if (cell) {
+                        bus.at("QA", { type, cell, value });
+                    } else {
+                        let parentNode = node.parent;
+                        while (true) {
+                            if (parentNode.object.cell) {
+                                cell = parentNode.object.cell;
+                                break;
+                            } else if (parentNode.type === Types.Excel) {
+                                break; // 不应该完全找不到
+                            }
+                            parentNode = parentNode.parent;
+                        }
+                        bus.at("QA", { type, cell, value });
+                    }
+                },
+                { readonly: true }
+            );
+        });
+    })()
+);
+
+/* ------- e20p-check-mutil-match ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // TODO 检查匹配结果
+        return postobject.plugin("e20p-check-mutil-match.js", async function (root, context) {
+            /*
+        await root.walk( Types.SheetSection, (node, object) => {
+            let warn = [];
+         //   checkMatchResults(object.matchs, warn);
+            if (warn.length) {
+                console.info('[TODO]');
+                //console.info('[TODO]', JSON.stringify({object, warn}, null, 2));
+            }
+        }, {readonly: true});
+*/
+        });
+
+        function checkMatchResults(matchs, ary) {
+            if (!matchs || !matchs.length) return;
+
+            if (matchs.length > 1) {
+                ary.push(matchs);
+            }
+
+            matchs.forEach((match) => checkMatchResults(match.matchs, ary));
+        }
     })()
 );
 
@@ -331,28 +367,31 @@ bus.on(
             await root.walk(
                 Types.Parameter,
                 (node, object) => {
-                    let guessType, flg;
-                    let oParam;
-                    let parentNode = node.parent;
-                    while (true) {
-                        if (parentNode.type === Types.Method) {
-                            oParam = parentNode.object.parameters[0];
-                            break;
-                        } else if (parentNode.type === Types.Add && !flg) {
-                            let nd = parentNode.getChild(0) === node ? parentNode.getChild(1) : parentNode.getChild(0);
-                            guessType = nd.type;
-                            flg = true;
-                        } else if (parentNode.type === Types.Excel) {
-                            break; // 不应该完全找不到
-                        }
-                        parentNode = parentNode.parent;
+                    let ndMethod = node.findParent(Types.Method);
+                    let oParam = ndMethod.object.parameters[0];
+
+                    // -------------------------------
+                    // 方法已有参数类型定义时直接使用
+                    // -------------------------------
+                    if (oParam.type) {
+                        node.type = Types.Var; // 设定节点类型为Var
+                        object.type = oParam.type; // 设定参数类型
+                        return;
                     }
 
-                    if (!oParam.type && guessType) {
-                        oParam.type = guessType;
+                    // -------------------------------
+                    // 尝试反推初始化方法参数
+                    // -------------------------------
+                    if (node.parent.type === Types.Add) {
+                        // 【加法】时，参考兄弟节点推定类型
+                        let ndBrother = node.findBrother((nd) => nd !== this);
+                        if (ndBrother && ndBrother.type) {
+                            oParam.type = ndBrother.type; // 设定方法的参数类型
+                            node.type = Types.Var; // 设定节点类型为Var
+                            object.type = oParam.type; // 设定参数类型
+                            return;
+                        }
                     }
-                    node.type = Types.Var;
-                    object.type = oParam.type;
                 },
                 { readonly: true }
             );
@@ -434,6 +473,16 @@ bus.on(
         return postobject.plugin("z01p-export-root-to-result.js", async function (root, context) {
             context.root = () => root;
         });
+    })()
+);
+
+/* ------- z90m-000-qa ------- */
+bus.on(
+    "QA",
+    (function (cnt = 0) {
+        return function (obj) {
+            console.info(`[QA] ${++cnt}`, JSON.stringify(obj, null, 2));
+        };
     })()
 );
 

@@ -3,7 +3,7 @@
     const parser = require("./lib/parser");
     const generator = require("./lib/generator");
 
-    let file = './test/parser/e01p-create-node-by-match-result.js.xlsx';
+    let file = './helloworld.xlsx';
     let rsReader = await reader({file});
     let rs = await parser(rsReader.result);
     let root = rs.root();
