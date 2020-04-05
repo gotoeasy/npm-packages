@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.4.1
+0.5.0
 
 [main] // 入口文件
 index.js
@@ -13,6 +13,7 @@ index.js
 @gotoeasy/babel = 0.4.*
 @gotoeasy/browserify = 0.4.*
 prettier = *
+prettier-plugin-java = *
 uglify-es = *
 find-node-modules = *
 less = *
