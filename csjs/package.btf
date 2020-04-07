@@ -2,7 +2,7 @@
 @gotoeasy/csjs
 
 [version] // 版本号 （必填）
-0.5.0
+0.5.1
 
 [main] // 入口文件
 index.js
