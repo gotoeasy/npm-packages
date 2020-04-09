@@ -10,3 +10,5 @@ src/
 **.btf
 build.js
 z.js
+aipg.config.btf
+package.btf

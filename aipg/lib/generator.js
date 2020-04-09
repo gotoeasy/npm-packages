@@ -7,7 +7,7 @@ gen.on("代码生成", function (node) {
         return "";
     }
     let rs = gen.at(node.type, node);
-    if (!rs && !gen.on(node.type)) {
+    if (!rs && !gen.on(node.type).length) {
         console.info("找不到生成器：", node.type);
         //throw new Error("generator not found  ..........  " + node.type);
     }
@@ -68,19 +68,10 @@ gen.on(Types.SheetSection, function (node) {
         return ary.join("\r\n");
     }
 
-    let ndMatchSection = node.findChild(Types.MatchSection);
-    ndMatchSection.nodes.forEach((nd) => {
-        ary.push(gen.at("代码生成", nd));
-    });
-    return ary.join("\r\n");
+    let ndMatchSections = node.findChild(Types.MatchSections);
+    return gen.at("代码生成", ndMatchSections);
 });
 
-/**
- *
- *
- *
- *
- */
 /* ------- 011-var ------- */
 gen.on(Types.Var, function (node) {
     // TODO
@@ -132,33 +123,46 @@ gen.on(Types.Return, function (node) {
 
 /* ------- 021-if-else ------- */
 gen.on(Types.If, function (node) {
-    let condition = gen.at("代码生成", gen.at("查找子节点", node, Types.Condition));
-    let body = gen.at("代码生成", gen.at("查找子节点", node, Types.Body));
-    return `if ( ${condition} ){\r\n    ${body}\r\n}`;
+    let condition = [];
+    node.nodes.forEach((nd) => {
+        condition.push(gen.at("代码生成", nd));
+    });
+
+    let ndSheetSection = node.findParent(Types.SheetSection);
+    let body = [];
+    ndSheetSection.nodes.forEach((nd) => {
+        if (nd.type === Types.SheetSection) {
+            body.push(gen.at("代码生成", nd));
+        }
+    });
+    return `if ( ${condition.join(" ")} ){\r\n    ${body.join("\r\n")}\r\n}`;
 });
 
 gen.on(Types.ElseIf, function (node) {
-    let condition = gen.at("代码生成", gen.at("查找子节点", node, Types.Condition));
-    let body = gen.at("代码生成", gen.at("查找子节点", node, Types.Body));
-    return `else if ( ${condition} ){\r\n    ${body}\r\n}`;
+    let condition = [];
+    node.nodes.forEach((nd) => {
+        condition.push(gen.at("代码生成", nd));
+    });
+
+    let ndSheetSection = node.findParent(Types.SheetSection);
+    let body = [];
+    ndSheetSection.nodes.forEach((nd) => {
+        if (nd.type === Types.SheetSection) {
+            body.push(gen.at("代码生成", nd));
+        }
+    });
+    return `else if ( ${condition.join(" ")} ){\r\n    ${body.join("\r\n")}\r\n}`;
 });
 
 gen.on(Types.Else, function (node) {
-    let ary = [];
-    node.nodes.forEach((nd) => ary.push(gen.at("代码生成", nd)));
-    let body = ary.join("\r\n");
-    return `else {\r\n    ${body}\r\n}`;
-});
-
-gen.on(Types.Condition, function (node) {
-    // TODO
-    return gen.at("代码生成", node.nodes[0]);
-});
-
-gen.on(Types.Body, function (node) {
-    let ary = [];
-    node.nodes.forEach((nd) => ary.push(gen.at("代码生成", nd)));
-    return ary.join("    \r\n");
+    let ndSheetSection = node.findParent(Types.SheetSection);
+    let body = [];
+    ndSheetSection.nodes.forEach((nd) => {
+        if (nd.type === Types.SheetSection) {
+            body.push(gen.at("代码生成", nd));
+        }
+    });
+    return `else {\r\n    ${body.join("\r\n")}\r\n}`;
 });
 
 /* ------- 022-greater-than ------- */
@@ -189,11 +193,17 @@ gen.on(Types.LessEqualsThan, function (node) {
     return `${left} <= ${right}`;
 });
 
-/* ------- 026-equals ------- */
+/* ------- 026-equals-not-equals ------- */
 gen.on(Types.Equals, function (node) {
     let left = gen.at("代码生成", node.nodes[0]);
     let right = gen.at("代码生成", node.nodes[1]);
     return `${left} == ${right}`;
+});
+
+gen.on(Types.NotEquals, function (node) {
+    let left = gen.at("代码生成", node.nodes[0]);
+    let right = gen.at("代码生成", node.nodes[1]);
+    return `${left} != ${right}`;
 });
 
 /* ------- 027-exact-equals ------- */
@@ -315,6 +325,11 @@ gen.on(Types.Statement, function (node) {
     return ary.join("\r\n");
 });
 
+/* ------- 043-null ------- */
+gen.on(Types.Null, function () {
+    return "null";
+});
+
 /* ------- 051-call ------- */
 gen.on(Types.Call, function (node) {
     if (!node.nodes || !node.nodes.length) {
@@ -350,6 +365,23 @@ gen.on(Types.Method, function (node) {
 
     // 方法
     return `${prefix} ${returnType} ${methodName}(${param}) {\r\n ${sub}\r\n}`;
+});
+
+/* ------- 062-match-sections ------- */
+gen.on(Types.MatchSections, function (node) {
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
+});
+
+gen.on(Types.MatchSection, function (node) {
+    let ary = [];
+    node.nodes.forEach((nd) => {
+        ary.push(gen.at("代码生成", nd));
+    });
+    return ary.join("\r\n");
 });
 
 /* ------- 910-blank-node ------- */
@@ -401,7 +433,7 @@ gen.on(Types.Note, function (node) {
     return ary.join("\r\n");
 });
 
-gen.on(Types.SheetHead, function (node) {
+gen.on(Types.SheetHead, function () {
     return "";
 });
 

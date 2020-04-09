@@ -2,11 +2,11 @@
 const Types = {
     Add                     : 'Add',                            // +
     And                     : 'And',                            // &&
-    Body                    : 'Body',                           // 内容
+    //Body                    : 'Body',                           // 内容
     Break                   : 'Break',                          // break
     Continue                : 'Continue',                       // continue
     Call                    : 'Call',                           // 调用
-    Condition               : 'Condition',                      // 条件
+    //Condition               : 'Condition',                      // 条件
     Divide                  : 'Divide',                         // /
     Excel                   : 'Excel',                          // Excel
     Equal                   : 'Equal',                          // =
@@ -14,6 +14,7 @@ const Types = {
     ExactEquals             : 'ExactEquals',                    // ===
     ElseIf                  : 'ElseIf',                         // else if
     Else                    : 'Else',                           // else
+    False                   : 'False',                          // False
     GreaterThan             : 'GreaterThan',                    // >
     GreaterEqualsThan       : 'GreaterEqualsThan',              // >=
     Integer                 : 'Integer',                        // Integer
@@ -32,6 +33,8 @@ const Types = {
     Multiply                : 'Multiply',                       // *
     Number                  : 'Number',                         // 数值
     Note                    : 'Note',                           // 说明性文字
+    NotEquals               : 'NotEquals',                      // <>
+    Null                    : 'Null',                           // null
 
     Or                      : 'Or',                             // ||
     Parameter               : 'Parameter',                      // Parameter
@@ -51,9 +54,11 @@ const Types = {
     String                  : 'String',                         // String
     Statement               : 'Statement',                      // 语句
     Subtract                : 'Subtract',                       // -
+    True                    : 'True',                           // True
     Unknown                 : 'Unknown',                        // Unknown
     UnMatch                 : 'UnMatch',                        // UnMatch
     Var                     : 'Var',                            // 变量
+    Zero                    : 'Zero',                           // 0
 };
 
 Object.freeze(Types);

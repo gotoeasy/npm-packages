@@ -1,9 +1,0 @@
-[node]
-{
-    type : Types.Call,
-    object : {value : 'fnTest'},
-}
-
-[src]
-fnTest()
-==================================

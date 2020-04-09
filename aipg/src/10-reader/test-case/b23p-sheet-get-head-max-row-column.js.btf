@@ -1,7 +1,0 @@
-[test]
-async t => {
-    let rs = await reader({file: './test/reader/{FILE_NAME}.xlsx'});
-
-    t.is(rs.Sheets[0].maxHeadColumn, 20);
-    t.is(rs.Sheets[0].maxHeadRow, 5);
-}

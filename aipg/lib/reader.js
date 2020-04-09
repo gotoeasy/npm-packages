@@ -1056,7 +1056,7 @@ bus.on(
         return postobject.plugin(/**/ __filename /**/, function (root, context) {
             let oExcel = { type: Types.Excel, file: context.input.file, nodes: [] };
 
-            for (let i = 0, oSheet, sheet; (oSheet = context.Sheets[i++]); ) {
+            for (let i = 0, oSheet; (oSheet = context.Sheets[i++]); ) {
                 if (oSheet.ignore) continue; // 跳过忽略的Sheet
 
                 let type = oSheet.type;

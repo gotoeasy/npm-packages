@@ -1,7 +1,0 @@
-[node]
-{
-    type : Types.Break
-}
-
-[src]
-break;

@@ -1,7 +1,0 @@
-[node]
-{
-    type : Types.Continue
-}
-
-[src]
-continue;

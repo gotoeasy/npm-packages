@@ -1,8 +1,0 @@
-[node]
-{
-    type : Types.Var,
-    object : {value : 'count'},
-}
-
-[src]
-count

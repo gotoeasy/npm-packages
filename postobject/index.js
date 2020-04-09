@@ -10,8 +10,8 @@ postobject.plugin = (name, callback) => {
 }
 
 function postobject(plugins=[], opts={}){
-    let TYPE = opts.type || 'type';                 // 区分节点类型的属性名
-    let NODES = opts.nodes || 'nodes';              // 表示子节点的属性名
+    let TYPE = opts.type || 'type';                                     // 区分节点类型的属性名
+    let NODES = opts.nodes || 'nodes';                                  // 表示子节点的属性名
 
     return {plugins, TYPE, NODES, process, createNode};
 };
@@ -27,7 +27,8 @@ async function process(object, opts={}){
         name = weakmap.get(plugin) || '*';
         opts.log && (sTime = new Date().getTime());
         await plugin.bind(this)(root, result);
-        opts.json && opts.json[name] && (opts.json[name] = JSON.stringify(root, null, 2));                  // 若需要，导出插件处理后的json字符串
+        opts.callback && opts.callback(root, result, name);             // 有回调函数时调用
+        opts[name] && opts[name](root, result, name);                   // 有指定回调函数时调用
         opts.log && ((time = new Date().getTime() - sTime) > 30) && console.info(`${name} : ${time}ms`);
     }
     return result;
