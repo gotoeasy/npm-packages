@@ -2,17 +2,20 @@
 aipg
 
 [version] // 版本号
-0.0.6
+0.0.10
 
 [main] // 入口文件
 index.js
 
 [dependencies] // 依赖库
-@gotoeasy/bus = 1.0.*
-@gotoeasy/postobject = 0.4.*
-@gotoeasy/file = 0.2.*
+@gotoeasy/bus = *
+@gotoeasy/postobject = *
+@gotoeasy/file = *
+@gotoeasy/btf = *
+@gotoeasy/csjs = *
 xlsx-populate = *
 office-document-properties = *
+chinese-to-pinyin = *
 
 [devDependencies] // 开发依赖库
 

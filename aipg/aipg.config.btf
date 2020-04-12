@@ -1,8 +1,9 @@
-[setting]
-lang : java
-
 [input]
 filter : doc/**.xlsx
 
 [output]
 dist : dist
+lang : java
+
+[naming]
+lang : CN

@@ -1,70 +1,6 @@
-/* ------- 000-require ------- */
 const Types = require("./types");
 const aryFns = [];
 
-/* ------- a01-single ------- */
-aryFns.push((str) => (/^(空|null)$/i.test(str) ? { type: Types.Null } : null));
-aryFns.push((str) => (/^(Break|跳出循环)$/i.test(str) ? { type: Types.Break } : null));
-aryFns.push((str) => (/^(True|真)$/i.test(str) ? { type: Types.True } : null));
-aryFns.push((str) => (/^(0|０|Zero|〇|零)$/i.test(str) ? { type: Types.Zero } : null));
-
-aryFns.push((str) => {
-    let rs = str.match(/^(参数|Parameter)$/i);
-    if (rs) {
-        return {
-            type: Types.Parameter,
-            value: rs[1],
-        };
-    }
-
-    return null;
-});
-
-/* ------- a02-return ------- */
-aryFns.push((str) => {
-    let rs = str.match(/^返回(?:值|值为|值是)?\s*[:：](.+)[．.。]?$/);
-    if (rs) {
-        return {
-            type: Types.Return,
-            matchs: [rs[1]],
-        };
-    }
-
-    return /^(返回|Return)$/i.test(str) ? { type: Types.Return } : null;
-});
-
-/* ------- a03-string ------- */
-// 函数适用于有子项的匹配，或是较复杂的匹配逻辑，返回值需要指定类型，子项用items数组，值用value，exact表示完全独占匹配（TODO 考虑验证回调函数）
-// 字符串
-aryFns.push((str) => {
-    let rs =
-        str.match(/^"(.*?)"(.*)$/) ||
-        str.match(/^'(.*?)'(.*)$/) ||
-        str.match(/^“(.*?)”(.*)$/) ||
-        str.match(/^「(.*?)」(.*)$/) ||
-        str.match(/^『(.*?)』(.*)$/) ||
-        str.match(/^［(.*?)］(.*)$/) ||
-        str.match(/^\[(.*?)\](.*)$/);
-
-    if (!rs || rs[2]) return null;
-
-    return {
-        type: Types.String,
-        value: rs[1],
-        exact: true,
-    };
-});
-
-/* ------- a90-note ------- */
-// NNNN服务
-aryFns.push((str) => {
-    let rs = str.match(/^(.*?)服务[.。．]?$/);
-    if (rs) return { type: Types.Note, value: rs[1] };
-
-    return null;
-});
-
-/* ------- b01-arithmetic  ------- */
 aryFns.push((str) => {
     let rs = str.match(/^(.+?)(?:[×✖*]{1,1})(.+)$/);
     if (rs) {
@@ -99,15 +35,24 @@ aryFns.push((str) => {
     }
 });
 
-/* ------- c01-1-if ------- */
 aryFns.push((str) => {
-    let rs = str.match(/^(?:如果|假如|假若|若|当)[是]?(.+?)(?:的话|的场合|的情况|的情况的话|的情况时候)?[，,.]?(?:做以下处理|做下面处理)?[.。]?$/);
-    if (rs) return { type: Types.If, matchs: [rs[1]] };
-
-    return null;
+    let rs = str.match(/^(空白|Blank)$/i);
+    if (rs) return { type: Types.Blank, value: rs[1], exact: true };
 });
 
-/* ------- c01-2-else ------- */
+aryFns.push((str) => (/^(Break|跳出循环)$/i.test(str) ? { type: Types.Break, exact: true } : null));
+
+aryFns.push((str) => {
+    let rs = str.match(/^([0-9]+)$/i); // 999
+    if (rs) return { type: Types.Digit, value: rs[1], exact: true };
+
+    rs = str.match(/^(-[0-9]+)$/i); // -999
+    if (rs) return { type: Types.Integer, value: rs[1], exact: true };
+
+    rs = str.match(/^([-]?[0-9]+.[0-9]+)$/i); // -999.999
+    if (rs) return { type: Types.Double, value: rs[1], exact: true };
+});
+
 // Else
 aryFns.push((str) => {
     let rs = str.match(
@@ -118,7 +63,91 @@ aryFns.push((str) => {
     return null;
 });
 
-/* ------- c02-condition ------- */
+aryFns.push((str) => {
+    let rs = str.match(/^(Empty|Nothing)$/i);
+    if (rs) return { type: Types.Empty, value: rs[1], exact: true };
+});
+
+aryFns.push((str) => {
+    let rs = str.match(/^(?:当|若|如果|假如|假设)?(.+?比.+?小|小时|小的时候|小的话|小的情况下)[,.。、:：]?(?:做以下处理|做下面处理)?[.。]?$/);
+    if (rs && str !== rs[1]) return { type: Types.If, matchs: [rs[1]] };
+
+    rs = str.match(
+        /^(?:当|若|如果|假如|假设)?(.+?和.+?一样大时|一样大的时候|一样大小时|一样大小的时候|一样大小的话)[,.。、:：]?(?:做以下处理|做下面处理)?[.。]?$/
+    );
+    if (rs && str !== rs[1]) return { type: Types.If, matchs: [rs[1]] };
+
+    rs = str.match(
+        /^(?:如果|假如|假若|若|当)[是]?(.+?)(?:时|的话|的时候|的场合|的情况|的情况的话|的情况时候)?[，,.]?(?:做以下处理|做下面处理)?[.。]?$/
+    );
+    if (rs) return { type: Types.If, matchs: [rs[1]] };
+
+    return null;
+});
+
+// NNNN服务
+aryFns.push((str) => {
+    let rs = str.match(/^(.*?)服务[.。．]?$/);
+    if (rs) return { type: Types.Note, value: rs[1] };
+
+    return null;
+});
+
+aryFns.push((str) => (/^(空|null)$/i.test(str) ? { type: Types.Null, exact: true } : null));
+
+aryFns.push((str) => {
+    let rs = str.match(/^([0-9]+[.]?[0-9]+\s*小时)$/i); // 99.99小时
+    if (rs) return { type: Types.NumHour, value: rs[1], exact: true };
+});
+
+aryFns.push((str) => {
+    let rs = str.match(/^(参数|Parameter)$/i);
+    if (rs) return { type: Types.Parameter, value: rs[1], exact: true };
+});
+
+aryFns.push((str) => {
+    let rs = str.match(/^参数[.．](\S+)$/i);
+    if (rs) return { type: Types.Parameters, value: rs[1] };
+});
+
+aryFns.push((str) => {
+    let rs = str.match(/^返回(?:值|值为|值是)?\s*[:：](.+)[．.。]?$/);
+    if (rs) {
+        return {
+            type: Types.Return,
+            matchs: [rs[1]],
+        };
+    }
+
+    return /^(返回|Return)$/i.test(str) ? { type: Types.Return } : null;
+});
+
+// 函数适用于有子项的匹配，或是较复杂的匹配逻辑，返回值需要指定类型，子项用items数组，值用value，exact表示完全独占匹配（TODO 考虑验证回调函数）
+// 字符串
+aryFns.push((str) => {
+    let rs =
+        str.match(/^"(.*?)"(.*)$/) ||
+        str.match(/^'(.*?)'(.*)$/) ||
+        str.match(/^“(.*?)”(.*)$/) ||
+        str.match(/^「(.*?)」(.*)$/) ||
+        str.match(/^『(.*?)』(.*)$/) ||
+        str.match(/^［(.*?)］(.*)$/) ||
+        str.match(/^\[(.*?)\](.*)$/) ||
+        str.match(/^【(.*?)】(.*)$/);
+
+    if (!rs || rs[2]) return null;
+
+    return {
+        type: Types.String,
+        value: rs[1],
+        exact: true,
+    };
+});
+
+aryFns.push((str) => (/^(True|真)$/i.test(str) ? { type: Types.True, exact: true } : null));
+
+aryFns.push((str) => (/^(0|０|Zero|〇|零)$/i.test(str) ? { type: Types.Zero, exact: true } : null));
+
 // 条件
 aryFns.push((str) => {
     let rs = str.match(/^(.+?)(?:>=|>＝|＞=|＞＝|≧|大于等于)(.+)$/);
@@ -133,16 +162,22 @@ aryFns.push((str) => {
     rs = str.match(/^(.+?)(?:=|＝|等于|是|为)(.+)$/);
     if (rs) return { type: Types.Equals, matchs: [rs[1], rs[2]] };
 
+    rs = str.match(/^(.+?)和(.+?)(?:一样大时|一样大的时候|一样大小时|一样大小|大小一样|一样大小的时候|一样大小的话|一样|同样|一模一样)$/);
+    if (rs) return { type: Types.Equals, matchs: [rs[1], rs[2]] };
+
     rs = str.match(/^(.+?)(?:>|＞|大于)(.+)$/);
+    if (rs) return { type: Types.GreaterThan, matchs: [rs[1], rs[2]] };
+
+    rs = str.match(/^(.+?)比(.+?)(?:大|大时|大的时候|大的话|大的情况下)$/);
     if (rs) return { type: Types.GreaterThan, matchs: [rs[1], rs[2]] };
 
     rs = str.match(/^(.+?)(?:<|＜|小于)(.+)$/);
     if (rs) return { type: Types.LessThan, matchs: [rs[1], rs[2]] };
 
-    return null;
+    rs = str.match(/^(.+?)比(.+?)(?:小|小时|小的时候|小的话|小的情况下)$/);
+    if (rs) return { type: Types.LessThan, matchs: [rs[1], rs[2]] };
 });
 
-/* ------- z99-exports ------- */
 function fnMatch(value) {
     let txt = value.trim(); // 去两边空白后再匹配
     let ary = [];

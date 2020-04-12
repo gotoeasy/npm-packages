@@ -1,13 +1,16 @@
 {
   "name": "aipg",
-  "version": "0.0.6",
+  "version": "0.0.10",
   "main": "index.js",
   "dependencies": {
-    "@gotoeasy/bus": "1.0.*",
-    "@gotoeasy/postobject": "0.4.*",
-    "@gotoeasy/file": "0.2.*",
+    "@gotoeasy/bus": "*",
+    "@gotoeasy/postobject": "*",
+    "@gotoeasy/file": "*",
+    "@gotoeasy/btf": "*",
+    "@gotoeasy/csjs": "*",
     "xlsx-populate": "*",
-    "office-document-properties": "*"
+    "office-document-properties": "*",
+    "chinese-to-pinyin": "*"
   },
   "description": "自动编程，智能编程",
   "keywords": [
