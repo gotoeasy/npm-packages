@@ -180,6 +180,246 @@ bus.on(
     })()
 );
 
+/* ------- e01p-filter-0001-match-section-by-syntax ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // 章节不能是加减乘除等特定节点
+        return postobject.plugin("e01p-filter-0001-match-section-by-syntax", async function (root) {
+            await root.walk(Types.MatchSection, (node) => {
+                node.nodes.forEach((nd) => {
+                    if (
+                        nd.type === Types.Add ||
+                        nd.type === Types.Subtract ||
+                        nd.type === Types.Multiply ||
+                        nd.type === Types.Divide ||
+                        nd.type === Types.GreaterEqualsThan ||
+                        nd.type === Types.LessEqualsThan ||
+                        nd.type === Types.NotEquals ||
+                        nd.type === Types.Equals ||
+                        nd.type === Types.GreaterThan ||
+                        nd.type === Types.LessThan ||
+                        nd.type === Types.Or ||
+                        nd.type === Types.And
+                    ) {
+                        nd.remove();
+                    }
+                });
+
+                !node.nodes && node.remove();
+            });
+        });
+    })()
+);
+
+/* ------- e01p-filter-0002-mutil-sub-match-by-or-node-syntax ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // 子项有多个匹配时先检查过滤
+        return postobject.plugin("e01p-filter-0002-mutil-sub-match-by-or-node-syntax", async function (root) {
+            await root.walk(Types.Or, (node) => {
+                let ndLeft = node.nodes[0];
+                let ndRight = node.nodes[1];
+
+                if (
+                    !(
+                        ndLeft.type === Types.GreaterEqualsThan ||
+                        ndLeft.type === Types.LessEqualsThan ||
+                        ndLeft.type === Types.NotEquals ||
+                        ndLeft.type === Types.Equals ||
+                        ndLeft.type === Types.GreaterThan ||
+                        ndLeft.type === Types.LessThan ||
+                        ndLeft.type === Types.Or ||
+                        ndLeft.type === Types.And ||
+                        ndLeft.type === Types.MutilSubMatch
+                    )
+                ) {
+                    node.remove();
+                    return;
+                }
+
+                if (
+                    !(
+                        ndRight.type === Types.GreaterEqualsThan ||
+                        ndRight.type === Types.LessEqualsThan ||
+                        ndRight.type === Types.NotEquals ||
+                        ndRight.type === Types.Equals ||
+                        ndRight.type === Types.GreaterThan ||
+                        ndRight.type === Types.LessThan ||
+                        ndRight.type === Types.Or ||
+                        ndRight.type === Types.And ||
+                        ndRight.type === Types.MutilSubMatch
+                    )
+                ) {
+                    node.remove();
+                    return;
+                }
+
+                if (ndLeft.type === Types.MutilSubMatch) {
+                    let dels = [];
+                    ndLeft.nodes.forEach((nd) => {
+                        if (
+                            !(
+                                nd.type === Types.GreaterEqualsThan ||
+                                nd.type === Types.LessEqualsThan ||
+                                nd.type === Types.NotEquals ||
+                                nd.type === Types.Equals ||
+                                nd.type === Types.GreaterThan ||
+                                nd.type === Types.LessThan ||
+                                nd.type === Types.Or ||
+                                nd.type === Types.And
+                            )
+                        ) {
+                            dels.push(nd);
+                        }
+                    });
+                    dels.forEach((nd) => nd.remove());
+
+                    if (!ndLeft.nodes) {
+                        node.remove();
+                        return;
+                    }
+
+                    ndLeft.nodes.length === 1 && ndLeft.replaceWith(ndLeft.nodes[0].clone()); // 仅剩唯一一个节点时，替换掉MutilSubMatch节点
+                }
+
+                if (ndRight.type === Types.MutilSubMatch) {
+                    let dels = [];
+                    ndRight.nodes.forEach((nd) => {
+                        if (
+                            !(
+                                nd.type === Types.GreaterEqualsThan ||
+                                nd.type === Types.LessEqualsThan ||
+                                nd.type === Types.NotEquals ||
+                                nd.type === Types.Equals ||
+                                nd.type === Types.GreaterThan ||
+                                nd.type === Types.LessThan ||
+                                nd.type === Types.Or ||
+                                nd.type === Types.And
+                            )
+                        ) {
+                            dels.push(nd);
+                        }
+                    });
+                    dels.forEach((nd) => nd.remove());
+
+                    if (!ndRight.nodes) {
+                        node.remove();
+                        return;
+                    }
+
+                    ndRight.nodes.length === 1 && ndRight.replaceWith(ndRight.nodes[0].clone()); // 仅剩唯一一个节点时，替换掉MutilSubMatch节点
+                }
+            });
+        });
+    })()
+);
+
+/* ------- e01p-filter-0003-mutil-sub-match-by-and-node-syntax ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // 子项有多个匹配时先检查过滤
+        return postobject.plugin("e01p-filter-0003-mutil-sub-match-by-and-node-syntax", async function (root) {
+            await root.walk(Types.And, (node) => {
+                let ndLeft = node.nodes[0];
+                let ndRight = node.nodes[1];
+
+                if (
+                    !(
+                        ndLeft.type === Types.GreaterEqualsThan ||
+                        ndLeft.type === Types.LessEqualsThan ||
+                        ndLeft.type === Types.NotEquals ||
+                        ndLeft.type === Types.Equals ||
+                        ndLeft.type === Types.GreaterThan ||
+                        ndLeft.type === Types.LessThan ||
+                        ndLeft.type === Types.Or ||
+                        ndLeft.type === Types.And ||
+                        ndLeft.type === Types.MutilSubMatch
+                    )
+                ) {
+                    node.remove();
+                    return;
+                }
+
+                if (
+                    !(
+                        ndRight.type === Types.GreaterEqualsThan ||
+                        ndRight.type === Types.LessEqualsThan ||
+                        ndRight.type === Types.NotEquals ||
+                        ndRight.type === Types.Equals ||
+                        ndRight.type === Types.GreaterThan ||
+                        ndRight.type === Types.LessThan ||
+                        ndRight.type === Types.Or ||
+                        ndRight.type === Types.And ||
+                        ndRight.type === Types.MutilSubMatch
+                    )
+                ) {
+                    node.remove();
+                    return;
+                }
+
+                if (ndLeft.type === Types.MutilSubMatch) {
+                    let dels = [];
+                    ndLeft.nodes.forEach((nd) => {
+                        if (
+                            !(
+                                nd.type === Types.GreaterEqualsThan ||
+                                nd.type === Types.LessEqualsThan ||
+                                nd.type === Types.NotEquals ||
+                                nd.type === Types.Equals ||
+                                nd.type === Types.GreaterThan ||
+                                nd.type === Types.LessThan ||
+                                nd.type === Types.Or ||
+                                nd.type === Types.And
+                            )
+                        ) {
+                            dels.push(nd);
+                        }
+                    });
+                    dels.forEach((nd) => nd.remove());
+
+                    if (!ndLeft.nodes) {
+                        node.remove();
+                        return;
+                    }
+
+                    ndLeft.nodes.length === 1 && ndLeft.replaceWith(ndLeft.nodes[0].clone()); // 仅剩唯一一个节点时，替换掉MutilSubMatch节点
+                }
+
+                if (ndRight.type === Types.MutilSubMatch) {
+                    let dels = [];
+                    ndRight.nodes.forEach((nd) => {
+                        if (
+                            !(
+                                nd.type === Types.GreaterEqualsThan ||
+                                nd.type === Types.LessEqualsThan ||
+                                nd.type === Types.NotEquals ||
+                                nd.type === Types.Equals ||
+                                nd.type === Types.GreaterThan ||
+                                nd.type === Types.LessThan ||
+                                nd.type === Types.Or ||
+                                nd.type === Types.And
+                            )
+                        ) {
+                            dels.push(nd);
+                        }
+                    });
+                    dels.forEach((nd) => nd.remove());
+
+                    if (!ndRight.nodes) {
+                        node.remove();
+                        return;
+                    }
+
+                    ndRight.nodes.length === 1 && ndRight.replaceWith(ndRight.nodes[0].clone()); // 仅剩唯一一个节点时，替换掉MutilSubMatch节点
+                }
+            });
+        });
+    })()
+);
+
 /* ------- e01p-filter-0010-mutil-sub-match-node-by-syntax ------- */
 bus.on(
     "解析器插件",
@@ -199,7 +439,9 @@ bus.on(
                         nd.type === Types.NotEquals ||
                         nd.type === Types.Equals ||
                         nd.type === Types.GreaterThan ||
-                        nd.type === Types.LessThan
+                        nd.type === Types.LessThan ||
+                        nd.type === Types.Or ||
+                        nd.type === Types.And
                     ) {
                         if (!nd.nodes || nd.nodes.length !== 2) {
                             nd.remove();
@@ -229,7 +471,7 @@ bus.on(
                     }
                 });
 
-                if (!node.nodes.length) {
+                if (!node.nodes) {
                     node.type = Types.MutilSubMatchNg; // 无匹配时改掉类型方便后续操作
                 }
             });
@@ -237,12 +479,47 @@ bus.on(
     })()
 );
 
-/* ------- e01p-filter-0020-mutil-sub-match-node-by-if ------- */
+/* ------- e01p-filter-0020-mutil-sub-match-by-ng-node-syntax ------- */
+bus.on(
+    "解析器插件",
+    (function () {
+        // 子项有多个匹配时先检查过滤
+        return postobject.plugin("e01p-filter-0020-mutil-sub-match-by-ng-node-syntax", async function (root) {
+            await root.walk((node) => {
+                // 仅处理两元操作
+                if (
+                    !(
+                        node.type === Types.Add ||
+                        node.type === Types.Subtract ||
+                        node.type === Types.Multiply ||
+                        node.type === Types.Divide ||
+                        node.type === Types.GreaterEqualsThan ||
+                        node.type === Types.LessEqualsThan ||
+                        node.type === Types.NotEquals ||
+                        node.type === Types.Equals ||
+                        node.type === Types.GreaterThan ||
+                        node.type === Types.LessThan ||
+                        node.type === Types.Or ||
+                        node.type === Types.And
+                    )
+                ) {
+                    return;
+                }
+
+                if (node.nodes[0].type === Types.MutilSubMatchNg || node.nodes[1].type === Types.MutilSubMatchNg) {
+                    node.remove();
+                }
+            });
+        });
+    })()
+);
+
+/* ------- e01p-filter-0030-mutil-sub-match-node-by-if ------- */
 bus.on(
     "解析器插件",
     (function () {
         // IF节点下有多个匹配时，尝试解决
-        return postobject.plugin("e01p-filter-0020-mutil-sub-match-node-by-if", async function (root) {
+        return postobject.plugin("e01p-filter-0030-mutil-sub-match-node-by-if", async function (root) {
             await root.walk(Types.If, (node) => {
                 if (node.nodes[0].type !== Types.MutilSubMatch) return;
 
@@ -256,7 +533,9 @@ bus.on(
                         nd.type !== Types.NotEquals &&
                         nd.type !== Types.Equals &&
                         nd.type !== Types.GreaterThan &&
-                        nd.type !== Types.LessThan
+                        nd.type !== Types.LessThan &&
+                        nd.type !== Types.Or &&
+                        nd.type !== Types.And
                     ) {
                         dels.push(nd);
                     }
@@ -268,12 +547,12 @@ bus.on(
     })()
 );
 
-/* ------- e01p-filter-9990-fix-mutil-sub-match-node ------- */
+/* ------- e90p-filter-fix-mutil-sub-match-node ------- */
 bus.on(
     "解析器插件",
     (function () {
         // IF节点下有多个匹配时，尝试解决
-        return postobject.plugin("e01p-filter-9990-fix-mutil-sub-match-node", async function (root) {
+        return postobject.plugin("e90p-filter-fix-mutil-sub-match-node", async function (root) {
             await root.walk(Types.MutilSubMatch, (node) => {
                 // 剩余单个条件节点时，整理下节点结构，如：If - MutilSubMatch - Equals 改成 If - Equals
                 if (node.nodes.length === 1) {
@@ -380,6 +659,8 @@ bus.on(
 
                     for (let i = 0, param; (param = parameters[i++]); ) {
                         if (param.name === object.value) {
+                            object.name = param.name;
+                            object.value = param.value;
                             return; // 已有相应参数时略过
                         }
                     }
@@ -451,6 +732,28 @@ bus.on(
                             return;
                         }
                     }
+                },
+                { readonly: true }
+            );
+
+            await root.walk(
+                Types.Parameters,
+                (node, object) => {
+                    let ndMethod = node.findParent((nd, obj) => obj.type === Types.Method);
+                    let parameters = ndMethod.object.parameters;
+
+                    parameters.forEach((oParam) => {
+                        if (oParam.type || oParam.name !== object.name) return;
+
+                        if (node.parent.type === Types.Add) {
+                            let ndBrother = node.findBrother((nd) => nd !== this);
+                            if (ndBrother && ndBrother.type) {
+                                oParam.type = ndBrother.type; // 设定方法的参数类型
+                                object.type = oParam.type; // 设定参数类型
+                                node.type = Types.Var; // 设定节点类型为Var
+                            }
+                        }
+                    });
                 },
                 { readonly: true }
             );
@@ -683,20 +986,36 @@ bus.on(
         // isBlank
         return postobject.plugin("y90p-optimize-imports", async function (root) {
             let imports = root.nodes[0].object.imports;
-            let ary = [...imports];
+            let oImp = {};
+            imports.forEach((imp) => {
+                let cls = imp.substring(imp.lastIndexOf(".") + 1);
+                oImp[cls] = imp;
+            });
+
             await root.walk((node, object) => {
                 if (!object.common) return;
 
-                let tmps = object.common.split(".");
-                let method = tmps.pop();
-                let cls = tmps.pop();
-                object.common = `${cls}.${method}`;
-                tmps.length && tmps.push(cls) && ary.push(tmps.join("."));
+                let ary = object.common.split(".");
+                let method = ary.pop();
+                let cls = ary.pop();
+                ary.push(cls);
+                let imp = ary.join(".");
+
+                if (!oImp[cls] || oImp[cls] === imp) {
+                    object.import = imp;
+                    object.common = `${cls}.${method}`;
+                    oImp[cls] = imp; // 导入没冲突就可以import
+                }
             });
 
-            let oSet = new Set(ary);
+            let imps = [];
+            for (let cls in oImp) {
+                imps.push(oImp[cls]);
+            }
+            let oSet = new Set(imps);
             imports.length = 0;
             imports.push(...oSet);
+            imports.sort();
         });
     })()
 );

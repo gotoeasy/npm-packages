@@ -36,6 +36,16 @@ aryFns.push((str) => {
 });
 
 aryFns.push((str) => {
+    let rs = str.match(/^(.+?)[,，、]?(?:并且|而且|且)[,，、]?(.+)$/);
+    if (rs) {
+        return {
+            type: Types.And,
+            matchs: [rs[1], rs[2]],
+        };
+    }
+});
+
+aryFns.push((str) => {
     let rs = str.match(/^(空白|Blank)$/i);
     if (rs) return { type: Types.Blank, value: rs[1], exact: true };
 });
@@ -98,6 +108,16 @@ aryFns.push((str) => (/^(空|null)$/i.test(str) ? { type: Types.Null, exact: tru
 aryFns.push((str) => {
     let rs = str.match(/^([0-9]+[.]?[0-9]+\s*小时)$/i); // 99.99小时
     if (rs) return { type: Types.NumHour, value: rs[1], exact: true };
+});
+
+aryFns.push((str) => {
+    let rs = str.match(/^(.+?)[,，、]?(?:或者|或是|或)[,，、]?(.+)$/);
+    if (rs) {
+        return {
+            type: Types.Or,
+            matchs: [rs[1], rs[2]],
+        };
+    }
 });
 
 aryFns.push((str) => {
