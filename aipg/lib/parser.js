@@ -658,19 +658,17 @@ bus.on(
                     let parameters = (ndMethod.object.parameters = ndMethod.object.parameters || []);
 
                     for (let i = 0, param; (param = parameters[i++]); ) {
-                        if (param.name === object.value) {
-                            object.name = param.name;
+                        if (param.value && param.name === object.name) {
                             object.value = param.value;
                             return; // 已有相应参数时略过
                         }
                     }
 
                     let type = null; // 参数类型未知
-                    let name = object.value; // 参数名称
-                    let value = bus.at("变量命名", object.value); // 参数变量名
+                    let name = object.name; // 参数名称
+                    let value = bus.at("变量命名", name); // 参数变量名
                     parameters.push({ type, name, value });
 
-                    object.name = name; // 参数名称
                     object.value = value; // 参数变量名
                 },
                 { readonly: true }
@@ -684,15 +682,14 @@ bus.on(
                     let parameters = (ndMethod.object.parameters = ndMethod.object.parameters || []);
                     if (!parameters.length) {
                         let type = null; // 参数类型未知
-                        let name = object.value; // 参数名称
+                        let name = object.name; // 参数名称
                         let value = bus.at("变量命名", object.name); // 参数变量名
                         parameters.push({ type, name, value });
 
-                        object.name = name; // 参数名称
                         object.value = value; // 参数变量名
                     } else {
                         object.name = parameters[0].name; // 参数名称
-                        object.value = parameters[0].value; // 参数变量名
+                        parameters[0].value && (object.value = parameters[0].value); // 参数变量名
                     }
                 },
                 { readonly: true }

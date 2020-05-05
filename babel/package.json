@@ -1,11 +1,12 @@
 {
   "name": "@gotoeasy/babel",
-  "version": "0.4.2",
+  "version": "0.5.3",
   "main": "index.js",
   "dependencies": {
-    "@babel/core": "7.6.*",
-    "@babel/preset-env": "7.6.*",
-    "@babel/polyfill": "7.6.*"
+    "@babel/core": "7.9.*",
+    "@babel/preset-env": "7.9.*",
+    "@babel/polyfill": "7.8.*",
+    "core-js": "3.*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

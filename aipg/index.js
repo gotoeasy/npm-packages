@@ -3,5 +3,7 @@ const parser = require("./lib/parser");
 const generator = require("./lib/generator");
 
 module.exports = async function (file, opts) {
-    return generator(await parser(await reader({file}).result, opts).root());
+    let rsReader = await reader({file});
+    let rsParser = await parser(rsReader.result, opts);
+    return generator(rsParser.root());
 };

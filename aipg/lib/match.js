@@ -122,12 +122,12 @@ aryFns.push((str) => {
 
 aryFns.push((str) => {
     let rs = str.match(/^(参数|Parameter)$/i);
-    if (rs) return { type: Types.Parameter, value: rs[1], exact: true };
+    if (rs) return { type: Types.Parameter, name: rs[1], value: rs[1], exact: true };
 });
 
 aryFns.push((str) => {
     let rs = str.match(/^参数[.．](\S+)$/i);
-    if (rs) return { type: Types.Parameters, value: rs[1] };
+    if (rs) return { type: Types.Parameters, name: rs[1], value: rs[1] };
 });
 
 aryFns.push((str) => {

@@ -12,7 +12,7 @@ const options = {
 	presets: [
 		['@babel/env', {
 			useBuiltIns: 'usage',		// 按需添加兼容补丁
-            corejs: 'core-js@2'         // core-js@2 或 core-js@3
+            corejs: 'core-js@3'         // core-js@3
 		}],
 	]
 };

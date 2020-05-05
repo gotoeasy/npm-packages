@@ -2,7 +2,7 @@
 @gotoeasy/browserify
 
 [version] // 版本号
-0.4.2
+0.4.3
 
 [main] // 入口文件
 index.js
