@@ -1,5 +1,6 @@
 [target-file]
-*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.html, *.htm, *.css, *.sass, *.scss, *.less, *.tld, *.sh, *.sql, *.ts, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle, *.btf, *.rpose, *.skill
+*.java, *.xml, *.dtd, *.properties, *.jsp, *.js, *.vue, *.html, *.htm, *.php, *.css, *.sass, *.scss, *.less, *.tld
+*.sh, *.sql, *.ts, *.lua, *.yml, *.yaml, *.bat, *.json, *.gradle, *.btf, *.rpose, *.skill, *.h, *.m, *.c, *.cpp
 
 [java]
 line-comment=//
@@ -35,6 +36,13 @@ block-comment-end=*/
 block-comment-start=/*
 block-comment-end=*/
 
+[vue]
+line-comment=//
+block-comment-start=<!--
+block-comment-end=-->
+block-comment-start1=/*
+block-comment-end1=*/
+
 [jsp]
 line-comment=//
 block-comment-start=<!--
@@ -50,6 +58,13 @@ block-comment-start1=/*
 block-comment-end1=*/
 
 [htm]
+line-comment=//
+block-comment-start=<!--
+block-comment-end=-->
+block-comment-start1=/*
+block-comment-end1=*/
+
+[php]
 line-comment=//
 block-comment-start=<!--
 block-comment-end=-->
@@ -103,3 +118,23 @@ line-comment=#
 line-comment=--
 block-comment-start=--[[
 block-comment-end=]]
+
+[h]
+line-comment=//
+block-comment-start=/*
+block-comment-end=*/
+
+[m]
+line-comment=//
+block-comment-start=/*
+block-comment-end=*/
+
+[c]
+line-comment=//
+block-comment-start=/*
+block-comment-end=*/
+
+[cpp]
+line-comment=//
+block-comment-start=/*
+block-comment-end=*/

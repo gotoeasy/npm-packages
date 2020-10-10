@@ -56,7 +56,7 @@ function getConfig(result){
 	}
 
 	let btf = new Btf(configFile);
-	result.exts = (btf.getText('target-file') || '').replace(/ /g, '').trim().replace(/\*/g, '').replace(/\./g, '').split(',');
+	result.exts = (btf.getText('target-file') || '').replace(/ /g, '').trim().replace(/\*/g, '').replace(/\./g, '').replace(/\\r*\n/g, ',').split(',');
 	result.exts.sort();
 	console.debug('count target file:' , result.exts);
 
